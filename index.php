@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>ShootThis - a 2D HTML5 online shooter</title>
+
+		<link href="css/animate.min.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700|Material+Icons|Kaushan+Script">
+		<link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+		
+	</head>
+	<body style="background-image: url('images/background.png'); color: #ffffff;">
+		<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(255,255,255, 0.1); box-shadow: none !important; border-bottom: 1px solid rgba(255, 255, 255, 0.7) !important;">
+		  <div class="navbar-brand" style="font-family: 'Kaushan Script' !important;" >ShootThis</div>
+		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		  </button>
+		  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+			<ul class="ml-auto navbar-nav">
+			  <li class="nav-item">
+				<a class="nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="register.php">Register</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="play.php">Play Now!</a>
+			  </li>
+			</ul>
+		  </div>
+		</nav>
+		
+		<center>
+			<div class="animate__animated animate__jackInTheBox" style="--animate-duration: 1s; font-family: 'Kaushan Script' !important; margin-top: 20px; font-size: 10vw; ">ShootThis</div>
+			<h1 class="animate__animated animate__fadeIn" style="--animate-delay: 10s !important; --animate-duration: 2s !important; font-weight: 100 !important;">A 2D HTML5 shooter.</h1>
+			<a href="play.php" class="animate__animated animate__fadeInUp btn btn-light btn-lg active" style="margin-top: 20px; box-shadow: 0 0px 10px rgba(255, 255, 255, 1) !important;" role="button">Play Now!</a>
+		</center>
+		
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+		<script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+	</body>
+</html>
