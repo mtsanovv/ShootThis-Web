@@ -52,13 +52,13 @@
 		  <div class="collapse navbar-collapse" id="navbarNavDropdown">
 			<ul class="ml-auto navbar-nav">
 			  <li class="nav-item">
-				<a class="nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+				<a class="nav-link" href="index.html">Home</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link active" href="register.php">Register <span class="sr-only">(current)</span></a>
 			  </li>
 			  <li class="nav-item">
 				<a class="nav-link" href="contactus.php">Contact Us</a>
-			  </li>
-			  <li class="nav-item">
-				<a class="nav-link" href="register.php">Register</a>
 			  </li>
 			  <li class="nav-item">
 				<a class="nav-link" href="play.php">Play Now!</a>
