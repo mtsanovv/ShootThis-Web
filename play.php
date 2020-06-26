@@ -53,7 +53,9 @@
 			?>
 			
 		</center>
-		<script src="src/index.js" type="text/javascript"></script>
+		<script src="src/loginScene.js" type="text/javascript"></script>
+		<script src="src/bootScene.js" type="text/javascript"></script>
+		<script src="src/init.js" type="text/javascript"></script>
 		<div id="game" style="margin-top: 2vh;"></div>
 		
 	</body>
