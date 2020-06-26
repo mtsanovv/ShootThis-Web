@@ -1,23 +1,27 @@
 <?php
+
 	error_reporting(0);
 
 	//bannedEmails.txt is used to ban specific email addresses
 	//bannedDomains.txt is used to ban specific domain names
 
 	$success = false;
-	$usernameCheck = false;
+	$usernameCheck = true;
 	$error = array();
 
 	$_SERVER['REMOTE_ADDR'] = isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $_SERVER["REMOTE_ADDR"];
 
-	$dbuser = "root"; //database username
-	$dbpass = ""; //database password
-	$dbname = "shootthis"; //database name
+	$dbUser = "root"; //database username
+	$dbPass = ""; //database password
+	$dbName = "shootthis"; //database name
+	$dbHost = "localhost"; //database host
 	//only v2 recaptcha supported
 	//the current recaptcha keys used are the ones provided by Google for testing purposes
 	$recaptchaSecret = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"; //Google Recaptcha Secret Key, enter a key to enable captcha
 	$recaptchaPublic = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"; //Google Recaptcha Public Key, enter a key to enable captcha on this page
 	$tempMailKey = ""; //isTempMail.com key, enter a key to use the service to check if users use temp mail addresses
+	$mailValidatorHost = "http://" . $_SERVER['HTTP_HOST'] . "/shootthis/"; //host where the mail validation script is located, you can set this to an empty string in order to ignore validation
+	//this is not taking in mind the rest of the path: mailVerifier/validate.php, please check below if you need that edited
 
 	if($tempMailKey) include("istempmail.php");
 
@@ -25,6 +29,156 @@
 	{
 		foreach ($errors as $err)
 			echo '<li>' . $err . '</li>';
+	}
+
+	function checkTor()
+	{
+		$hostname = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+		$tor = stripos($hostname, 'tor');
+
+		if($tor == true)
+			return true;
+		return false;
+	}
+
+	function bannedDomain($tempMailKey)
+	{
+		$domains = file_get_contents('bannedDomains.txt');
+		$domainArr = preg_split("/\r\n|\n|\r/", $domains);
+		$domain = array_pop(explode("@", $_POST['email']));
+		if(in_array($domain, $domainArr))
+			return true;
+		if(!$tempMailKey)
+			return false;
+		$isTempMail = new IsTempMail($tempMailKey);
+		try 
+		{
+			if($isTempMail->isDea("testit@" . $domain))
+				return true;
+		} 
+		catch (Exception $exception) {}
+		return false;
+	}
+
+	function bannedMail()
+	{
+		$mails = file_get_contents('bannedEmails.txt');
+		$mailsarr = preg_split("/\r\n|\n|\r/", $mails);
+		if(in_array($_POST['email'], $mailsarr))
+			return true;
+		return false;
+	}
+
+	if ($_SERVER['REQUEST_METHOD'] == 'POST')
+	{
+		$username = htmlspecialchars($_POST['username']);
+		$password = htmlspecialchars($_POST['password']);
+		$repeatPassword = htmlspecialchars($_POST['repeatpassword']);
+		$email = htmlspecialchars($_POST['email']);
+
+		try 
+		{
+			$db = new PDO('mysql:host=' . $dbHost . ';dbname=' . $dbName . ';charset=utf8', $dbUser, $dbPass);
+			$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+			if (empty($username)) 
+			{
+				$error[] = '<font size="4" color="red">You did not enter a username.</font>';
+				$usernameCheck = false;
+			}
+			if (!preg_match('/^[A-Za-z0-9]+$/', $username)) 
+				$error[] = '<font size="4" color="red">Usernames can only contain letters and numbers.</font>';
+			if (!(strlen(trim($username)) > 3))
+				$error[] = '<font size="4" color="red">Username must be at least 4 characters long.</font>';
+			if (empty($password))
+				$error[] = '<font size="4" color="red">You did not enter a password.</font>';
+			if (!preg_match('/^[A-Za-z0-9]+$/', $password))
+				$error[] = '<font size="4" color="red">Passwords can contain only letters and numbers.</font>';
+			if (strlen(trim($password)) < 7 && strlen(trim($password)) > 18)
+				$error[] = '<font size="4" color="red">Passwords may be only between 7 and 18 characters long.</font>';
+			if ($password != $repeatPassword)
+				$error[] = '<font size="4" color="red">Password and password repeat did not match.</font>';
+			if (empty($email))
+				$error[] = '<font size="4" color="red">You did not enter an email address.</font>';
+			if (bannedDomain($tempMailKey) || bannedMail())
+				$error[] = '<font size="4" color="red">You cannot use this email to register a ShootThis account.</font>';
+			if (checkTor())
+				$error[] = '<font size="4" color="red">You are not allowed to register this account.</font>';
+
+			if($usernameCheck)
+			{
+				$isUsernameAlreadyTaken = $db->prepare("SELECT * FROM users WHERE username LIKE :username");
+				$isUsernameAlreadyTaken->bindValue(":username", $_POST['username']);
+				$isUsernameAlreadyTaken->execute();
+				
+				$numusernames = $isUsernameAlreadyTaken->rowCount();
+				$isUsernameAlreadyTaken->closeCursor();
+				if($numusernames > 0)
+				{
+					$error[] = '<font size="4" color="red">This username is already taken.</font>';
+				}
+				$IPCheck = $db->prepare("SELECT * FROM users WHERE `ip` = :ip");
+				$IPCheck->bindValue(":ip", $_SERVER["REMOTE_ADDR"]);
+				$IPCheck->execute();
+				
+				$numips = $IPCheck->rowCount();
+				$IPCheck->closeCursor();
+				if($numips > 3)
+					$error[] = '<font size="4" color="red">You cannot register more than 4 accounts.</font>';
+
+				$emailCheck = $db->prepare("SELECT * FROM users WHERE `email` LIKE :email");
+				$emailCheck->bindValue(":email", $email);
+				$emailCheck->execute();
+				
+				$numMails = $emailCheck->rowCount();
+				$emailCheck->closeCursor();
+				if($numMails >= 1)
+					$error[] = '<font size="4" color="red">You cannot use this email again to register an account.</font>';
+			}
+			
+			if(isset($_POST['g-recaptcha-response']) && !empty($_POST['g-recaptcha-response']) && $recaptchaPublic && $recaptchaSecret)
+			{
+				$verifyResponse = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret='. $recaptchaSecret .'&response=' . $_POST['g-recaptcha-response']);
+				$responseData = json_decode($verifyResponse);
+			}
+
+			if(!$responseData->success && $recaptchaPublic && $recaptchaSecret)
+				$error[] = '<font size="4" color="red">Please verify the captcha check.</font>';
+
+			if(!filter_var($email, FILTER_VALIDATE_EMAIL))
+				$error[] = '<font size="4" color="red">You did not enter a valid email address.</font>';
+
+			else if($mailValidatorHost)
+			{
+				$emailValid = file_get_contents($mailValidatorHost . "mailVerifier/validate.php?email=" . $email);
+				if($emailValid == "valid")
+					$error[] = '<font size="4" color="red">You did not enter a real email address.</font>';
+			}
+
+			if(empty($error)) 
+			{
+				$insertQuery = $db->prepare("
+					INSERT INTO
+						users
+						(id, username, nickname, password, email, ipfromreg, ip)
+					VALUES
+						(:id, :username, :username, :password, :email, :ip, :ip)
+				");
+				$insertQuery->bindValue(":id", NULL);
+				$insertQuery->bindValue(":username", $username);
+				$insertQuery->bindValue(":email", $email);
+				$insertQuery->bindValue(":password", password_hash($password, PASSWORD_BCRYPT));
+				$insertQuery->bindValue(":ip", $_SERVER['REMOTE_ADDR']);
+				$insertQuery->execute();
+				$insertQuery->closeCursor();
+				$success = true;	
+			}
+		} 
+		catch (PDOException $e) 
+		{
+			//there has been an error with pdo, please check configuration
+			$error[] = '<font size="4" color="red">We are currently unable to register your account due to a PDO error. Please contact the site owner.</font>';
+		}
 	}
 ?>
 <!DOCTYPE html>
@@ -88,13 +242,13 @@
 					</small>
 					<br>
 					<label for="inputPassword">Password</label>
-					<input id="inputPassword" class="form-control" aria-describedby="passwordHelp" style="width: 80vw !important;" name="password"  pattern="[A-Za-z0-9].{6,}" maxlength="18" type="password" placeholder="Password" required>
+					<input id="inputPassword" class="form-control" aria-describedby="passwordHelp" style="width: 80vw !important;" name="password"  pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$" maxlength="18" type="password" placeholder="Password" required>
 					<small id="passwordHelp" class="form-text text-muted">
-						Your password must be 7-18 characters long and it can contain only letters and numbers.
+						Your password must be 7-18 characters long and it can contain only letters and numbers. <b>You need to use at least 1 letter and 1 number.</b>
 					</small>
 					<br>
 					<label for="inputPasswordRepeat">Repeat Password</label>
-					<input id="inputPasswordRepeat" class="form-control" aria-describedby="passwordRepeatHelp" style="width: 80vw !important;" name="repeatpassword"  pattern="[A-Za-z0-9].{6,}" maxlength="18" type="password" placeholder="Repeat Password" required>
+					<input id="inputPasswordRepeat" class="form-control" aria-describedby="passwordRepeatHelp" style="width: 80vw !important;" name="repeatpassword"  pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$" maxlength="18" type="password" placeholder="Repeat Password" required>
 					<small id="passwordRepeatHelp" class="form-text text-muted">
 						Make sure this password matches the one you entered above.
 					</small>
