@@ -10,13 +10,13 @@ class LoginScene extends Phaser.Scene
     preload() 
     {
 
-        var loadingPercentage = this.add.text(860, 830, "Loading: ", {fontFamily: 'Roboto', fontSize: '32px', fill: '#FFF'});
-        //login scene stuff is added here
+        this.loadingPercentage = this.add.text(860, 830, "Loading: ", {fontFamily: 'Roboto', fontSize: '32px', fill: '#FFF'});
+        //all game assets are added here
         this.load.image('loginbg', 'assets/loginbg.png');
-        //end login scene asssets
+        //if it becomes too much, balancing may be done with another loading part after login completes
 
-		this.load.on('progress', this.onProgress, {loadingPercentage:loadingPercentage});
-		this.load.on('complete', this.onComplete, {scene:this.scene});
+		this.load.on('progress', this.onProgress, {loadingPercentage: this.loadingPercentage});
+		this.load.on('complete', this.onComplete, {loadingPercentage: this.loadingPercentage});
 	}
 
     onProgress(percentage) 
@@ -27,7 +27,8 @@ class LoginScene extends Phaser.Scene
 
     onComplete() 
     {
-		game.scene.remove("BootScene");
+        game.scene.remove("BootScene");
+        this.loadingPercentage.destroy();
     }
     
     create()

@@ -13,6 +13,7 @@ A 2D HTML5 shooter, using the [Phaser 3](https://github.com/photonstorm/phaser/)
 4. The mail verfication script may not work when it's requested from a location that's behind proxy/CDN and thus break down the register.php file. You may want to configure your web server to serve that script directly. **When you do so, you need to configure $mailValidatorHost, by default it is $_SERVER['HTTP_HOST']. The mail validator script could have some unexpected behavior when requested using https protocol, so http may only be used. Since that's an inside page, it's perfectly fine.**
 5. In order for the registration script to work, you need to import the shootthis.sql file in your SQL server. **Please note that this file was created by MariaDB, a fork of MySQL. This has not been tested with other engines and it may not work with some.**
 6. You may have to edit the config.xml file to match the backend login server IP and port.
+7. In order to have everything operational, you need to set up servers in the servers table in the database.
 
 ## About the SQL file included
 This is the structure of the database that is used for ShootThis **and it is required by both the frontend and the backend.**
