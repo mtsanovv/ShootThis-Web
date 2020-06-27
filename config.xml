@@ -1,4 +1,7 @@
-<ShootThis>
-    <ip>127.0.0.1</ip>
-    <port>9903</port>
-</ShootThis>
+<ShootThisServers>
+	<!-- In order to handle the load, you can add as many login servers ips & ports as you want, the first one to respond that it's free will be the one to connect to -->
+	<ShootThisLogin>
+		<ip>127.0.0.1</ip>
+		<port>9903</port>
+	</ShootThisLogin>
+</ShootThisServers>

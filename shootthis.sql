@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 26, 2020 at 05:50 PM
+-- Generation Time: Jun 27, 2020 at 10:38 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.1.33
 
@@ -45,7 +45,9 @@ CREATE TABLE `loginhistory` (
 CREATE TABLE `servers` (
   `id` int(11) NOT NULL,
   `serverName` varchar(255) NOT NULL,
-  `serverIP` varchar(45) NOT NULL
+  `serverIP` varchar(45) NOT NULL,
+  `users` int(11) NOT NULL DEFAULT 0,
+  `maxUsers` int(11) NOT NULL DEFAULT 500
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
