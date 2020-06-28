@@ -51,7 +51,7 @@ class LoginScene extends Phaser.Scene
 
     onComplete() 
     {
-        game.scene.remove("BootScene");
+        game.scene.remove("LoaderScene");
         this.loadingPercentage.destroy();
     }
     

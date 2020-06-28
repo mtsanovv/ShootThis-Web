@@ -1,4 +1,4 @@
-class BootScene extends Phaser.Scene
+class LoaderScene extends Phaser.Scene
 {
 
     constructor (config)
@@ -25,7 +25,7 @@ class BootScene extends Phaser.Scene
         this.anims.create({ key: 'moveLogo', frames: frameNames, frameRate: 24, repeat: -1 });
         this.loadingText.anims.play('moveLogo');
 
-        game.scene.add("LoginScene", LoginScene, true, { x: 960, y: 540});
+        game.scene.add(data.loadScene, data.loadSceneClass, true, { x: data.loadSceneX, y: data.loadSceneY});
     }
 
     update(time, delta)

@@ -56,7 +56,7 @@
 		<script src="js/bcrypt.min.js" type="text/javascript"></script>
 		<script src="js/util.js" type="text/javascript"></script>
 		<script src="src/loginScene.js" type="text/javascript"></script>
-		<script src="src/bootScene.js" type="text/javascript"></script>
+		<script src="src/loaderScene.js" type="text/javascript"></script>
 		<script src="src/init.js" type="text/javascript"></script>
 		<div id="game" style="margin-top: 2vh;">
 		</div>
