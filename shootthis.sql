@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 27, 2020 at 10:38 PM
+-- Generation Time: Jun 28, 2020 at 07:26 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.1.33
 
@@ -64,7 +64,9 @@ CREATE TABLE `users` (
   `regdate` datetime NOT NULL DEFAULT current_timestamp(),
   `email` varchar(255) NOT NULL,
   `ipfromreg` varchar(45) NOT NULL,
-  `ip` varchar(45) NOT NULL
+  `ip` varchar(45) NOT NULL,
+  `savedLoginCookie` varchar(255) NOT NULL,
+  `loginToken` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
