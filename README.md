@@ -14,6 +14,7 @@ A 2D HTML5 shooter, using the [Phaser 3](https://github.com/photonstorm/phaser/)
 5. In order for the registration script to work, you need to import the shootthis.sql file in your SQL server. **Please note that this file was created by MariaDB, a fork of MySQL. This has not been tested with other engines and it may not work with some.**
 6. You may have to edit the config.xml file to match the backend login server(s) IP and port.
 7. In order to have everything operational, you need to set up servers in the servers table in the database.
+8. There is the ability of having bruteforce attempts on login. Thus, you need to set up a firewall filtering packets on login server (and perhaps game server as well).
 
 ## About the SQL file included
 This is the structure of the database that is used for ShootThis **and it is required by both the frontend and the backend.**
@@ -29,4 +30,5 @@ This is the structure of the database that is used for ShootThis **and it is req
 - Phaser 3 engine: [https://github.com/photonstorm/phaser/] (https://github.com/photonstorm/phaser/)
 - Mobile device detection: [http://mobiledetect.net/] (http://mobiledetect.net/)
 - RexUI: [https://github.com/rexrainbow/phaser3-rex-notes] (https://github.com/rexrainbow/phaser3-rex-notes)
+- bcryptjs: [https://github.com/dcodeIO/bcrypt.js] (https://github.com/dcodeIO/bcrypt.js)
 *M. Tsanov, S. Tsvetkov, Y. Berov, 2020*

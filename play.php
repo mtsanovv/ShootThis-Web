@@ -53,6 +53,8 @@
 			?>
 			
 		</center>
+		<script src="js/bcrypt.min.js" type="text/javascript"></script>
+		<script src="js/util.js" type="text/javascript"></script>
 		<script src="src/loginScene.js" type="text/javascript"></script>
 		<script src="src/bootScene.js" type="text/javascript"></script>
 		<script src="src/init.js" type="text/javascript"></script>

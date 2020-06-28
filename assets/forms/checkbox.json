@@ -1,0 +1,460 @@
+{
+	"textures": [
+		{
+			"image": "checkbox.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1880,
+				"h": 126
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "checkbox0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0002.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 236,
+						"y": 1,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0003.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 471,
+						"y": 1,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0004.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 706,
+						"y": 1,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0005.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 941,
+						"y": 1,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0006.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 1176,
+						"y": 1,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0007.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 1411,
+						"y": 1,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0008.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 1646,
+						"y": 1,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0009.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 1,
+						"y": 43,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0010.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 236,
+						"y": 43,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0011.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 471,
+						"y": 43,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0012.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 706,
+						"y": 43,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0013.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 941,
+						"y": 43,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0014.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 1176,
+						"y": 43,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0015.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 1411,
+						"y": 43,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0016.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 1646,
+						"y": 43,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0017.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 1,
+						"y": 85,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0018.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 236,
+						"y": 85,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0019.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 471,
+						"y": 85,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0020.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 706,
+						"y": 85,
+						"w": 233,
+						"h": 40
+					}
+				},
+				{
+					"filename": "checkbox0021.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 235,
+						"h": 42
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 233,
+						"h": 40
+					},
+					"frame": {
+						"x": 941,
+						"y": 85,
+						"w": 233,
+						"h": 40
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "http://free-tex-packer.com",
+		"version": "0.6.6"
+	}
+}
