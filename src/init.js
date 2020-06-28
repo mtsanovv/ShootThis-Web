@@ -13,6 +13,12 @@ var config = {
             height: 1080
         },
         autoCenter: Phaser.Scale.CENTER_BOTH
+    },
+    physics: {
+        default: 'arcade'
+    },
+    dom: {
+        createContainer: true
     }
 };
 

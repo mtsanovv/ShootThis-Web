@@ -6,13 +6,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<title>ShootThis - a 2D HTML5 online shooter</title>
 		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700|Material+Icons|Kaushan+Script">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700|Material+Icons|Kaushan+Script|Montserrat">
 		<link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
 		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/1.0.10/cookieconsent.min.js"></script>
 		<script type="text/javascript">
 			window.cookieconsent_options = {"message":"This website uses cookies to improve your experience.","dismiss":"Got It","learnMore":"Learn More","link":"https://cookie-consent.app.forthe.top/why-websites-use-cookies/","target": "_blank", "theme":"light-bottom"};
 		</script>
-		<script src="https://cdn.jsdelivr.net/npm/phaser@3.23.0/dist/phaser-arcade-physics.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/phaser@3.23.0/dist/phaser.min.js"></script>
 		<!--Alternative location for Phaser 3.23.0 -> js/phaser.min.js-->
 	</head>
 	<body style="background-image: url('images/background.png'); color: #ffffff;">
@@ -56,7 +56,8 @@
 		<script src="src/loginScene.js" type="text/javascript"></script>
 		<script src="src/bootScene.js" type="text/javascript"></script>
 		<script src="src/init.js" type="text/javascript"></script>
-		<div id="game" style="margin-top: 2vh;"></div>
-		
+		<div id="game" style="margin-top: 2vh;">
+		</div>
+
 	</body>
 </html>
