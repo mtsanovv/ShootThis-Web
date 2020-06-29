@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 28, 2020 at 07:26 PM
+-- Generation Time: Jun 29, 2020 at 10:25 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.1.33
 
@@ -39,20 +39,6 @@ CREATE TABLE `loginhistory` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `servers`
---
-
-CREATE TABLE `servers` (
-  `id` int(11) NOT NULL,
-  `serverName` varchar(255) NOT NULL,
-  `serverIP` varchar(45) NOT NULL,
-  `users` int(11) NOT NULL DEFAULT 0,
-  `maxUsers` int(11) NOT NULL DEFAULT 500
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `users`
 --
 
@@ -80,12 +66,6 @@ ALTER TABLE `loginhistory`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `servers`
---
-ALTER TABLE `servers`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -99,12 +79,6 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `loginhistory`
 --
 ALTER TABLE `loginhistory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `servers`
---
-ALTER TABLE `servers`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
