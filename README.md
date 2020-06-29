@@ -30,6 +30,7 @@ This is the structure of the database that is used for ShootThis **and it is req
 - Phaser 3 engine: https://github.com/photonstorm/phaser/
 - Mobile device detection: http://mobiledetect.net/
 - RexUI: https://github.com/rexrainbow/phaser3-rex-notes
-- bcryptjs: https://github.com/dcodeIO/bcrypt.js] (https://github.com/dcodeIO/bcrypt.js
+- bcryptjs: https://github.com/dcodeIO/bcrypt.js
+- Socket.IO: https://github.com/socketio
 
 *M. Tsanov, S. Tsvetkov, Y. Berov, 2020*
