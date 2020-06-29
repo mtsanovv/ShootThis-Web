@@ -54,7 +54,6 @@
 			
 		</center>
 		<script src="js/socket.io.js" type="text/javascript"></script>
-		<script src="js/bcrypt.min.js" type="text/javascript"></script>
 		<script src="js/util.js" type="text/javascript"></script>
 		<script src="src/loginScene.js" type="text/javascript"></script>
 		<script src="src/loaderScene.js" type="text/javascript"></script>
