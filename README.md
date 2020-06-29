@@ -26,10 +26,10 @@ This is the structure of the database that is used for ShootThis **and it is req
 - Backend: M. Tsanov, Y. Berov
 
 ## Credits
-- Mail verification script: Konstantin Granin < [kostya@granin.me] > (mailto:kostya@granin.me)
-- Phaser 3 engine: [https://github.com/photonstorm/phaser/] (https://github.com/photonstorm/phaser/)
-- Mobile device detection: [http://mobiledetect.net/] (http://mobiledetect.net/)
-- RexUI: [https://github.com/rexrainbow/phaser3-rex-notes] (https://github.com/rexrainbow/phaser3-rex-notes)
-- bcryptjs: [https://github.com/dcodeIO/bcrypt.js] (https://github.com/dcodeIO/bcrypt.js)
+- Mail verification script: Konstantin Granin <kostya@granin.me>
+- Phaser 3 engine: https://github.com/photonstorm/phaser/
+- Mobile device detection: http://mobiledetect.net/
+- RexUI: https://github.com/rexrainbow/phaser3-rex-notes
+- bcryptjs: https://github.com/dcodeIO/bcrypt.js] (https://github.com/dcodeIO/bcrypt.js
 
 *M. Tsanov, S. Tsvetkov, Y. Berov, 2020*
