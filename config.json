@@ -1,7 +1,0 @@
-{
-	"login1": {
-		"address": "//localhost",
-		"port": 9903,
-		"protocol": "http:"
-	}
-}
