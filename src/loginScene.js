@@ -29,6 +29,8 @@ class LoginScene extends Phaser.Scene
         this.hasConnected = false;
         this.goingForward = true;
         this.loadingText;
+        this.loadingShadow;
+        this.timesDisconnected = 0;
     }
 
     preload() 
@@ -110,7 +112,7 @@ class LoginScene extends Phaser.Scene
 
         this.add.image(960, 540, 'loginbg');
         
-        var loadingShadow = this.add.image(960, 540, "shadow");
+        this.loadingShadow = this.add.image(960, 540, "shadow");
         this.loadingText = this.add.sprite(0, 479, 'loadingScreen', 'loading/loading0001.png');
 
         this.loadingPercentage = this.add.text(960, 730, "Connecting to login server...", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'});
@@ -128,7 +130,7 @@ class LoginScene extends Phaser.Scene
         {
             if(jQuery.isEmptyObject(loginConfig))
             {
-                loadingShadow.destroy();
+                this.loadingShadow.destroy();
                 this.loadingText.destroy();
                 this.loadingPercentage.destroy();
                 this.showMessage("ERROR", "ShootThis can't connect due to bad configuration. Please try again later or contact us.");
@@ -140,11 +142,8 @@ class LoginScene extends Phaser.Scene
                     if(loginConfig[server].address && loginConfig[server].port && loginConfig[server].protocol)
                     {
                         var socket = io(loginConfig[server].protocol + loginConfig[server].address + ":" + loginConfig[server].port, {secure: true, reconnectionAttempts: 2, transport: ['websocket']});
-                        socket.on('connect', () => {
-                            loadingShadow.destroy();
-                            this.loadingText.destroy();
-                            this.loadingPercentage.destroy();
-                            this.onConnection(socket);
+                        socket.on('loginExt', (responseType, args) => {
+                            this.handleLoginResponse(this, socket, responseType, args);
                         });
                         socket.on('reconnect_failed', () => {
                             if(!this.hasConnected)
@@ -154,7 +153,7 @@ class LoginScene extends Phaser.Scene
                                     this.socket.destroy();
                                 } 
                                 catch(e){}
-                                loadingShadow.destroy();
+                                this.loadingShadow.destroy();
                                 this.loadingText.destroy();
                                 this.loadingPercentage.destroy();
                                 this.showMessage("CONNECTION FAILURE", "ShootThis is unable to connect. It may be your connection or an issue on our end.\n\nPlease try again later or contact us.");
@@ -170,11 +169,25 @@ class LoginScene extends Phaser.Scene
                                 catch(e){} 
                                 this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
                             }
+                            else
+                                this.timesDisconnected++;
+                            if(this.timesDisconnected >= Object.keys(loginConfig).length)
+                            {
+                                try 
+                                {
+                                    this.socket.destroy();
+                                } 
+                                catch(e){}
+                                this.loadingShadow.destroy();
+                                this.loadingText.destroy();
+                                this.loadingPercentage.destroy();
+                                this.showMessage("MAXED OUT CAPACITIES", "ShootThis is unable to connect as our capacities are currently maxed out. Please try again later or contact us.");
+                            }
                         });
                     }
                     else
                     {
-                        loadingShadow.destroy();
+                        this.loadingShadow.destroy();
                         this.loadingText.destroy();
                         this.loadingPercentage.destroy();
                         this.showMessage("ERROR", "ShootThis can't connect due to bad configuration. One or more servers may not be configured properly.\n\nPlease try again later or contact us.");
@@ -185,13 +198,26 @@ class LoginScene extends Phaser.Scene
         }
         catch(e)
         {
-            loadingShadow.destroy();
+            this.loadingShadow.destroy();
             this.loadingText.destroy();
             this.loadingPercentage.destroy();
             this.showMessage("ERROR", "ShootThis can't connect due to bad configuration. Please try again later or contact us.");
             return;
         }
 
+    }
+
+    handleLoginResponse(scene, socket, responseType, args)
+    {
+        switch(responseType)
+        {
+            case "connectionSuccessful":
+                scene.loadingShadow.destroy();
+                scene.loadingText.destroy();
+                scene.loadingPercentage.destroy();
+                scene.onConnection(socket);
+                break;
+        }
     }
 
     showMessage(title, message, yesno = "none", yesCallback = function() {this.messageYesBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, noCallback = function() {this.messageNoBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, okCallback = function() {this.messageOkBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;})
