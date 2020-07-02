@@ -139,7 +139,7 @@ class LoginScene extends Phaser.Scene
                 {
                     if(loginConfig[server].address && loginConfig[server].port && loginConfig[server].protocol)
                     {
-                        var socket = io(loginConfig[server].protocol + loginConfig[server].address + ":" + loginConfig[server].port, {secure: true, reconnectionAttempts: 2});
+                        var socket = io(loginConfig[server].protocol + loginConfig[server].address + ":" + loginConfig[server].port, {secure: true, reconnectionAttempts: 2, transport: ['websocket']});
                         socket.on('connect', () => {
                             loadingShadow.destroy();
                             this.loadingText.destroy();
@@ -157,7 +157,7 @@ class LoginScene extends Phaser.Scene
                                 loadingShadow.destroy();
                                 this.loadingText.destroy();
                                 this.loadingPercentage.destroy();
-                                this.showMessage("CONNECTION FAILURE", "ShootThis is unable to connect. One or more servers may be down or misconfigured.\n\nPlease try again later or contact us.");
+                                this.showMessage("CONNECTION FAILURE", "ShootThis is unable to connect. It may be your connection or an issue on our end.\n\nPlease try again later or contact us.");
                             }
                         });
                         socket.on('disconnect', () => {
@@ -168,7 +168,7 @@ class LoginScene extends Phaser.Scene
                                     this.socket.destroy();
                                 } 
                                 catch(e){} 
-                                this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to try again.");
+                                this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
                             }
                         });
                     }
