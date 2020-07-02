@@ -107,6 +107,10 @@
 
 			if($usernameCheck)
 			{
+				$ip = $_SERVER['REMOTE_ADDR'];
+				if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4))
+					$ip = "::ffff:" . $ip;
+				
 				$isUsernameAlreadyTaken = $db->prepare("SELECT * FROM users WHERE username LIKE :username");
 				$isUsernameAlreadyTaken->bindValue(":username", $_POST['username']);
 				$isUsernameAlreadyTaken->execute();
@@ -168,7 +172,7 @@
 				$insertQuery->bindValue(":username", $username);
 				$insertQuery->bindValue(":email", $email);
 				$insertQuery->bindValue(":password", password_hash($password, PASSWORD_BCRYPT));
-				$insertQuery->bindValue(":ip", $_SERVER['REMOTE_ADDR']);
+				$insertQuery->bindValue(":ip", $ip);
 				$insertQuery->execute();
 				$insertQuery->closeCursor();
 				$success = true;	
