@@ -136,7 +136,7 @@
 				
 				$numMails = $emailCheck->rowCount();
 				$emailCheck->closeCursor();
-				if($numMails >= 1)
+				if($numMails >= 3)
 					$error[] = '<font size="4" color="red">You cannot use this email again to register an account.</font>';
 			}
 			
