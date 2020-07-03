@@ -15,7 +15,7 @@ class LoaderScene extends Phaser.Scene
 
     create(data)
     {
-        this.loadingText = this.add.sprite(0, 479, 'loadingScreen', 'loading/loading0001.png');
+        this.loadingText = this.add.sprite(0, 479, 'loadingScreen', 'loading0001.png');
 
         var frameNames = this.anims.generateFrameNames('loadingScreen', {
             start: 1, end: 45, zeroPad: 4,

@@ -31,6 +31,9 @@ class LoginScene extends Phaser.Scene
         this.loadingText;
         this.loadingShadow;
         this.timesDisconnected = 0;
+        this.loginForm = false;
+        this.loginText;
+        this.switchToLoginForm;
     }
 
     preload() 
@@ -44,8 +47,8 @@ class LoginScene extends Phaser.Scene
         this.load.multiatlas('formFields', 'assets/forms/fields.json', 'assets/forms');
         this.load.multiatlas('rememberAccount', 'assets/forms/checkbox.json', 'assets/forms');
         this.load.multiatlas('loginBtn', 'assets/forms/mediumBtn.json', 'assets/forms');
-        this.load.image('shadow', 'assets/shadow.png');
         this.load.image('messageBG', 'assets/messageBG.png');
+        this.load.multiatlas('connectingAnim', 'assets/loading/connectingAnim.json', 'assets/loading');
         //Login plugins
         this.load.scenePlugin({
             key: 'rexuiplugin',
@@ -79,8 +82,15 @@ class LoginScene extends Phaser.Scene
 
         this.anims.create({ key: 'loginBtnClicked', frames: loginBtnClicked, frameRate: 24});
 
+        var connectingAnimFrames = this.anims.generateFrameNames('connectingAnim', {
+            start: 1, end: 70, zeroPad: 4,
+            prefix: 'connectingAnim', suffix: '.png'
+        });
+
+        this.anims.create({ key: 'connectingAnimation', frames: connectingAnimFrames, frameRate: 24, repeat: -1 });
+
         this.messageContainer = this.add.container(0, 0);
-        var shadow = this.add.image(960, 540, "shadow");
+        var shadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
         var msgbg = this.add.image(960, 540, "messageBG");
         this.messageTitle = this.add.text(960, 420, "WARNING", { fontFamily: 'Rubik', fontSize: '64px', color: "#fff", fontStyle: "bold"});
         this.messageTitle.setOrigin(0.5, 0.5);
@@ -112,8 +122,8 @@ class LoginScene extends Phaser.Scene
 
         this.add.image(960, 540, 'loginbg');
         
-        this.loadingShadow = this.add.image(960, 540, "shadow");
-        this.loadingText = this.add.sprite(0, 479, 'loadingScreen', 'loading/loading0001.png');
+        this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
+        this.loadingText = this.add.sprite(0, 479, 'loadingScreen', 'loading0001.png');
 
         this.loadingPercentage = this.add.text(960, 730, "Connecting to login server...", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'});
         this.loadingPercentage.setOrigin(0.5, 0.5);
@@ -143,14 +153,14 @@ class LoginScene extends Phaser.Scene
                     {
                         var socket = io(loginConfig[server].protocol + loginConfig[server].address + ":" + loginConfig[server].port, {secure: true, reconnectionAttempts: 2, transport: ['websocket']});
                         socket.on('loginExt', (responseType, args) => {
-                            this.handleLoginResponse(this, socket, responseType, args);
+                            this.handleLoginResponse(socket, responseType, args);
                         });
                         socket.on('reconnect_failed', () => {
                             if(!this.hasConnected)
                             {
                                 try 
                                 {
-                                    this.socket.destroy();
+                                    socket.destroy();
                                 } 
                                 catch(e){}
                                 this.loadingShadow.destroy();
@@ -164,24 +174,26 @@ class LoginScene extends Phaser.Scene
                             {
                                 try 
                                 {
-                                    this.socket.destroy();
+                                    socket.destroy();
                                 } 
                                 catch(e){} 
                                 this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
                             }
                             else
-                                this.timesDisconnected++;
-                            if(this.timesDisconnected >= Object.keys(loginConfig).length)
                             {
-                                try 
+                                this.timesDisconnected++;
+                                if(this.timesDisconnected >= Object.keys(loginConfig).length)
                                 {
-                                    this.socket.destroy();
-                                } 
-                                catch(e){}
-                                this.loadingShadow.destroy();
-                                this.loadingText.destroy();
-                                this.loadingPercentage.destroy();
-                                this.showMessage("MAXED OUT CAPACITIES", "ShootThis is unable to connect as our capacities are currently maxed out. Please try again later or contact us.");
+                                    try 
+                                    {
+                                        socket.destroy();
+                                    } 
+                                    catch(e){}
+                                    this.loadingShadow.destroy();
+                                    this.loadingText.destroy();
+                                    this.loadingPercentage.destroy();
+                                    this.showMessage("MAXED OUT CAPACITIES", "ShootThis is unable to connect as our capacities are currently maxed out. Please try again later or contact us.");
+                                }
                             }
                         });
                     }
@@ -207,16 +219,36 @@ class LoginScene extends Phaser.Scene
 
     }
 
-    handleLoginResponse(scene, socket, responseType, args)
+    handleLoginResponse(socket, responseType, args)
     {
         switch(responseType)
         {
             case "connectionSuccessful":
-                scene.loadingShadow.destroy();
-                scene.loadingText.destroy();
-                scene.loadingPercentage.destroy();
-                scene.onConnection(socket);
+                this.loadingShadow.destroy();
+                this.loadingText.destroy();
+                this.loadingPercentage.destroy();
+                this.onConnection(socket);
                 break;
+            case "slFail":
+                this.loadingShadow.destroy();
+                this.loadingText.destroy();
+                this.showMessage("CANNOT SIGN IN", "The saved login credentials are invalid.\n\nYou need to log in again.", "false", null, null, () => {
+                    this.loginElementsAlpha = -0.5;
+                    this.loginLogo.destroy();
+                    this.loginText.destroy();
+                    this.switchToLoginForm.destroy();
+                    this.loginBtn.destroy();
+                    this.loginBtnText.destroy();
+                    this.loginForm = true;
+                    this.messageOkBtn.anims.play('loginBtnClicked'); 
+                    this.messageContainer.alpha = 0;
+                    this.loginBtn.removeInteractive();
+                    console.log(this.loginBtn);
+                    setCookie("savedLogin", "", 0);
+                    this.showLoginForm(socket);
+                });
+                break;
+
         }
     }
 
@@ -238,8 +270,8 @@ class LoginScene extends Phaser.Scene
                 this.okText.alpha = 0;
                 this.messageNoBtn.alpha = 1;
                 this.noText.alpha = 1;
-                messageYesBtn.setInteractive().on('pointerdown', yesCallback);
-                messageYesBtn.setInteractive().on('pointerdown', noCallback);
+                this.messageYesBtn.setInteractive().on('pointerdown', yesCallback);
+                this.messageNoBtn.setInteractive().on('pointerdown', noCallback);
                 break;
             case "false":
                 this.messageYesBtn.alpha = 0;
@@ -248,7 +280,7 @@ class LoginScene extends Phaser.Scene
                 this.okText.alpha = 1;
                 this.messageNoBtn.alpha = 0;
                 this.noText.alpha = 0;
-                messageOkBtn.setInteractive().on('pointerdown', okCallback);
+                this.messageOkBtn.setInteractive().on('pointerdown', okCallback);
                 break;
             default:
                 this.messageYesBtn.alpha = 0;
@@ -266,7 +298,82 @@ class LoginScene extends Phaser.Scene
     onConnection(socket)
     {
         this.hasConnected = true;
+
+        if(checkCookie("savedLogin"))
+        {
+            if(getCookie("savedLogin").split(",")[0] && getCookie("savedLogin").split(",")[1])
+                this.showSavedLogin(socket);
+        }
+        else
+        {
+            this.loginForm = true;
+            this.showLoginForm(socket);
+        }
         
+    }
+
+    showSavedLogin(socket)
+    {
+        this.loginLogo = this.add.sprite(960, 100, 'loginlogo');
+        this.loginLogo.alpha = 0;
+
+        this.loginText = this.add.text(945, 370, "Currently logged in as: " + getCookie("savedLogin").split(",")[0], { fontFamily: 'Rubik', fontSize: '64px'});
+        this.loginText.setOrigin(0.5, 0.5);
+        this.loginText.alpha = 0;
+
+        this.switchToLoginForm = this.add.text(945, 650, "Click here to log in with another account", { fontFamily: 'Rubik', fontSize: '32px', color: "#0b0080"});
+        this.switchToLoginForm.setOrigin(0.5, 0.5);
+        this.switchToLoginForm.alpha = 0;
+
+        this.loginBtn = this.add.sprite(960, 800, 'loginBtn', 'mediumBtn0001.png');
+        this.loginBtn.alpha = 0;
+
+        this.loginBtnText = this.add.text(960, 780, "Sign In", { fontFamily: 'Rubik', fontSize: '64px'});
+        this.loginBtnText.setOrigin(0.5, 0.5);
+        this.loginBtnText.alpha = 0;
+
+        this.loginBtn.setInteractive().on('pointerdown', () => {
+            this.loginBtn.anims.play('loginBtnClicked');
+            this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.7);
+            this.loadingText = this.add.sprite(960, 550, 'connectingAnim', 'connectingAnim0001.png');
+
+            this.loadingText.anims.play('connectingAnimation');
+
+            socket.emit("loginExt", "cc", getCookie("savedLogin").split(","));
+        });
+
+        this.switchToLoginForm.setInteractive().on('pointerdown', () => {
+            this.showMessage("FORGET THIS ACCOUNT", "Would you like to forget this saved account?", "true", () => {
+                setCookie("savedLogin", "", 0);
+                this.loginElementsAlpha = -0.5;
+                this.loginLogo.destroy();
+                this.loginText.destroy();
+                this.switchToLoginForm.destroy();
+                this.loginBtn.destroy();
+                this.loginBtnText.destroy();
+                this.loginForm = true;
+                this.messageYesBtn.anims.play('loginBtnClicked'); 
+                this.messageContainer.alpha = 0;
+                this.loginBtn.removeInteractive();
+                this.showLoginForm(socket);
+            }, () => {
+                this.loginElementsAlpha = -0.5;
+                this.loginLogo.destroy();
+                this.loginText.destroy();
+                this.switchToLoginForm.destroy();
+                this.loginBtn.destroy();
+                this.loginBtnText.destroy();
+                this.loginForm = true;
+                this.messageNoBtn.anims.play('loginBtnClicked'); 
+                this.messageContainer.alpha = 0;
+                this.loginBtn.removeInteractive();
+                this.showLoginForm(socket);
+            });
+        });
+    }
+
+    showLoginForm(socket)
+    {
         this.loginLogo = this.add.sprite(960, 100, 'loginlogo');
         this.loginLogo.alpha = 0;
 
@@ -358,38 +465,67 @@ class LoginScene extends Phaser.Scene
             //initiate login sequence
         });
     }
+
     update(time, delta)
     {
         if(this.hasConnected)
         {
-            if(this.loginElementsAlpha < 1)
+            if(this.loginForm)
             {
-                if(this.loginElementsAlpha >= 0)
-                    this.loginLogo.alpha += delta / 1000;
-                this.loginElementsAlpha += delta / 1000;
+                if(this.loginElementsAlpha < 1)
+                {
+                    if(this.loginElementsAlpha >= 0)
+                        this.loginLogo.alpha += delta / 1000;
+                    this.loginElementsAlpha += delta / 1000;
+                }
+                else if(this.loginElementsAlpha >= 1 && this.loginElementsAlpha < 2)
+                {
+                    this.usernameFieldAsset.alpha += delta / 300;
+                    this.usernameField.alpha += delta / 300;
+                    this.loginElementsAlpha += delta / 300;
+                }
+                else if(this.loginElementsAlpha >= 2 && this.loginElementsAlpha < 3)
+                {
+                    this.passwordFieldAsset.alpha += delta / 300;
+                    this.passwordField.alpha += delta / 300;
+                    this.loginElementsAlpha += delta / 300;
+                }
+                else if(this.loginElementsAlpha >= 3 && this.loginElementsAlpha < 4)
+                {
+                    this.rememberAccount.alpha += delta / 300;
+                    this.loginElementsAlpha += delta / 300;
+                }
+                else if(this.loginElementsAlpha >= 4 && this.loginElementsAlpha < 5)
+                {
+                    this.loginBtn.alpha += delta / 300;
+                    this.loginBtnText.alpha += delta / 300;
+                    this.loginElementsAlpha += delta / 300;
+                }
             }
-            else if(this.loginElementsAlpha >= 1 && this.loginElementsAlpha < 2)
+            else
             {
-                this.usernameFieldAsset.alpha += delta / 300;
-                this.usernameField.alpha += delta / 300;
-                this.loginElementsAlpha += delta / 300;
-            }
-            else if(this.loginElementsAlpha >= 2 && this.loginElementsAlpha < 3)
-            {
-                this.passwordFieldAsset.alpha += delta / 300;
-                this.passwordField.alpha += delta / 300;
-                this.loginElementsAlpha += delta / 300;
-            }
-            else if(this.loginElementsAlpha >= 3 && this.loginElementsAlpha < 4)
-            {
-                this.rememberAccount.alpha += delta / 300;
-                this.loginElementsAlpha += delta / 300;
-            }
-            else if(this.loginElementsAlpha >= 4 && this.loginElementsAlpha < 5)
-            {
-                this.loginBtn.alpha += delta / 300;
-                this.loginBtnText.alpha += delta / 300;
-                this.loginElementsAlpha += delta / 300;
+                if(this.loginElementsAlpha < 1)
+                {
+                    if(this.loginElementsAlpha >= 0)
+                        this.loginLogo.alpha += delta / 1000;
+                    this.loginElementsAlpha += delta / 1000;
+                }
+                else if(this.loginElementsAlpha >= 1 && this.loginElementsAlpha < 2)
+                {
+                    this.loginText.alpha += delta / 300;
+                    this.loginElementsAlpha += delta / 300;
+                }
+                else if(this.loginElementsAlpha >= 2 && this.loginElementsAlpha < 3)
+                {
+                    this.switchToLoginForm.alpha += delta / 300;
+                    this.loginElementsAlpha += delta / 300;
+                }
+                else if(this.loginElementsAlpha >= 3 && this.loginElementsAlpha < 4)
+                {
+                    this.loginBtn.alpha += delta / 300;
+                    this.loginBtnText.alpha += delta / 300;
+                    this.loginElementsAlpha += delta / 300;
+                }
             }
         }
         else
