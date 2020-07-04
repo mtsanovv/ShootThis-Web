@@ -27,13 +27,14 @@ class LoginScene extends Phaser.Scene
         this.yesText;
         this.noText;
         this.hasConnected = false;
-        this.goingForward = true;
         this.loadingText;
         this.loadingShadow;
         this.timesDisconnected = 0;
         this.loginForm = false;
         this.loginText;
         this.switchToLoginForm;
+        this.closedUsernameEditor = true;
+        this.closedPasswordEditor = true;
     }
 
     preload() 
@@ -97,25 +98,10 @@ class LoginScene extends Phaser.Scene
         this.messageText = this.add.text(960, 520, "This is some warning/error message and we have a placeholder here.\n\nAnd this is a place holder for a new line.", { fontFamily: 'Rubik', fontSize: '32px', color: "#fff"});
         this.messageText.setAlign("center");
         this.messageText.setOrigin(0.5, 0.5);
-        this.messageYesBtn = this.add.sprite(548, 670, 'loginBtn', 'mediumBtn0001.png');
-        this.yesText = this.add.text(548, 650, "Yes", { fontFamily: 'Rubik', fontSize: '64px'});
-        this.yesText.setOrigin(0.5, 0.5);
-        this.messageOkBtn = this.add.sprite(960, 670, 'loginBtn', 'mediumBtn0001.png');
-        this.okText = this.add.text(960, 650, "OK", { fontFamily: 'Rubik', fontSize: '64px'});
-        this.okText.setOrigin(0.5, 0.5);
-        this.messageNoBtn = this.add.sprite(1372, 670, 'loginBtn', 'mediumBtn0001.png');
-        this.noText = this.add.text(1372, 650, "No", { fontFamily: 'Rubik', fontSize: '64px'});
-        this.noText.setOrigin(0.5, 0.5);
         this.messageContainer.add(shadow);
         this.messageContainer.add(msgbg);
         this.messageContainer.add(this.messageTitle);
         this.messageContainer.add(this.messageText);
-        this.messageContainer.add(this.messageYesBtn);
-        this.messageContainer.add(this.yesText);
-        this.messageContainer.add(this.messageOkBtn);
-        this.messageContainer.add(this.okText);
-        this.messageContainer.add(this.messageNoBtn);
-        this.messageContainer.add(this.noText);
         this.messageContainer.setDepth(100);
         this.messageContainer.alpha = 0;
 
@@ -123,18 +109,12 @@ class LoginScene extends Phaser.Scene
         this.add.image(960, 540, 'loginbg');
         
         this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
-        this.loadingText = this.add.sprite(0, 479, 'loadingScreen', 'loading0001.png');
+        this.loadingText = this.add.sprite(960, 550, 'connectingAnim', 'connectingAnim0001.png');
 
-        this.loadingPercentage = this.add.text(960, 730, "Connecting to login server...", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'});
+        this.loadingText.anims.play('connectingAnimation');
+
+        this.loadingPercentage = this.add.text(960, 790, "Connecting to login server...", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'});
         this.loadingPercentage.setOrigin(0.5, 0.5);
-
-        var loadingFrames = this.anims.generateFrameNames('loadingScreen', {
-            start: 1, end: 45, zeroPad: 4,
-            prefix: 'loading', suffix: '.png'
-        });
-
-        this.anims.create({ key: 'moveLogo', frames: loadingFrames, frameRate: 24, repeat: -1 });
-        this.loadingText.anims.play('moveLogo');
 
         try
         {
@@ -242,53 +222,54 @@ class LoginScene extends Phaser.Scene
                     this.loginForm = true;
                     this.messageOkBtn.anims.play('loginBtnClicked'); 
                     this.messageContainer.alpha = 0;
-                    this.loginBtn.removeInteractive();
-                    console.log(this.loginBtn);
                     setCookie("savedLogin", "", 0);
                     this.showLoginForm(socket);
                 });
+                break;
+            case "lFail":
+                this.loadingShadow.destroy();
+                this.loadingText.destroy();
+                this.showMessage("CANNOT LOG IN", "Invalid username or password.\n\nPasswords are case sensitive.", "false");
                 break;
 
         }
     }
 
-    showMessage(title, message, yesno = "none", yesCallback = function() {this.messageYesBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, noCallback = function() {this.messageNoBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, okCallback = function() {this.messageOkBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;})
+    showMessage(title, message, yesno = "none", yesCallback = () => {this.messageYesBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, noCallback = () => {this.messageNoBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, okCallback = () => {this.messageOkBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;})
     {
         this.messageTitle.text = title;
         this.messageText.text = message;
 
-        this.messageYesBtn.removeInteractive();
-        this.messageNoBtn.removeInteractive();
-        this.messageOkBtn.removeInteractive();
+        try { this.messageYesBtn.destroy(); } catch(e) {}
+        try { this.yesText.destroy(); } catch(e) {}
+        try { this.messageNoBtn.destroy(); } catch(e) {}
+        try { this.noText.destroy(); } catch(e) {}
+        try { this.messageOkBtn.destroy(); } catch(e) {}
+        try { this.okText.destroy(); } catch(e) {}
 
         switch(yesno)
         {
             case "true":
-                this.messageYesBtn.alpha = 1;
-                this.yesText.alpha = 1;
-                this.messageOkBtn.alpha = 0;
-                this.okText.alpha = 0;
-                this.messageNoBtn.alpha = 1;
-                this.noText.alpha = 1;
+                this.messageYesBtn = this.add.sprite(548, 670, 'loginBtn', 'mediumBtn0001.png');
+                this.yesText = this.add.text(548, 650, "Yes", { fontFamily: 'Rubik', fontSize: '64px'});
+                this.yesText.setOrigin(0.5, 0.5);
+                this.messageContainer.add(this.messageYesBtn);
+                this.messageContainer.add(this.yesText);
+                this.messageNoBtn = this.add.sprite(1372, 670, 'loginBtn', 'mediumBtn0001.png');
+                this.noText = this.add.text(1372, 650, "No", { fontFamily: 'Rubik', fontSize: '64px'});
+                this.noText.setOrigin(0.5, 0.5);
+                this.messageContainer.add(this.messageNoBtn);
+                this.messageContainer.add(this.noText);
                 this.messageYesBtn.setInteractive().on('pointerdown', yesCallback);
                 this.messageNoBtn.setInteractive().on('pointerdown', noCallback);
                 break;
             case "false":
-                this.messageYesBtn.alpha = 0;
-                this.yesText.alpha = 0;
-                this.messageOkBtn.alpha = 1;
-                this.okText.alpha = 1;
-                this.messageNoBtn.alpha = 0;
-                this.noText.alpha = 0;
+                this.messageOkBtn = this.add.sprite(960, 670, 'loginBtn', 'mediumBtn0001.png');
+                this.okText = this.add.text(960, 650, "OK", { fontFamily: 'Rubik', fontSize: '64px'});
+                this.okText.setOrigin(0.5, 0.5);
+                this.messageContainer.add(this.messageOkBtn);
+                this.messageContainer.add(this.okText);
                 this.messageOkBtn.setInteractive().on('pointerdown', okCallback);
-                break;
-            default:
-                this.messageYesBtn.alpha = 0;
-                this.yesText.alpha = 0;
-                this.messageOkBtn.alpha = 0;
-                this.okText.alpha = 0;
-                this.messageNoBtn.alpha = 0;
-                this.noText.alpha = 0;
                 break;
         }
 
@@ -354,7 +335,6 @@ class LoginScene extends Phaser.Scene
                 this.loginForm = true;
                 this.messageYesBtn.anims.play('loginBtnClicked'); 
                 this.messageContainer.alpha = 0;
-                this.loginBtn.removeInteractive();
                 this.showLoginForm(socket);
             }, () => {
                 this.loginElementsAlpha = -0.5;
@@ -366,7 +346,6 @@ class LoginScene extends Phaser.Scene
                 this.loginForm = true;
                 this.messageNoBtn.anims.play('loginBtnClicked'); 
                 this.messageContainer.alpha = 0;
-                this.loginBtn.removeInteractive();
                 this.showLoginForm(socket);
             });
         });
@@ -386,19 +365,24 @@ class LoginScene extends Phaser.Scene
 
         var onCloseUsernameEditor = function (txtObj)
         {
+            this.scene.closedUsernameEditor = true;
             txtObj.style.color = "rgb(171 171 171)";
-            this.username = txtObj.text;
+            this.scene.username = txtObj.text;
             if(txtObj.text == "") 
                 txtObj.text = "Username";
             this.scene.usernameFieldAsset.setFrame("field0001.png");
         };
 
 	    this.usernameField.setInteractive().on('pointerdown', () => {
-            this.usernameFieldAsset.setFrame("field0002.png");
-            if(this.usernameField.text == "Username") 
-                this.usernameField.text = "";
-            this.usernameField.style.color = "rgb(0 0 0)";
-            this.usernameEditor = this.rexUI.edit(this.usernameField, {}, onCloseUsernameEditor);
+            if(!this.messageContainer.alpha)
+            {
+                this.closedUsernameEditor = false;
+                this.usernameFieldAsset.setFrame("field0002.png");
+                if(this.usernameField.text == "Username") 
+                    this.usernameField.text = "";
+                this.usernameField.style.color = "rgb(0 0 0)";
+                this.usernameEditor = this.rexUI.edit(this.usernameField, {}, onCloseUsernameEditor);
+            }
         });
 
         this.passwordFieldAsset = this.add.sprite(960, 570, 'formFields', 'field0001.png');
@@ -410,8 +394,9 @@ class LoginScene extends Phaser.Scene
 
         var onClosePasswordEditor = function (txtObj)
         {
+            this.scene.closedPasswordEditor = true;
             txtObj.style.color = "rgb(171 171 171)";
-            this.password = txtObj.text;
+            this.scene.password = txtObj.text;
             if(txtObj.text == "") 
                 txtObj.text = "Password";
             else
@@ -424,10 +409,15 @@ class LoginScene extends Phaser.Scene
         };
 
 	    this.passwordField.setInteractive().on('pointerdown', () => {
-            this.passwordFieldAsset.setFrame("field0002.png");
-            if(this.passwordField.text == "Password") this.passwordField.text = "";
-            this.passwordField.style.color = "rgb(0 0 0)";
-            this.passwordEditor = this.rexUI.edit(this.passwordField, {type: "password"}, onClosePasswordEditor);
+            if(!this.messageContainer.alpha)
+            {
+                this.closedPasswordEditor = false;
+                this.passwordFieldAsset.setFrame("field0002.png");
+                if(this.passwordField.text == "Password") this.passwordField.text = "";
+                else if(this.password) this.passwordField.text = this.password;
+                this.passwordField.style.color = "rgb(0 0 0)";
+                this.passwordEditor = this.rexUI.edit(this.passwordField, {type: "password"}, onClosePasswordEditor);
+            }
         });
 
         this.rememberAccount = this.add.sprite(960, 650, 'rememberAccount', 'checkbox0001.png');
@@ -441,15 +431,22 @@ class LoginScene extends Phaser.Scene
         this.anims.create({ key: 'checkboxClicked', frames: checkboxClicked, frameRate: 24});
 
         this.rememberAccount.setInteractive().on('pointerdown', () => {
-            if(this.rememberAccount.frame.name == "checkbox0001.png")
+            if(!this.messageContainer.alpha)
             {
-                this.rememberAccount.anims.play('checkboxClicked');
-                this.saveAccount = true;
-            }
-            else
-            {
-                this.rememberAccount.setFrame("checkbox0001.png");
-                this.saveAccount = false;
+                if(this.rememberAccount.frame.name == "checkbox0001.png")
+                {
+                    this.showMessage("CONFIRM REMEMBER ACCOUNT", "Are you sure that you want to remember this account? This will replace any other account you have saved.\n\nIt is not recommended to remember this account if others can access it on this device.", "true", () => {
+                        this.messageYesBtn.anims.play('loginBtnClicked'); 
+                        this.messageContainer.alpha = 0;
+                        this.rememberAccount.anims.play('checkboxClicked');
+                        this.saveAccount = true;
+                    });
+                }
+                else
+                {
+                    this.rememberAccount.setFrame("checkbox0001.png");
+                    this.saveAccount = false;
+                }
             }
         });
 
@@ -462,7 +459,38 @@ class LoginScene extends Phaser.Scene
 
         this.loginBtn.setInteractive().on('pointerdown', () => {
             this.loginBtn.anims.play('loginBtnClicked');
-            //initiate login sequence
+            if(this.closedPasswordEditor)
+            {
+                if(this.password.length < 7 || this.username.length > 18)
+                    this.showMessage("CANNOT LOG IN", "You have to enter a valid password that's between 7 and 18 characters long.", "false");      
+            }
+            else
+            {
+                if(this.passwordField.text.length < 7 || this.passwordField.text.length > 18)
+                    this.showMessage("CANNOT LOG IN", "You have to enter a valid password that's between 7 and 18 characters long.", "false");
+                else
+                    this.password = this.passwordField.text;
+            }
+            if(this.closedUsernameEditor)
+            {
+                if(this.username.length < 4 || this.username.length > 16)
+                    this.showMessage("CANNOT LOG IN", "You have to enter a valid username that's between 4 and 16 characters long.", "false");      
+            }
+            else
+            {
+                if(this.usernameField.text.length < 4 || this.usernameField.text.length > 16)
+                    this.showMessage("CANNOT LOG IN", "You have to enter a valid username that's between 4 and 16 characters long.", "false");
+                else
+                    this.username = this.usernameField.text;
+            }
+            if(!this.messageContainer.alpha)
+            {
+                this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.7);
+                this.loadingText = this.add.sprite(960, 550, 'connectingAnim', 'connectingAnim0001.png');
+
+                this.loadingText.anims.play('connectingAnimation');
+                socket.emit("loginExt", "pl", [this.username, this.password, this.saveAccount]);
+            }
         });
     }
 
@@ -526,23 +554,6 @@ class LoginScene extends Phaser.Scene
                     this.loginBtnText.alpha += delta / 300;
                     this.loginElementsAlpha += delta / 300;
                 }
-            }
-        }
-        else
-        {
-            if(this.goingForward)
-            {
-                if(this.loadingText.x < 1478)
-                    this.loadingText.x += delta / 1.33;
-                else 
-                    this.goingForward = false;
-            }
-            else
-            {
-                if(this.loadingText.x > 0)
-                    this.loadingText.x -= delta / 1.33;
-                else
-                    this.goingForward = true;
             }
         }
     }
