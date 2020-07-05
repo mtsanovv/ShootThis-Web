@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 03, 2020 at 04:19 PM
+-- Generation Time: Jul 05, 2020 at 03:30 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.1.33
 
@@ -33,7 +33,8 @@ USE `shootthis`;
 CREATE TABLE `loginhistory` (
   `id` int(11) NOT NULL,
   `username` varchar(16) NOT NULL,
-  `time` datetime NOT NULL DEFAULT current_timestamp()
+  `time` datetime NOT NULL DEFAULT current_timestamp(),
+  `world` varchar(16) NOT NULL COMMENT 'Make sure your server keys (i.e. login1, game1) are no longer than 20 characters'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -51,8 +52,10 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `ipfromreg` varchar(45) NOT NULL,
   `ip` varchar(45) NOT NULL,
-  `savedLoginCookie` varchar(255) NOT NULL,
-  `loginToken` varchar(255) NOT NULL
+  `savedLoginCookie` varchar(72) NOT NULL,
+  `savedLoginCookieValidUntil` datetime NOT NULL,
+  `loginToken` varchar(72) NOT NULL,
+  `loginTokenExpiry` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
