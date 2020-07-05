@@ -56,6 +56,7 @@
 		<script src="config.js" type="text/javascript"></script>
 		<script src="js/socket.io.js" type="text/javascript"></script>
 		<script src="js/util.js" type="text/javascript"></script>
+		<script src="src/lobbyScene.js" type="text/javascript"></script>
 		<script src="src/loginScene.js" type="text/javascript"></script>
 		<script src="src/loaderScene.js" type="text/javascript"></script>
 		<script src="src/init.js" type="text/javascript"></script>

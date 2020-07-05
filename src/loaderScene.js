@@ -10,7 +10,8 @@ class LoaderScene extends Phaser.Scene
 
     preload ()
     {
-        this.load.multiatlas('loadingScreen', 'assets/loading/loading.json', 'assets/loading');
+        if(!this.textures.exists('loadingScreen'))
+            this.load.multiatlas('loadingScreen', 'assets/loading/loading.json', 'assets/loading');
     }
 
     create(data)

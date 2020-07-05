@@ -35,6 +35,10 @@ class LoginScene extends Phaser.Scene
         this.switchToLoginForm;
         this.closedUsernameEditor = true;
         this.closedPasswordEditor = true;
+        this.pingTimes = {};
+        this.serverCount = 0;
+        this.serversProcessed = 0;
+        this.servers = [];
     }
 
     preload() 
@@ -212,7 +216,7 @@ class LoginScene extends Phaser.Scene
             case "slFail":
                 this.loadingShadow.destroy();
                 this.loadingText.destroy();
-                this.showMessage("CANNOT SIGN IN", "The saved login credentials are invalid.\n\nYou need to log in again.", "false", null, null, () => {
+                this.showMessage("CANNOT SIGN IN", "The saved login data has expired.\n\nYou need to log in again.", "false", null, null, () => {
                     this.loginElementsAlpha = -0.5;
                     this.loginLogo.destroy();
                     this.loginText.destroy();
@@ -231,7 +235,106 @@ class LoginScene extends Phaser.Scene
                 this.loadingText.destroy();
                 this.showMessage("CANNOT LOG IN", "Invalid username or password.\n\nPasswords are case sensitive.", "false");
                 break;
+            case "sCookie":
+                setCookie("savedLogin", args.join(","), 60);
+                break;
+            case "ls":
+                this.handleLoginSuccessful(socket, args);
+                break;
+        }
+    }
 
+    handleLoginSuccessful(oldSocket, args)
+    {
+        setCookie("loginToken", args[0].join(","), 0.00694);
+        try
+        {
+            oldSocket.destroy();
+        } catch(e) {}
+        
+        this.serverCount = args[1].length;
+        this.servers = args[1];
+        this.findBestServer();
+    }
+
+    findBestServer()
+    {
+        if(this.servers.length)
+        {
+            if(this.serversProcessed == this.serverCount)
+            {
+                var pings = [];
+                for (var server in this.pingTimes)
+                    pings.push([server, this.pingTimes[server].ping]);
+                
+                pings.sort(function(a, b) {
+                    return a[1] - b[1];
+                });
+
+                for(var i in pings)
+                {
+                    if(pings[i][1] == -1)
+                        continue;
+                    else
+                    {
+                        setCookie("gameServer", pings[i][0] + "," + pings[i][1], 0.00694);
+                        game.scene.add("LoaderScene", LoaderScene, true, { x: 960, y: 540, loadScene: "LobbyScene", loadSceneClass: LobbyScene, loadSceneX: 960, loadSceneY: 540});
+                        game.scene.remove("LoginScene");
+                        return;
+                    }
+                }
+                this.loadingShadow.destroy();
+                this.loadingText.destroy();
+                this.showMessage("CANNOT JOIN SERVER", "ShootThis is unable to join a game server. Please try again later.");
+            }
+            else if(this.serversProcessed < this.serverCount)
+            {
+                this.pingTimes[this.servers[this.serversProcessed]] = {ping: -1, begin: 0, end: 0};
+                var socket = io(this.servers[this.serversProcessed], {secure: true, reconnection: false, transport: ['websocket']});
+                socket.on('gameExt', (recvResponse) => {
+                    if(recvResponse == "connectionSuccessful")
+                    {
+                        this.pingTimes[this.servers[this.serversProcessed]].begin = new Date();
+                        socket.emit("gameExt", "p");
+                    }
+                    else if(recvResponse == "p")
+                    {
+                        this.pingTimes[this.servers[this.serversProcessed]].end = new Date();
+                        this.pingTimes[this.servers[this.serversProcessed]].ping = this.pingTimes[this.servers[this.serversProcessed]].end - this.pingTimes[this.servers[this.serversProcessed]].begin;
+                        try 
+                        {
+                            socket.destroy();
+                        } 
+                        catch(e){}
+                        this.serversProcessed++;
+                        this.findBestServer();
+                    }
+                });
+                socket.on('connect_error', () => {
+                    try 
+                    {
+                        socket.destroy();
+                    } 
+                    catch(e){}
+                    this.serversProcessed++;
+                    this.findBestServer();
+                });
+                socket.on('disconnect', () => {
+                    try 
+                    {
+                        socket.destroy();
+                    } 
+                    catch(e){} 
+                    this.serversProcessed++;
+                    this.findBestServer();
+                });
+            }
+        }
+        else
+        {
+            this.loadingShadow.destroy();
+            this.loadingText.destroy();
+            this.showMessage("CANNOT JOIN SERVER", "ShootThis cannot find an available game server. Please try again later.");
         }
     }
 
