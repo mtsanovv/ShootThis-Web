@@ -14,7 +14,7 @@ A 2D HTML5 shooter, using the [Phaser 3](https://github.com/photonstorm/phaser/)
 5. In order for the registration script to work, you need to create a new database using the shootthis.sql file in your SQL server. **Please note that this file was created by MariaDB, a fork of MySQL. This has not been tested with other engines and it may not work with some.**
 6. You may have to edit the config.js file to match the backend login server(s) address and port, as well as the security protocol. If you use https as security protocol, you may need to configure on your servers SSL access for the respective ports. 
 ```diff 
-By default, this uses http, which is EXTREMELY insecure BECAUSE PASSWORDS ARE SENT IN PLAINTEXT. ALWAYS USE HTTPS WHENEVER SENDING PLAINTEXT PASSWORDS!
+- By default, this uses http, which is EXTREMELY insecure BECAUSE PASSWORDS ARE SENT IN PLAINTEXT. ALWAYS USE HTTPS WHENEVER SENDING PLAINTEXT PASSWORDS!
 ```
 7. In order to have everything operational, you need to set up the backend, following the instructions. [ShootThis-Backend](https://github.com/mtsanovv/ShootThis-Backend)
 8. **There is the chance of having bruteforce attempts on login. Thus, you need to set up a firewall filtering packets on login and game server as well).**
