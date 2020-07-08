@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 05, 2020 at 03:30 PM
+-- Generation Time: Jul 08, 2020 at 11:16 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.1.33
 
@@ -34,7 +34,8 @@ CREATE TABLE `loginhistory` (
   `id` int(11) NOT NULL,
   `username` varchar(16) NOT NULL,
   `time` datetime NOT NULL DEFAULT current_timestamp(),
-  `world` varchar(16) NOT NULL COMMENT 'Make sure your server keys (i.e. login1, game1) are no longer than 20 characters'
+  `world` varchar(16) NOT NULL COMMENT 'Make sure your server keys (i.e. login1, game1) are no longer than 20 characters',
+  `ip` varchar(45) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -52,6 +53,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `ipfromreg` varchar(45) NOT NULL,
   `ip` varchar(45) NOT NULL,
+  `playerData` longtext NOT NULL DEFAULT '{"level": 1, "xp": 0, "xpToLevel": 2600, "kills": 0, "kdr": 0}',
   `savedLoginCookie` varchar(72) NOT NULL,
   `savedLoginCookieValidUntil` datetime NOT NULL,
   `loginToken` varchar(72) NOT NULL,
