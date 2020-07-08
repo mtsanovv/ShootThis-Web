@@ -30,9 +30,7 @@ A 2D HTML5 shooter, using the [Phaser 3](https://github.com/photonstorm/phaser/)
 
 ## Credits
 - Mail verification script: Konstantin Granin <kostya@granin.me>
-- Phaser 3 engine: https://github.com/photonstorm/phaser/
 - Mobile device detection: http://mobiledetect.net/
 - RexUI: https://github.com/rexrainbow/phaser3-rex-notes
-- Socket.IO: https://github.com/socketio
 
 *M. Tsanov, S. Tsvetkov, Y. Berov, 2020*
