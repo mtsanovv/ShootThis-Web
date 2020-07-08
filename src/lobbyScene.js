@@ -78,7 +78,7 @@ class LobbyScene extends Phaser.Scene
         }
         else
         {
-            var socket = io(getCookie("gameServer").split(",")[0], {secure: true, reconnection: false, transport: ['websocket']});
+            var socket = io(getCookie("gameServer"), {secure: true, reconnection: false, transport: ['websocket']});
             socket.on('gameExt', (responseType, args) => {
                 this.handleWorldResponse(socket, responseType, args);
             });
@@ -121,10 +121,15 @@ class LobbyScene extends Phaser.Scene
         switch(responseType)
         {
             case "connectionSuccessful":
-                this.loadingPercentage.text = "Joining server " + args[0] + " [" + getCookie("gameServer").split(",")[1] + "ms]";
+                this.loadingPercentage.text = "Joining server " + args[0];
+                socket.emit("gameExt", "joinServer", getCookie("loginToken").split(","));
                 break;
-            case "joinSuccess":
+            case "joinOk":
                 this.hasConnected = true;
+                this.loadingShadow.destroy();
+                this.loadingText.destroy();
+                this.loadingPercentage.destroy();
+                this.initLobby(socket);
                 break;
             case "joinFail":
                 this.loadingShadow.destroy();
@@ -133,6 +138,11 @@ class LobbyScene extends Phaser.Scene
                 this.showMessage("CANNOT JOIN SERVER", "The server is unable to authenticate you.\n\nPlease refresh the page and try again or contact us.");
                 break;
         }
+    }
+
+    initLobby(socket)
+    {
+        //init lobby
     }
 
     showMessage(title, message, yesno = "none", yesCallback = () => {this.messageYesBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, noCallback = () => {this.messageNoBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, okCallback = () => {this.messageOkBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;})

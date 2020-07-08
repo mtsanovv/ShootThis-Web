@@ -277,7 +277,7 @@ class LoginScene extends Phaser.Scene
                         continue;
                     else
                     {
-                        setCookie("gameServer", pings[i][0] + "," + pings[i][1], 0.00694);
+                        setCookie("gameServer", pings[i][0], 0.00694);
                         game.scene.add("LoaderScene", LoaderScene, true, { x: 960, y: 540, loadScene: "LobbyScene", loadSceneClass: LobbyScene, loadSceneX: 960, loadSceneY: 540});
                         game.scene.remove("LoginScene");
                         return;
