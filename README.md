@@ -17,7 +17,7 @@ A 2D HTML5 shooter, using the [Phaser 3](https://github.com/photonstorm/phaser/)
 - By default, this uses http, which is EXTREMELY insecure BECAUSE PASSWORDS ARE SENT IN PLAINTEXT. ALWAYS USE HTTPS WHENEVER SENDING PLAINTEXT PASSWORDS!
 ```
 7. In order to have everything operational, you need to set up the backend, following the instructions. [ShootThis-Backend](https://github.com/mtsanovv/ShootThis-Backend)
-8. **There is the chance of having bruteforce attempts on login. Thus, you need to set up a firewall filtering packets on login and game server as well).**
+8. **There is the chance of having bruteforce attempts on login. Thus, you need to set up a firewall filtering packets on login and game server as well.**
 
 ## Important notes
 - The SQL file included contains the structure of the database that is used for ShootThis **and it is required by both the frontend and the backend.**

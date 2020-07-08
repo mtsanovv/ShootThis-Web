@@ -36,7 +36,6 @@ class LoginScene extends Phaser.Scene
         this.closedUsernameEditor = true;
         this.closedPasswordEditor = true;
         this.pingTimes = {};
-        this.serverCount = 0;
         this.serversProcessed = 0;
         this.servers = [];
     }
@@ -51,9 +50,10 @@ class LoginScene extends Phaser.Scene
         this.load.image('loginlogo', 'assets/loginlogo.png');
         this.load.multiatlas('formFields', 'assets/forms/fields.json', 'assets/forms');
         this.load.multiatlas('rememberAccount', 'assets/forms/checkbox.json', 'assets/forms');
-        this.load.multiatlas('loginBtn', 'assets/forms/mediumBtn.json', 'assets/forms');
+        this.load.multiatlas('mediumBtn', 'assets/forms/mediumBtn.json', 'assets/forms');
         this.load.image('messageBG', 'assets/messageBG.png');
         this.load.multiatlas('connectingAnim', 'assets/loading/connectingAnim.json', 'assets/loading');
+        this.load.image('wideBtn', 'assets/forms/wideBtn.png');
         //Login plugins
         this.load.scenePlugin({
             key: 'rexuiplugin',
@@ -80,7 +80,7 @@ class LoginScene extends Phaser.Scene
     
     create()
     {
-        var loginBtnClicked = this.anims.generateFrameNames('loginBtn', {
+        var loginBtnClicked = this.anims.generateFrameNames('mediumBtn', {
             start: 2, end: 14, zeroPad: 4,
             prefix: 'mediumBtn', suffix: '.png'
         });
@@ -252,7 +252,6 @@ class LoginScene extends Phaser.Scene
             oldSocket.destroy();
         } catch(e) {}
         
-        this.serverCount = args[1].length;
         this.servers = args[1];
         this.findBestServer();
     }
@@ -261,37 +260,36 @@ class LoginScene extends Phaser.Scene
     {
         if(this.servers.length)
         {
-            if(this.serversProcessed == this.serverCount)
+            if(this.serversProcessed == this.servers.length)
             {
                 var pings = [];
                 for (var server in this.pingTimes)
-                    pings.push([server, this.pingTimes[server].ping]);
-                
-                pings.sort(function(a, b) {
-                    return a[1] - b[1];
-                });
+                    pings.push([server, this.pingTimes[server].ping, this.pingTimes[server].name]);
+
+                var availableServers = [];
 
                 for(var i in pings)
                 {
                     if(pings[i][1] == -1)
                         continue;
                     else
-                    {
-                        setCookie("gameServer", pings[i][0], 0.00694);
-                        game.scene.add("LoaderScene", LoaderScene, true, { x: 960, y: 540, loadScene: "LobbyScene", loadSceneClass: LobbyScene, loadSceneX: 960, loadSceneY: 540});
-                        game.scene.remove("LoginScene");
-                        return;
-                    }
+                        availableServers.push(pings[i]);
                 }
                 this.loadingShadow.destroy();
                 this.loadingText.destroy();
-                this.showMessage("CANNOT JOIN SERVER", "ShootThis is unable to join a game server. Please try again later.");
+                if(availableServers.length)
+                {
+                    game.scene.add("ServersScene", ServersScene, true, { x: 960, y: 540, availableServers: availableServers});
+                    game.scene.remove("LoginScene");
+                }
+                else
+                    this.showMessage("CANNOT JOIN SERVER", "ShootThis is unable to find an available game server. Please try again later.");
             }
-            else if(this.serversProcessed < this.serverCount)
+            else if(this.serversProcessed < this.servers.length)
             {
-                this.pingTimes[this.servers[this.serversProcessed]] = {ping: -1, begin: 0, end: 0};
+                this.pingTimes[this.servers[this.serversProcessed]] = {ping: -1, begin: 0, end: 0, name: "", address: this.servers[this.serversProcessed]};
                 var socket = io(this.servers[this.serversProcessed], {secure: true, reconnection: false, transport: ['websocket']});
-                socket.on('gameExt', (recvResponse) => {
+                socket.on('gameExt', (recvResponse, args) => {
                     if(recvResponse == "connectionSuccessful")
                     {
                         this.pingTimes[this.servers[this.serversProcessed]].begin = new Date();
@@ -301,6 +299,7 @@ class LoginScene extends Phaser.Scene
                     {
                         this.pingTimes[this.servers[this.serversProcessed]].end = new Date();
                         this.pingTimes[this.servers[this.serversProcessed]].ping = this.pingTimes[this.servers[this.serversProcessed]].end - this.pingTimes[this.servers[this.serversProcessed]].begin;
+                        this.pingTimes[this.servers[this.serversProcessed]].name = args[0];
                         try 
                         {
                             socket.destroy();
@@ -353,12 +352,12 @@ class LoginScene extends Phaser.Scene
         switch(yesno)
         {
             case "true":
-                this.messageYesBtn = this.add.sprite(548, 670, 'loginBtn', 'mediumBtn0001.png');
+                this.messageYesBtn = this.add.sprite(548, 670, 'mediumBtn', 'mediumBtn0001.png');
                 this.yesText = this.add.text(548, 650, "Yes", { fontFamily: 'Rubik', fontSize: '64px'});
                 this.yesText.setOrigin(0.5, 0.5);
                 this.messageContainer.add(this.messageYesBtn);
                 this.messageContainer.add(this.yesText);
-                this.messageNoBtn = this.add.sprite(1372, 670, 'loginBtn', 'mediumBtn0001.png');
+                this.messageNoBtn = this.add.sprite(1372, 670, 'mediumBtn', 'mediumBtn0001.png');
                 this.noText = this.add.text(1372, 650, "No", { fontFamily: 'Rubik', fontSize: '64px'});
                 this.noText.setOrigin(0.5, 0.5);
                 this.messageContainer.add(this.messageNoBtn);
@@ -367,7 +366,7 @@ class LoginScene extends Phaser.Scene
                 this.messageNoBtn.setInteractive().on('pointerdown', noCallback);
                 break;
             case "false":
-                this.messageOkBtn = this.add.sprite(960, 670, 'loginBtn', 'mediumBtn0001.png');
+                this.messageOkBtn = this.add.sprite(960, 670, 'mediumBtn', 'mediumBtn0001.png');
                 this.okText = this.add.text(960, 650, "OK", { fontFamily: 'Rubik', fontSize: '64px'});
                 this.okText.setOrigin(0.5, 0.5);
                 this.messageContainer.add(this.messageOkBtn);
@@ -409,7 +408,7 @@ class LoginScene extends Phaser.Scene
         this.switchToLoginForm.setOrigin(0.5, 0.5);
         this.switchToLoginForm.alpha = 0;
 
-        this.loginBtn = this.add.sprite(960, 800, 'loginBtn', 'mediumBtn0001.png');
+        this.loginBtn = this.add.sprite(960, 800, 'mediumBtn', 'mediumBtn0001.png');
         this.loginBtn.alpha = 0;
 
         this.loginBtnText = this.add.text(960, 780, "Sign In", { fontFamily: 'Rubik', fontSize: '64px'});
@@ -553,7 +552,7 @@ class LoginScene extends Phaser.Scene
             }
         });
 
-        this.loginBtn = this.add.sprite(960, 800, 'loginBtn', 'mediumBtn0001.png');
+        this.loginBtn = this.add.sprite(960, 800, 'mediumBtn', 'mediumBtn0001.png');
         this.loginBtn.alpha = 0;
 
         this.loginBtnText = this.add.text(960, 780, "Login", { fontFamily: 'Rubik', fontSize: '64px'});
