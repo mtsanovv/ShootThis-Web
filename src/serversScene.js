@@ -52,7 +52,7 @@ class ServersScene extends Phaser.Scene
 
         this.input.setHitArea(serverList.getChildren()).on('gameobjectdown', function(pointer, gameObject) {
             setCookie("gameServer",  this.scene.availableServers[gameObject.x / 640 + 3 * (gameObject.y - 350) / 83][0], 0.00694);
-            game.scene.add("LoaderScene", LoaderScene, true, { x: 960, y: 540, loadScene: "LobbyScene", loadSceneClass: LobbyScene, loadSceneX: 960, loadSceneY: 540});
+            game.scene.add("LobbyScene", LobbyScene, true, { x: 960, y: 540, socket: false});
             game.scene.remove("ServersScene");
         });
     }

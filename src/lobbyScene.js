@@ -17,32 +17,10 @@ class LobbyScene extends Phaser.Scene
         this.loadingText;
         this.loadingShadow;
         this.hasConnected = false;
+        this.background;
     }
 
-    preload()
-    {
-        this.loadingPercentage = this.add.text(960, 830, "Loading: ", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'});
-        this.loadingPercentage.setOrigin(0.5, 0.5);
-        //Load whatever the game needs that's not loaded in login
-        this.load.image('map', 'assets/map.png');
-
-        this.load.on('progress', this.onProgress, {loadingPercentage: this.loadingPercentage});
-		this.load.on('complete', this.onComplete, {loadingPercentage: this.loadingPercentage});
-    }
-
-    onProgress(percentage) 
-    {
-		percentage = percentage * 100;
-        this.loadingPercentage.setText("Loading: " + percentage.toFixed(0) + "%");
-	}
-
-    onComplete() 
-    {
-        game.scene.remove("LoaderScene");
-        this.loadingPercentage.destroy();
-    }
-
-    create()
+    create(data)
     {
         this.messageContainer = this.add.container(0, 0);
         var shadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
@@ -59,60 +37,63 @@ class LobbyScene extends Phaser.Scene
         this.messageContainer.setDepth(100);
         this.messageContainer.alpha = 0;
 
-        this.add.image(960, 540, 'loginbg');
-
-        this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
-        this.loadingText = this.add.sprite(960, 550, 'connectingAnim', 'connectingAnim0001.png');
-
-        this.loadingText.anims.play('connectingAnimation');
-
-        this.loadingPercentage = this.add.text(960, 790, "Connecting to game server...", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'});
-        this.loadingPercentage.setOrigin(0.5, 0.5);
-
-        if(!getCookie("gameServer") || !getCookie("loginToken"))
+        if(data.socket === false)
         {
-            this.loadingShadow.destroy();
-            this.loadingText.destroy();
-            this.loadingPercentage.destroy();
-            this.showMessage("CANNOT JOIN SERVER", "The login credentials have expired, please refresh the page and log in again.");
-        }
-        else
-        {
-            var socket = io(getCookie("gameServer"), {secure: true, reconnection: false, transport: ['websocket']});
-            socket.on('gameExt', (responseType, args) => {
-                this.handleWorldResponse(socket, responseType, args);
-            });
-            socket.on('connect_error', () => {
-                if(!this.hasConnected)
-                {
-                    try 
+            this.background = this.add.image(960, 540, 'loginbg');
+
+            this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
+            this.loadingText = this.add.sprite(960, 550, 'connectingAnim', 'connectingAnim0001.png');
+
+            this.loadingText.anims.play('connectingAnimation');
+
+            this.loadingPercentage = this.add.text(960, 790, "Connecting to game server...", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'});
+            this.loadingPercentage.setOrigin(0.5, 0.5);
+
+            if(!getCookie("gameServer") || !getCookie("loginToken"))
+            {
+                this.loadingShadow.destroy();
+                this.loadingText.destroy();
+                this.loadingPercentage.destroy();
+                this.showMessage("CANNOT JOIN SERVER", "The login credentials have expired, please refresh the page and log in again.");
+            }
+            else
+            {
+                var socket = io(getCookie("gameServer"), {secure: true, reconnection: false, transport: ['websocket']});
+                socket.on('gameExt', (responseType, args) => {
+                    this.handleWorldResponse(socket, responseType, args);
+                });
+                socket.on('connect_error', () => {
+                    if(!this.hasConnected)
                     {
-                        socket.destroy();
-                    } 
-                    catch(e){}
-                    this.loadingShadow.destroy();
-                    this.loadingText.destroy();
-                    this.loadingPercentage.destroy();
-                    this.showMessage("CONNECTION FAILURE", "ShootThis is unable to connect to the game server. It may be your connection or an issue on our end.\n\nPlease try again later or contact us.");
-                }
-            });
-            socket.on('disconnect', () => {
-                if(this.hasConnected)
-                {
-                    try 
+                        try 
+                        {
+                            socket.destroy();
+                        } 
+                        catch(e){}
+                        this.loadingShadow.destroy();
+                        this.loadingText.destroy();
+                        this.loadingPercentage.destroy();
+                        this.showMessage("CONNECTION FAILURE", "ShootThis is unable to connect to the game server. It may be your connection or an issue on our end.\n\nPlease try again later or contact us.");
+                    }
+                });
+                socket.on('disconnect', () => {
+                    if(this.hasConnected)
                     {
-                        socket.destroy();
-                    } 
-                    catch(e){}
-                }
-                if(!this.messageContainer.alpha)
-                {
-                    this.loadingShadow.destroy();
-                    this.loadingText.destroy();
-                    this.loadingPercentage.destroy();
-                    this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
-                }
-            });
+                        try 
+                        {
+                            socket.destroy();
+                        } 
+                        catch(e){}
+                    }
+                    if(!this.messageContainer.alpha)
+                    {
+                        this.loadingShadow.destroy();
+                        this.loadingText.destroy();
+                        this.loadingPercentage.destroy();
+                        this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
+                    }
+                });
+            }
         }
     }
 
@@ -129,7 +110,7 @@ class LobbyScene extends Phaser.Scene
                 this.loadingShadow.destroy();
                 this.loadingText.destroy();
                 this.loadingPercentage.destroy();
-                this.initLobby(socket);
+                this.askForAudio(socket);
                 break;
             case "joinFail":
                 this.loadingShadow.destroy();
@@ -140,9 +121,26 @@ class LobbyScene extends Phaser.Scene
         }
     }
 
+    askForAudio(socket)
+    {
+        this.showMessage("ENABLE AUDIO?", "Would you like to enable music & sounds?", "true", () => {
+            this.sound.play('lobbyMusic', {volume: 0.01, loop: true});
+            this.messageYesBtn.anims.play('loginBtnClicked'); 
+            this.messageContainer.alpha = 0;
+            this.background.destroy();
+            this.initLobby(socket);
+        }, () => {
+            this.messageNoBtn.anims.play('loginBtnClicked'); 
+            this.messageContainer.alpha = 0;
+            game.sound.mute = true;
+            this.background.destroy();
+            this.initLobby(socket);
+        });
+    }
+
     initLobby(socket)
     {
-        //init lobby
+        //this.background = new lobby bg
     }
 
     showMessage(title, message, yesno = "none", yesCallback = () => {this.messageYesBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, noCallback = () => {this.messageNoBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, okCallback = () => {this.messageOkBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;})
@@ -160,12 +158,12 @@ class LobbyScene extends Phaser.Scene
         switch(yesno)
         {
             case "true":
-                this.messageYesBtn = this.add.sprite(548, 670, 'loginBtn', 'mediumBtn0001.png');
+                this.messageYesBtn = this.add.sprite(548, 670, 'mediumBtn', 'mediumBtn0001.png');
                 this.yesText = this.add.text(548, 650, "Yes", { fontFamily: 'Rubik', fontSize: '64px'});
                 this.yesText.setOrigin(0.5, 0.5);
                 this.messageContainer.add(this.messageYesBtn);
                 this.messageContainer.add(this.yesText);
-                this.messageNoBtn = this.add.sprite(1372, 670, 'loginBtn', 'mediumBtn0001.png');
+                this.messageNoBtn = this.add.sprite(1372, 670, 'mediumBtn', 'mediumBtn0001.png');
                 this.noText = this.add.text(1372, 650, "No", { fontFamily: 'Rubik', fontSize: '64px'});
                 this.noText.setOrigin(0.5, 0.5);
                 this.messageContainer.add(this.messageNoBtn);
@@ -174,7 +172,7 @@ class LobbyScene extends Phaser.Scene
                 this.messageNoBtn.setInteractive().on('pointerdown', noCallback);
                 break;
             case "false":
-                this.messageOkBtn = this.add.sprite(960, 670, 'loginBtn', 'mediumBtn0001.png');
+                this.messageOkBtn = this.add.sprite(960, 670, 'mediumBtn', 'mediumBtn0001.png');
                 this.okText = this.add.text(960, 650, "OK", { fontFamily: 'Rubik', fontSize: '64px'});
                 this.okText.setOrigin(0.5, 0.5);
                 this.messageContainer.add(this.messageOkBtn);
