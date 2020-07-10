@@ -25,12 +25,13 @@ A 2D HTML5 shooter, using the [Phaser 3](https://github.com/photonstorm/phaser/)
 ## Authors
 - Web Design: M. Tsanov
 - Game Design: S. Tsvetkov
-- Graphics Design: M. Tsanov, S. Tsvetkov
+- Artwork: M. Tsanov, S. Tsvetkov
 - Backend: M. Tsanov, Y. Berov
 
 ## Credits
 - Mail verification script: Konstantin Granin <kostya@granin.me>
 - Mobile device detection: http://mobiledetect.net/
 - RexUI: https://github.com/rexrainbow/phaser3-rex-notes
+- Lobby music: https://www.audiomicro.com/chilled-dubstep-music-royalty-free-stock-music-1388001
 
 *M. Tsanov, S. Tsvetkov, Y. Berov, 2020*
