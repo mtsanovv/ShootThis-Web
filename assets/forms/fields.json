@@ -35,12 +35,12 @@
 					"rotated": false,
 					"trimmed": true,
 					"sourceSize": {
-						"w": 820,
-						"h": 90
+						"w": 810,
+						"h": 75
 					},
 					"spriteSourceSize": {
-						"x": 13,
-						"y": 13,
+						"x": 8,
+						"y": 6,
 						"w": 793,
 						"h": 63
 					},

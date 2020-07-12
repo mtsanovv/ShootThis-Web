@@ -95,6 +95,8 @@ class LobbyScene extends Phaser.Scene
                 });
             }
         }
+        else
+            this.initLobby(data.socket);
     }
 
     handleWorldResponse(socket, responseType, args)

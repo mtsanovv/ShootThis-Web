@@ -405,7 +405,7 @@ class LoginScene extends Phaser.Scene
         this.loginText.setOrigin(0.5, 0.5);
         this.loginText.alpha = 0;
 
-        this.switchToLoginForm = this.add.text(945, 650, "Click here to log in with another account", { fontFamily: 'Rubik', fontSize: '32px', color: "#0b0080"});
+        this.switchToLoginForm = this.add.text(945, 650, "Click here to log in with another account", { fontFamily: 'Rubik', fontSize: '32px', color: "#622e00"});
         this.switchToLoginForm.setOrigin(0.5, 0.5);
         this.switchToLoginForm.alpha = 0;
 
@@ -462,17 +462,19 @@ class LoginScene extends Phaser.Scene
         this.usernameFieldAsset = this.add.sprite(960, 480, 'formFields', 'field0001.png');
         this.usernameFieldAsset.alpha = 0;
 
-        this.usernameField = this.add.text(950, 480, "Username", { fontFamily: 'Rubik', fontSize: '48px', fixedWidth: 700, color: "#ABABAB"});
+        this.usernameField = this.add.text(950, 480, "Username", { fontFamily: 'Rubik', fontSize: '48px', fixedWidth: 700, color: "#a79076"});
         this.usernameField.setOrigin(0.5, 0.5);
         this.usernameField.alpha = 0;
 
         var onCloseUsernameEditor = function (txtObj)
         {
             this.scene.closedUsernameEditor = true;
-            txtObj.style.color = "rgb(171 171 171)";
+            txtObj.style.color = "rgb(167 144 118)";
             this.scene.username = txtObj.text;
             if(txtObj.text == "") 
                 txtObj.text = "Username";
+            else
+                txtObj.style.color = "rgb(98 46 0)";
             this.scene.usernameFieldAsset.setFrame("field0001.png");
         };
 
@@ -483,7 +485,7 @@ class LoginScene extends Phaser.Scene
                 this.usernameFieldAsset.setFrame("field0002.png");
                 if(this.usernameField.text == "Username") 
                     this.usernameField.text = "";
-                this.usernameField.style.color = "rgb(0 0 0)";
+                this.usernameField.style.color = "rgb(98 46 0)";
                 this.usernameEditor = this.rexUI.edit(this.usernameField, {}, onCloseUsernameEditor);
             }
         });
@@ -491,20 +493,20 @@ class LoginScene extends Phaser.Scene
         this.passwordFieldAsset = this.add.sprite(960, 570, 'formFields', 'field0001.png');
         this.passwordFieldAsset.alpha = 0;
 
-        this.passwordField = this.add.text(950, 570, "Password", { fontFamily: 'Rubik', fontSize: '48px', fixedWidth: 700, color: "#ABABAB"});
+        this.passwordField = this.add.text(950, 570, "Password", { fontFamily: 'Rubik', fontSize: '48px', fixedWidth: 700, color: "#a79076"});
         this.passwordField.setOrigin(0.5, 0.5);
         this.passwordField.alpha = 0;
 
         var onClosePasswordEditor = function (txtObj)
         {
             this.scene.closedPasswordEditor = true;
-            txtObj.style.color = "rgb(171 171 171)";
+            txtObj.style.color = "rgb(167 144 118)";
             this.scene.password = txtObj.text;
             if(txtObj.text == "") 
                 txtObj.text = "Password";
             else
             {
-                txtObj.style.color = "rgb(0 0 0)";
+                txtObj.style.color = "rgb(98 46 0)";
                 for(var c in txtObj.text)
                     txtObj.text = txtObj.text.substr(0, c) + '●' + txtObj.text.substr(c + 1);
             }
@@ -518,7 +520,7 @@ class LoginScene extends Phaser.Scene
                 this.passwordFieldAsset.setFrame("field0002.png");
                 if(this.passwordField.text == "Password") this.passwordField.text = "";
                 else if(this.password) this.passwordField.text = this.password;
-                this.passwordField.style.color = "rgb(0 0 0)";
+                this.passwordField.style.color = "rgb(98 46 0)";
                 this.passwordEditor = this.rexUI.edit(this.passwordField, {type: "password"}, onClosePasswordEditor);
             }
         });
