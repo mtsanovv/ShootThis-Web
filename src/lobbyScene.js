@@ -160,13 +160,13 @@ class LobbyScene extends Phaser.Scene
         switch(yesno)
         {
             case "true":
-                this.messageYesBtn = this.add.sprite(548, 670, 'mediumBtn', 'mediumBtn0001.png');
-                this.yesText = this.add.text(548, 650, "Yes", { fontFamily: 'Rubik', fontSize: '64px'});
+                this.messageYesBtn = this.add.sprite(548, 660, 'mediumBtn', 'mediumBtn0001.png');
+                this.yesText = this.add.text(548, 640, "Yes", { fontFamily: 'Rubik', fontSize: '64px'});
                 this.yesText.setOrigin(0.5, 0.5);
                 this.messageContainer.add(this.messageYesBtn);
                 this.messageContainer.add(this.yesText);
-                this.messageNoBtn = this.add.sprite(1372, 670, 'mediumBtn', 'mediumBtn0001.png');
-                this.noText = this.add.text(1372, 650, "No", { fontFamily: 'Rubik', fontSize: '64px'});
+                this.messageNoBtn = this.add.sprite(1372, 660, 'mediumBtn', 'mediumBtn0001.png');
+                this.noText = this.add.text(1372, 640, "No", { fontFamily: 'Rubik', fontSize: '64px'});
                 this.noText.setOrigin(0.5, 0.5);
                 this.messageContainer.add(this.messageNoBtn);
                 this.messageContainer.add(this.noText);
@@ -174,8 +174,8 @@ class LobbyScene extends Phaser.Scene
                 this.messageNoBtn.setInteractive().on('pointerdown', noCallback);
                 break;
             case "false":
-                this.messageOkBtn = this.add.sprite(960, 670, 'mediumBtn', 'mediumBtn0001.png');
-                this.okText = this.add.text(960, 650, "OK", { fontFamily: 'Rubik', fontSize: '64px'});
+                this.messageOkBtn = this.add.sprite(960, 660, 'mediumBtn', 'mediumBtn0001.png');
+                this.okText = this.add.text(960, 640, "OK", { fontFamily: 'Rubik', fontSize: '64px'});
                 this.okText.setOrigin(0.5, 0.5);
                 this.messageContainer.add(this.messageOkBtn);
                 this.messageContainer.add(this.okText);
