@@ -55,6 +55,10 @@ class LoginScene extends Phaser.Scene
         this.load.multiatlas('connectingAnim', 'assets/loading/connectingAnim.json', 'assets/loading');
         this.load.image('wideBtn', 'assets/forms/wideBtn.png');
         this.load.audio('lobbyMusic', ['assets/sound/lobby.mp3', 'assets/sound/lobby.ogg']);
+        this.load.image('lobbybg', 'assets/lobby/lobbybg.png');
+        this.load.image('lobbyCloud1', 'assets/lobby/cloud1.png');
+        this.load.image('lobbyCloud2', 'assets/lobby/cloud2.png');
+        this.load.image('lobbyCloud3', 'assets/lobby/cloud3.png');
         //Login plugins
         this.load.scenePlugin({
             key: 'rexuiplugin',

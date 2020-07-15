@@ -18,6 +18,10 @@ class LobbyScene extends Phaser.Scene
         this.loadingShadow;
         this.hasConnected = false;
         this.background;
+        this.lobbyMusic;
+        this.musicVolume = 0.1;
+        this.cloudsPlaying = 0;
+        this.clouds = [];
     }
 
     create(data)
@@ -112,7 +116,12 @@ class LobbyScene extends Phaser.Scene
                 this.loadingShadow.destroy();
                 this.loadingText.destroy();
                 this.loadingPercentage.destroy();
-                this.askForAudio(socket);
+                if(!getCookie("music"))  
+                    this.askForAudio(socket);
+                else
+                    if(getCookie("music") === "true")
+                        this.lobbyMusic = this.sound.play('lobbyMusic', {volume: this.musicVolume, loop: true});
+                    this.initLobby(socket);
                 break;
             case "joinFail":
                 this.loadingShadow.destroy();
@@ -125,31 +134,50 @@ class LobbyScene extends Phaser.Scene
 
     askForAudio(socket)
     {
-        this.showMessage("ENABLE AUDIO?", "Would you like to enable music & sounds?", "true", () => {
-            this.sound.play('lobbyMusic', {volume: 0.01, loop: true});
+        this.showMessage("ENABLE MUSIC?", "Would you like to enable music?", "true", () => {
+            this.lobbyMusic = this.sound.play('lobbyMusic', {volume: 0.1, loop: true});
+            setCookie("music", "true", 365);
             this.messageYesBtn.anims.play('loginBtnClicked'); 
             this.messageContainer.alpha = 0;
-            this.background.destroy();
             this.initLobby(socket);
         }, () => {
             this.messageNoBtn.anims.play('loginBtnClicked'); 
             this.messageContainer.alpha = 0;
-            game.sound.mute = true;
-            this.background.destroy();
+            setCookie("music", "false", 365);
             this.initLobby(socket);
         });
     }
 
     initLobby(socket)
     {
-        //this.background = new lobby bg
+        try
+        {
+            this.background.destroy();
+        }
+        catch(e) {}
+
+        this.background = this.add.image(960, 540, 'lobbybg');
+
+        this.spawnClouds();
+    }
+
+    spawnClouds()
+    {
+        this.cloudsPlaying = 3;
+        for(var i = 0; i < this.cloudsPlaying; i++)
+        {
+            var cloud = this.add.image(100, i * 50, 'lobbyCloud' + (i + 1));
+            cloud.x = -(i + 1) * cloud.width - i * 200;
+            cloud.setOrigin(0, 0);
+            this.clouds.push(cloud);
+        }
     }
 
     showMessage(title, message, yesno = "none", yesCallback = () => {this.messageYesBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, noCallback = () => {this.messageNoBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, okCallback = () => {this.messageOkBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;})
     {
         this.messageTitle.text = title;
         this.messageText.text = message;
-
+8
         try { this.messageYesBtn.destroy(); } catch(e) {}
         try { this.yesText.destroy(); } catch(e) {}
         try { this.messageNoBtn.destroy(); } catch(e) {}
@@ -184,5 +212,18 @@ class LobbyScene extends Phaser.Scene
         }
 
         this.messageContainer.alpha = 1;
+    }
+
+    update(time, delta)
+    {
+        if(this.cloudsPlaying)
+        {
+            for(var i = 0; i < this.clouds.length; i++)
+            {
+                if(this.clouds[i].x > 1920)
+                    this.clouds[i].x = -(i + 1) * this.clouds[i].width - i * 200;
+                this.clouds[i].x += delta / 20;
+            }
+        }
     }
 }
