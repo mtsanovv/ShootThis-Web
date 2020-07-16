@@ -129,7 +129,50 @@ class LobbyScene extends Phaser.Scene
                 this.loadingPercentage.destroy();
                 this.showMessage("CANNOT JOIN SERVER", "The server is unable to authenticate you.\n\nPlease refresh the page and try again or contact us.");
                 break;
+            case "userInfo":
+                this.showPlayer(socket, args);
+                break;
         }
+    }
+
+    showPlayer(socket, args)
+    {
+        var statsbg = this.add.image(950, 530, 'statsbg').setOrigin(0, 0);
+        var nameText = this.add.text(950, 550, args[0], {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF', fontStyle: 'bold'}).setOrigin(0, 0);
+        nameText.x = statsbg.x + Math.floor((statsbg.width - nameText.width) / 2);
+
+        this.add.text(980, 600, "Level: " + args[1].level, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+        
+        var progressBarBg = this.add.image(950, 650, 'xpprogressbarbg').setOrigin(0, 0);
+        progressBarBg.x = statsbg.x + Math.floor((statsbg.width - progressBarBg.width) / 2);
+        progressBarBg.alpha = 0.3;
+        var progressBar = this.add.graphics(progressBarBg.x, progressBarBg.y);
+        progressBar.fillStyle(0xffd200);
+        progressBar.fillRect(progressBarBg.x, progressBarBg.y, (args[1].xp / args[1].xpToLevel) * progressBarBg.width, progressBarBg.height);
+        var mask = this.add.image(950, 650, 'xpprogressbarbg').setOrigin(0, 0);
+        mask.x = progressBarBg.x;
+        mask = mask.createBitmapMask();
+        progressBar.setMask(mask);
+        var xpText = this.add.text(980, 670, args[1].xp + '/' + args[1].xpToLevel + " XP", {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
+        xpText.x = statsbg.x + Math.floor((statsbg.width - xpText.width) / 2);
+        
+        this.add.text(980, 720, "Kills: " + args[1].kills, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+        this.add.text(980, 770, "Deaths: " + args[1].deaths, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+        this.add.text(980, 820, "K/DR: " + Math.round((args[1].kills / ((args[1].deaths == 0) ? 1 : args[1].deaths) + Number.EPSILON) * 100) / 100, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+        this.add.text(980, 870, "Games played: " + args[1].totalGames, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+        
+        this.add.graphics().fillStyle(0xffffff).fillRoundedRect(progressBarBg.x, 920, progressBarBg.width, 3, 2);
+        var lastMatchText = this.add.text(950, 930, "Last Match Stats", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF', fontStyle: 'bold'}).setOrigin(0, 0);
+        lastMatchText.x = statsbg.x + Math.floor((statsbg.width - lastMatchText.width) / 2);
+        var lastMatchKills = this.add.text(950, 965, "Kills: " + args[1].lastMatchKills, {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
+        var damageDone = this.add.text(950, 965, "Damage Done: " + args[1].lastMatchDamageDone, {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
+        lastMatchKills.x = statsbg.x + Math.floor((statsbg.width - (lastMatchKills.width + damageDone.width + 10)) / 2);
+        damageDone.x = lastMatchKills.x + lastMatchKills.width + 10;
+        
+        var lastMatchXp = this.add.text(950, 990, "XP: " + args[1].lastMatchXp, {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
+        var timeElapsed = this.add.text(950, 990, "Time Played: " + ((Math.floor(args[1].lastMatchTimeElapsed / 60000) < 10) ? "0" + String(Math.floor(args[1].lastMatchTimeElapsed / 60000)) : Math.floor(args[1].lastMatchTimeElapsed / 60000)) + ":" + ((((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000) < 10) ? "0" + String((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000) : ((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000)), {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
+        lastMatchXp.x = statsbg.x + Math.floor((statsbg.width - (lastMatchXp.width + timeElapsed.width + 10)) / 2);
+        timeElapsed.x = lastMatchXp.x + lastMatchXp.width + 10;
     }
 
     askForAudio(socket)
@@ -159,6 +202,8 @@ class LobbyScene extends Phaser.Scene
         this.background = this.add.image(960, 540, 'lobbybg');
 
         this.spawnClouds();
+
+        socket.emit("gameExt", "userInfo");
     }
 
     spawnClouds()

@@ -59,6 +59,8 @@ class LoginScene extends Phaser.Scene
         this.load.image('lobbyCloud1', 'assets/lobby/cloud1.png');
         this.load.image('lobbyCloud2', 'assets/lobby/cloud2.png');
         this.load.image('lobbyCloud3', 'assets/lobby/cloud3.png');
+        this.load.image('statsbg', 'assets/lobby/statsbg.png');
+        this.load.image('xpprogressbarbg', 'assets/lobby/xpProgessBar.png');
         //Login plugins
         this.load.scenePlugin({
             key: 'rexuiplugin',
