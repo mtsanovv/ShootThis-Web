@@ -12,8 +12,8 @@
 		<script type="text/javascript">
 			window.cookieconsent_options = {"message":"This website uses cookies to improve your experience.","dismiss":"Got It","learnMore":"Learn More","link":"https://cookie-consent.app.forthe.top/why-websites-use-cookies/","target": "_blank", "theme":"light-bottom"};
 		</script>
-		<script src="https://cdn.jsdelivr.net/npm/phaser@3.23.0/dist/phaser.min.js"></script>
-		<!--Alternative location for Phaser 3.23.0 -> js/phaser.min.js-->
+		<script src="https://cdn.jsdelivr.net/npm/phaser@3.24.1/dist/phaser.min.js"></script>
+		<!--Alternative location for Phaser 3.24.1 -> js/phaser.min.js-->
 	</head>
 	<body style="background-image: url('images/background.png'); color: #ffffff;">
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
