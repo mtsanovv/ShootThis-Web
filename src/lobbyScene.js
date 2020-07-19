@@ -41,21 +41,28 @@ class LobbyScene extends Phaser.Scene
         this.messageContainer.setDepth(100);
         this.messageContainer.alpha = 0;
 
+        this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
+        this.loadingShadow.alpha = 0;
+        this.loadingShadow.setDepth(10000);
+
         if(data.socket === false)
         {
             this.background = this.add.image(960, 540, 'loginbg');
 
-            this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
+            this.loadingShadow.alpha = 1;
+
             this.loadingText = this.add.sprite(960, 550, 'connectingAnim', 'connectingAnim0001.png');
+            this.loadingText.setDepth(this.loadingShadow.depth + 1);
 
             this.loadingText.anims.play('connectingAnimation');
 
             this.loadingPercentage = this.add.text(960, 790, "Connecting to game server...", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'});
             this.loadingPercentage.setOrigin(0.5, 0.5);
+            this.loadingPercentage.setDepth(this.loadingShadow.depth + 1);
 
             if(!getCookie("gameServer") || !getCookie("loginToken"))
             {
-                this.loadingShadow.destroy();
+                this.loadingShadow.alpha = 0;
                 this.loadingText.destroy();
                 this.loadingPercentage.destroy();
                 this.showMessage("CANNOT JOIN SERVER", "The login credentials have expired, please refresh the page and log in again.");
@@ -74,7 +81,7 @@ class LobbyScene extends Phaser.Scene
                             socket.destroy();
                         } 
                         catch(e){}
-                        this.loadingShadow.destroy();
+                        this.loadingShadow.alpha = 0;
                         this.loadingText.destroy();
                         this.loadingPercentage.destroy();
                         this.showMessage("CONNECTION FAILURE", "ShootThis is unable to connect to the game server. It may be your connection or an issue on our end.\n\nPlease try again later or contact us.");
@@ -91,7 +98,7 @@ class LobbyScene extends Phaser.Scene
                     }
                     if(!this.messageContainer.alpha)
                     {
-                        this.loadingShadow.destroy();
+                        this.loadingShadow.alpha = 0;
                         this.loadingText.destroy();
                         this.loadingPercentage.destroy();
                         this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
@@ -113,7 +120,7 @@ class LobbyScene extends Phaser.Scene
                 break;
             case "joinOk":
                 this.hasConnected = true;
-                this.loadingShadow.destroy();
+                this.loadingShadow.alpha = 0;
                 this.loadingText.destroy();
                 this.loadingPercentage.destroy();
                 if(!getCookie("music"))  
@@ -124,7 +131,7 @@ class LobbyScene extends Phaser.Scene
                     this.initLobby(socket);
                 break;
             case "joinFail":
-                this.loadingShadow.destroy();
+                this.loadingShadow.alpha = 0;
                 this.loadingText.destroy();
                 this.loadingPercentage.destroy();
                 this.showMessage("CANNOT JOIN SERVER", "The server is unable to authenticate you.\n\nPlease refresh the page and try again or contact us.");
@@ -139,12 +146,12 @@ class LobbyScene extends Phaser.Scene
     {
         var statsbg = this.add.image(950, 530, 'statsbg').setOrigin(0, 0);
         var nameText = this.add.text(950, 550, args[0], {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF', fontStyle: 'bold'}).setOrigin(0, 0);
-        nameText.x = statsbg.x + Math.floor((statsbg.width - nameText.width) / 2);
+        this.centerInContainer(statsbg, nameText);
 
         this.add.text(980, 600, "Level: " + args[1].level, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
         
         var progressBarBg = this.add.image(950, 650, 'xpprogressbarbg').setOrigin(0, 0);
-        progressBarBg.x = statsbg.x + Math.floor((statsbg.width - progressBarBg.width) / 2);
+        this.centerInContainer(statsbg, progressBarBg);
         progressBarBg.alpha = 0.3;
         var progressBar = this.add.graphics(progressBarBg.x, progressBarBg.y);
         progressBar.fillStyle(0xffd200);
@@ -154,7 +161,7 @@ class LobbyScene extends Phaser.Scene
         mask = mask.createBitmapMask();
         progressBar.setMask(mask);
         var xpText = this.add.text(980, 670, args[1].xp + '/' + args[1].xpToLevel + " XP", {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
-        xpText.x = statsbg.x + Math.floor((statsbg.width - xpText.width) / 2);
+        this.centerInContainer(statsbg, xpText);
         
         this.add.text(980, 720, "Kills: " + args[1].kills, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
         this.add.text(980, 770, "Deaths: " + args[1].deaths, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
@@ -163,7 +170,7 @@ class LobbyScene extends Phaser.Scene
         
         this.add.graphics().fillStyle(0xffffff).fillRoundedRect(progressBarBg.x, 920, progressBarBg.width, 3, 2);
         var lastMatchText = this.add.text(950, 930, "Last Match Stats", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF', fontStyle: 'bold'}).setOrigin(0, 0);
-        lastMatchText.x = statsbg.x + Math.floor((statsbg.width - lastMatchText.width) / 2);
+        this.centerInContainer(statsbg, lastMatchText)
         var lastMatchKills = this.add.text(950, 965, "Kills: " + args[1].lastMatchKills, {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
         var damageDone = this.add.text(950, 965, "Damage Done: " + args[1].lastMatchDamageDone, {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
         lastMatchKills.x = statsbg.x + Math.floor((statsbg.width - (lastMatchKills.width + damageDone.width + 10)) / 2);
@@ -173,6 +180,34 @@ class LobbyScene extends Phaser.Scene
         var timeElapsed = this.add.text(950, 990, "Time Played: " + ((Math.floor(args[1].lastMatchTimeElapsed / 60000) < 10) ? "0" + String(Math.floor(args[1].lastMatchTimeElapsed / 60000)) : Math.floor(args[1].lastMatchTimeElapsed / 60000)) + ":" + ((((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000) < 10) ? "0" + String((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000) : ((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000)), {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
         lastMatchXp.x = statsbg.x + Math.floor((statsbg.width - (lastMatchXp.width + timeElapsed.width + 10)) / 2);
         timeElapsed.x = lastMatchXp.x + lastMatchXp.width + 10;
+
+        var mediumThinBtnClicked = this.anims.generateFrameNames('mediumThinBtn', {
+            start: 2, end: 14, zeroPad: 4,
+            prefix: 'mediumThinBtn', suffix: '.png'
+        });
+
+        this.anims.create({ key: 'mediumThinBtnClicked', frames: mediumThinBtnClicked, frameRate: 24});
+
+        this.add.graphics().fillStyle(0xffffff).fillRoundedRect(progressBarBg.x, 1020, progressBarBg.width, 3, 2);
+        var changeCharacterBtn = this.add.sprite(950, 1030, 'mediumThinBtn', 'mediumThinBtn0001.png').setOrigin(0, 0);
+        this.centerInContainer(statsbg, changeCharacterBtn);
+        var changeCharacterText = this.add.text(950, 1035, "Change Character", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+        this.centerInContainer(changeCharacterBtn, changeCharacterText);
+
+        changeCharacterBtn.setInteractive().on('pointerdown', () => {
+            if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
+            {
+                changeCharacterBtn.anims.play('mediumThinBtnClicked');
+                this.showCharacterSelection(socket);
+            }
+        });
+    }
+
+    showCharacterSelection(socket)
+    {
+        var overlayItems = [];
+        this.loadingShadow.alpha = 1;
+        //character selection screen
     }
 
     askForAudio(socket)
@@ -204,6 +239,46 @@ class LobbyScene extends Phaser.Scene
         this.spawnClouds();
 
         socket.emit("gameExt", "userInfo");
+
+        var howToPlayBtnBg = this.add.image(1340, 570, 'lobbyButtonsRightBg').setOrigin(0, 0);
+        var howToPlayBtn = this.add.sprite(1340, 590, 'mediumBtn', 'mediumBtn0001.png').setOrigin(0, 0);
+        this.centerInContainer(howToPlayBtnBg, howToPlayBtn);
+        var howToPlayBtnText = this.add.text(1340, 605, "How to Play", { fontFamily: 'Rubik', fontSize: '60px'}).setOrigin(0, 0);
+        this.centerInContainer(howToPlayBtn, howToPlayBtnText);
+
+        howToPlayBtn.setInteractive().on('pointerdown', () => {
+            if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
+            {
+                howToPlayBtn.anims.play('loginBtnClicked');
+                this.showHowToPlay();
+            }
+        });
+
+        var matchMenuBg = this.add.image(1340, 720, 'lobbyBottomRightButtonsBg').setOrigin(0, 0);
+        var joinMatchBtn = this.add.sprite(1340, 730, 'mediumBtn', 'mediumBtn0001.png').setOrigin(0, 0);
+        this.centerInContainer(matchMenuBg, joinMatchBtn);
+        var joinMatchBtnText = this.add.text(1340, 745, "Join match", { fontFamily: 'Rubik', fontSize: '60px'}).setOrigin(0, 0);
+        this.centerInContainer(joinMatchBtn, joinMatchBtnText);
+
+        joinMatchBtn.setInteractive().on('pointerdown', () => {
+            if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
+            {
+                joinMatchBtn.anims.play('loginBtnClicked');
+                this.joinMatch(socket, joinMatchBtnText);
+            }
+        });
+    }
+
+    showHowToPlay()
+    {
+        var overlayItems = [];
+        this.loadingShadow.alpha = 1;
+        //how to play instructions screen
+    }
+
+    joinMatch(socket, joinMatchBtnText)
+    {
+
     }
 
     spawnClouds()
@@ -270,5 +345,10 @@ class LobbyScene extends Phaser.Scene
                 this.clouds[i].x += delta / 20;
             }
         }
+    }
+
+    centerInContainer(container, element)
+    {
+        element.x = container.x + Math.floor((container.width - element.width) / 2);
     }
 }

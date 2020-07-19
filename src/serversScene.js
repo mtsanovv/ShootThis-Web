@@ -26,6 +26,13 @@ class ServersScene extends Phaser.Scene
         this.loginText.setOrigin(0.5, 0.5);
         this.loginText.alpha = 0;
 
+        var wideBtnClicked = this.anims.generateFrameNames('wideBtn', {
+            start: 2, end: 14, zeroPad: 4,
+            prefix: 'wideBtn', suffix: '.png'
+        });
+
+        this.anims.create({ key: 'wideBtnClicked', frames: wideBtnClicked, frameRate: 24});
+
         var serversAdded = 0;
 
         for(var j = 0; j < 8; j++)
@@ -34,13 +41,13 @@ class ServersScene extends Phaser.Scene
             {
                 if(serversAdded < this.availableServers.length)
                 {
-                    var img = this.add.image(i * 640, j * 83 + 350, 'wideBtn');
+                    var img = this.add.sprite(i * 640, j * 83 + 350, 'wideBtn', 'wideBtn0001.png');
                     img.alpha = 0;
-                    img.setOrigin(0);
-                    var txt = this.add.text(i * 640 + 45, j * 83 + 377, this.availableServers[i + 3 * j][2] + " (" + this.availableServers[i + 3 * j][1] + "ms)", { fontFamily: 'Rubik', fontSize: '32px'});
+                    img.setOrigin(0, 0);
+                    var txt = this.add.text(i * 640 + 45, j * 83 + 360, this.availableServers[i + 3 * j][2] + " (" + this.availableServers[i + 3 * j][1] + "ms)", { fontFamily: 'Rubik', fontSize: '32px'});
                     txt.x = i * 640 + Math.floor((img.width - txt.width) / 2);
                     txt.alpha = 0;
-                    txt.setOrigin(0);
+                    txt.setOrigin(0, 0);
                     serversAdded++;
                     this.serverAssets.push(img);
                     this.serverTextAssets.push(txt);
@@ -51,6 +58,7 @@ class ServersScene extends Phaser.Scene
         var serverList = this.add.group(this.serverAssets);
 
         this.input.setHitArea(serverList.getChildren()).on('gameobjectdown', function(pointer, gameObject) {
+            gameObject.anims.play('wideBtnClicked');
             setCookie("gameServer",  this.scene.availableServers[gameObject.x / 640 + 3 * (gameObject.y - 350) / 83][0], 0.00694);
             game.scene.add("LobbyScene", LobbyScene, true, { x: 960, y: 540, socket: false});
             game.scene.remove("ServersScene");

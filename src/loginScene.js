@@ -53,7 +53,7 @@ class LoginScene extends Phaser.Scene
         this.load.multiatlas('mediumBtn', 'assets/forms/mediumBtn.json', 'assets/forms');
         this.load.image('messageBG', 'assets/messageBG.png');
         this.load.multiatlas('connectingAnim', 'assets/loading/connectingAnim.json', 'assets/loading');
-        this.load.image('wideBtn', 'assets/forms/wideBtn.png');
+        this.load.multiatlas('wideBtn', 'assets/forms/wideBtn.json', 'assets/forms');
         this.load.audio('lobbyMusic', ['assets/sound/lobby.mp3', 'assets/sound/lobby.ogg']);
         this.load.image('lobbybg', 'assets/lobby/lobbybg.png');
         this.load.image('lobbyCloud1', 'assets/lobby/cloud1.png');
@@ -61,6 +61,9 @@ class LoginScene extends Phaser.Scene
         this.load.image('lobbyCloud3', 'assets/lobby/cloud3.png');
         this.load.image('statsbg', 'assets/lobby/statsbg.png');
         this.load.image('xpprogressbarbg', 'assets/lobby/xpProgessBar.png');
+        this.load.multiatlas('mediumThinBtn', 'assets/forms/mediumThinBtn.json', 'assets/forms');
+        this.load.image('lobbyButtonsRightBg', 'assets/lobby/buttonsRightBg.png');
+        this.load.image('lobbyBottomRightButtonsBg', 'assets/lobby/bottomRightButtonsBg.png');
         //Login plugins
         this.load.scenePlugin({
             key: 'rexuiplugin',
