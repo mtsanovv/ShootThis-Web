@@ -140,66 +140,92 @@ class LoginScene extends Phaser.Scene
                 this.showMessage("ERROR", "ShootThis can't connect due to bad configuration. Please try again later or contact us.");
             }
             else
+                this.attemptConnection(1);
+        }
+        catch(e)
+        {
+            this.loadingShadow.destroy();
+            this.loadingText.destroy();
+            this.loadingPercentage.destroy();
+            this.showMessage("ERROR", "ShootThis can't connect due to bad configuration. Please try again later or contact us.");
+            return;
+        }
+    }
+
+    attemptConnection(loginServerId)
+    {
+        try
+        {
+            var server = "login" + String(loginServerId);
+            if(loginConfig[server].address && loginConfig[server].port && loginConfig[server].protocol)
             {
-                for(var server in loginConfig)
-                {
-                    if(loginConfig[server].address && loginConfig[server].port && loginConfig[server].protocol)
+                var socket = io(loginConfig[server].protocol + loginConfig[server].address + ":" + loginConfig[server].port, {secure: true, timeout: 1000, transport: ['websocket']});
+                console.log(new Date().valueOf());
+                socket.on('loginExt', (responseType, args) => {
+                    this.handleLoginResponse(socket, responseType, args);
+                });
+                socket.on('connect_error', (error) => {
+                    console.log(new Date().valueOf());
+                    if(!this.hasConnected)
                     {
-                        var socket = io(loginConfig[server].protocol + loginConfig[server].address + ":" + loginConfig[server].port, {secure: true, reconnectionAttempts: 2, transport: ['websocket']});
-                        socket.on('loginExt', (responseType, args) => {
-                            this.handleLoginResponse(socket, responseType, args);
-                        });
-                        socket.on('reconnect_failed', () => {
-                            if(!this.hasConnected)
-                            {
-                                try 
-                                {
-                                    socket.destroy();
-                                } 
-                                catch(e){}
-                                this.loadingShadow.destroy();
-                                this.loadingText.destroy();
-                                this.loadingPercentage.destroy();
-                                this.showMessage("CONNECTION FAILURE", "ShootThis is unable to connect. It may be your connection or an issue on our end.\n\nPlease try again later or contact us.");
-                            }
-                        });
-                        socket.on('disconnect', () => {
-                            if(this.hasConnected)
-                            {
-                                try 
-                                {
-                                    socket.destroy();
-                                } 
-                                catch(e){} 
-                                this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
-                            }
+                        try 
+                        {
+                            socket.destroy();
+                        } 
+                        catch(e){}
+                        if(loginServerId == Object.keys(loginConfig).length)
+                        {
+                            this.loadingShadow.destroy();
+                            this.loadingText.destroy();
+                            this.loadingPercentage.destroy();
+                            if(this.timesDisconnected > 0)
+                                this.showMessage("MAXED OUT CAPACITIES", "ShootThis is unable to connect as our capacities are currently maxed out. Please try again later or contact us.");
                             else
-                            {
-                                this.timesDisconnected++;
-                                if(this.timesDisconnected >= Object.keys(loginConfig).length)
-                                {
-                                    try 
-                                    {
-                                        socket.destroy();
-                                    } 
-                                    catch(e){}
-                                    this.loadingShadow.destroy();
-                                    this.loadingText.destroy();
-                                    this.loadingPercentage.destroy();
-                                    this.showMessage("MAXED OUT CAPACITIES", "ShootThis is unable to connect as our capacities are currently maxed out. Please try again later or contact us.");
-                                }
-                            }
-                        });
+                                this.showMessage("CONNECTION FAILURE", "ShootThis is unable to connect. It may be your connection or an issue on our end.\n\nPlease try again later or contact us.");
+                        }
+                        else
+                            this.attemptConnection(loginServerId + 1);
+                    }
+                });
+                socket.on('disconnect', () => {
+                    if(this.hasConnected)
+                    {
+                        try 
+                        {
+                            socket.destroy();
+                        } 
+                        catch(e){} 
+                        this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
                     }
                     else
                     {
-                        this.loadingShadow.destroy();
-                        this.loadingText.destroy();
-                        this.loadingPercentage.destroy();
-                        this.showMessage("ERROR", "ShootThis can't connect due to bad configuration. One or more servers may not be configured properly.\n\nPlease try again later or contact us.");
-                        return;
+                        try 
+                        {
+                            socket.destroy();
+                        } 
+                        catch(e){}
+                        if(loginServerId == Object.keys(loginConfig).length)
+                        {
+                            this.loadingShadow.destroy();
+                            this.loadingText.destroy();
+                            this.loadingPercentage.destroy();
+                            this.showMessage("MAXED OUT CAPACITIES", "ShootThis is unable to connect as our capacities are currently maxed out. Please try again later or contact us.");
+                        }
+                        else
+                        {
+                            this.timesDisconnected++;
+                            this.attemptConnection(loginServerId + 1);
+                        }
                     }
-                }
+                });
+            }
+            else
+            {
+                this.loadingShadow.destroy();
+                this.loadingText.destroy();
+                this.loadingPercentage.destroy();
+                this.showMessage("ERROR", "ShootThis can't connect due to bad configuration. One or more servers may not be configured properly.\n\nPlease try again later or contact us.");
+                return;
             }
         }
         catch(e)
@@ -210,7 +236,6 @@ class LoginScene extends Phaser.Scene
             this.showMessage("ERROR", "ShootThis can't connect due to bad configuration. Please try again later or contact us.");
             return;
         }
-
     }
 
     handleLoginResponse(socket, responseType, args)
