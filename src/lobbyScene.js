@@ -150,16 +150,21 @@ class LobbyScene extends Phaser.Scene
 
         this.add.text(980, 600, "Level: " + args[1].level, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
         
-        var progressBarBg = this.add.image(950, 650, 'xpprogressbarbg').setOrigin(0, 0);
+        var progressBarBg;
+        if(game.renderer.type === 2) progressBarBg = this.add.image(950, 650, 'xpprogressbarbg').setOrigin(0, 0);
+        else progressBarBg =  this.add.image(950, 650, 'xpprogressbarbgCANVAS').setOrigin(0, 0);
         this.centerInContainer(statsbg, progressBarBg);
         progressBarBg.alpha = 0.3;
         var progressBar = this.add.graphics(progressBarBg.x, progressBarBg.y);
         progressBar.fillStyle(0xffd200);
         progressBar.fillRect(progressBarBg.x, progressBarBg.y, (args[1].xp / args[1].xpToLevel) * progressBarBg.width, progressBarBg.height);
-        var mask = this.add.image(950, 650, 'xpprogressbarbg').setOrigin(0, 0);
-        mask.x = progressBarBg.x;
-        mask = mask.createBitmapMask();
-        progressBar.setMask(mask);
+        if(game.renderer.type === 2)
+        {
+            var mask = this.add.image(950, 650, 'xpprogressbarbg').setOrigin(0, 0);
+            mask.x = progressBarBg.x;
+            mask = mask.createBitmapMask();
+            progressBar.setMask(mask);
+        }
 
         var xpText = this.add.text(980, 670, args[1].xp + '/' + args[1].xpToLevel + " XP", {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
         this.centerInContainer(statsbg, xpText);

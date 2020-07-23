@@ -69,6 +69,7 @@ class LoginScene extends Phaser.Scene
         this.load.multiatlas('musicIcon', 'assets/lobby/musicIcon.json', 'assets/lobby');
         this.load.multiatlas('soundIcon', 'assets/lobby/soundIcon.json', 'assets/lobby');
         this.load.multiatlas('rendererIcon', 'assets/lobby/rendererIcon.json', 'assets/lobby');
+        this.load.image('xpprogressbarbgCANVAS', 'assets/lobby/xpProgessBarCANVAS.png');
         //Login plugins
         this.load.scenePlugin({
             key: 'rexuiplugin',
