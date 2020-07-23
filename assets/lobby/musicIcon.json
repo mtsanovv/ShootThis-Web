@@ -1,0 +1,61 @@
+{
+	"textures": [
+		{
+			"image": "musicIcon.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 156,
+				"h": 86
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "musicIcon0002.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 150,
+						"h": 150
+					},
+					"spriteSourceSize": {
+						"x": 32,
+						"y": 33,
+						"w": 89,
+						"h": 84
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 89,
+						"h": 84
+					}
+				},
+				{
+					"filename": "musicIcon0001.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 150,
+						"h": 150
+					},
+					"spriteSourceSize": {
+						"x": 40,
+						"y": 44,
+						"w": 63,
+						"h": 63
+					},
+					"frame": {
+						"x": 92,
+						"y": 1,
+						"w": 63,
+						"h": 63
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "http://free-tex-packer.com",
+		"version": "0.6.6"
+	}
+}

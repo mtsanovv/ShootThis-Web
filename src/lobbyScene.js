@@ -123,7 +123,7 @@ class LobbyScene extends Phaser.Scene
                 this.loadingShadow.alpha = 0;
                 this.loadingText.destroy();
                 this.loadingPercentage.destroy();
-                if(!getCookie("music"))  
+                if(checkCookie("music") === false)  
                     this.askForAudio(socket);
                 else
                     if(getCookie("music") === "true")
@@ -160,6 +160,7 @@ class LobbyScene extends Phaser.Scene
         mask.x = progressBarBg.x;
         mask = mask.createBitmapMask();
         progressBar.setMask(mask);
+
         var xpText = this.add.text(980, 670, args[1].xp + '/' + args[1].xpToLevel + " XP", {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
         this.centerInContainer(statsbg, xpText);
         
@@ -180,13 +181,6 @@ class LobbyScene extends Phaser.Scene
         var timeElapsed = this.add.text(950, 990, "Time Played: " + ((Math.floor(args[1].lastMatchTimeElapsed / 60000) < 10) ? "0" + String(Math.floor(args[1].lastMatchTimeElapsed / 60000)) : Math.floor(args[1].lastMatchTimeElapsed / 60000)) + ":" + ((((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000) < 10) ? "0" + String((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000) : ((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000)), {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
         lastMatchXp.x = statsbg.x + Math.floor((statsbg.width - (lastMatchXp.width + timeElapsed.width + 10)) / 2);
         timeElapsed.x = lastMatchXp.x + lastMatchXp.width + 10;
-
-        var mediumThinBtnClicked = this.anims.generateFrameNames('mediumThinBtn', {
-            start: 2, end: 14, zeroPad: 4,
-            prefix: 'mediumThinBtn', suffix: '.png'
-        });
-
-        this.anims.create({ key: 'mediumThinBtnClicked', frames: mediumThinBtnClicked, frameRate: 24});
 
         this.add.graphics().fillStyle(0xffffff).fillRoundedRect(progressBarBg.x, 1020, progressBarBg.width, 3, 2);
         var changeCharacterBtn = this.add.sprite(950, 1030, 'mediumThinBtn', 'mediumThinBtn0001.png').setOrigin(0, 0);
@@ -267,6 +261,106 @@ class LobbyScene extends Phaser.Scene
                 this.joinMatch(socket, joinMatchBtnText);
             }
         });
+
+        this.add.image(5, 905, 'lobbySoundControlButtonsBg').setOrigin(0, 0);
+
+        var muteMusicTxt = this.add.text(0, 1050, "Mute Music", { fontFamily: 'Rubik', fontSize: '25px'}).setOrigin(0, 0);
+        var muteMusicBtn = this.add.sprite(5, 905, 'squareBtn', 'squareBtn0001.png').setOrigin(0, 0);
+        var musicIcon = this.add.sprite(5, 905, 'musicIcon', 'musicIcon0001.png').setOrigin(0, 0);
+        muteMusicBtn.setInteractive().on('pointerdown', () => {
+            if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
+            {
+                muteMusicBtn.anims.play('squareBtnClicked');
+                if(getCookie("music") !== "true")
+                {
+                    muteMusicTxt.text = "Mute Music";
+                    musicIcon.setFrame('musicIcon0001.png');
+                    this.sound.removeByKey('lobbyMusic');
+                    this.lobbyMusic = this.sound.play('lobbyMusic', {volume: this.musicVolume, loop: true});
+                    setCookie("music", "true", 365);
+                }
+                else
+                {
+                    this.sound.stopByKey('lobbyMusic');
+                    musicIcon.setFrame('musicIcon0002.png');
+                    setCookie("music", "false", 365);
+                    muteMusicTxt.text = "Play Music";
+                }
+            }
+        });
+        if(getCookie("music") !== "true")
+        {
+            muteMusicTxt.text = "Play Music";
+            musicIcon.setFrame('musicIcon0002.png');
+            this.sound.removeByKey('lobbyMusic');
+        }
+
+        var muteSoundsTxt = this.add.text(0, 1050, "Mute Sounds", { fontFamily: 'Rubik', fontSize: '25px'}).setOrigin(0, 0);
+        var muteSoundsBtn = this.add.sprite(155, 905, 'squareBtn', 'squareBtn0001.png').setOrigin(0, 0);
+        var soundsIcon = this.add.sprite(155, 905, 'soundIcon', 'soundIcon0001.png').setOrigin(0, 0);
+        muteSoundsBtn.setInteractive().on('pointerdown', () => {
+            if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
+            {
+                muteSoundsBtn.anims.play('squareBtnClicked');
+                if(game.sound.mute || gameSoundMuted)
+                {
+                    muteSoundsTxt.text = "Mute Sounds";
+                    soundsIcon.setFrame('soundIcon0001.png');
+                    game.sound.mute = false;
+                    muteMusicBtn.visible = true;
+                    gameSoundMuted = false;
+                }
+                else
+                {
+                    muteSoundsTxt.text = "Allow Sounds";
+                    soundsIcon.setFrame('soundIcon0002.png');
+                    game.sound.mute = true;
+                    muteMusicBtn.visible = false;
+                    gameSoundMuted = true;
+                }
+            }
+        });
+        if(game.sound.mute || gameSoundMuted)
+        {
+            muteSoundsTxt.text = "Allow Sounds";
+            soundsIcon.setFrame('soundIcon0001.png');
+        }
+
+        var rendererTxt = this.add.text(0, 1050, "Renderer", { fontFamily: 'Rubik', fontSize: '25px'}).setOrigin(0, 0);
+        var rendererBtn = this.add.sprite(305, 905, 'squareBtn', 'squareBtn0001.png').setOrigin(0, 0);
+        var rendererIcon = this.add.sprite(305, 905, 'rendererIcon', 'rendererIcon0001.png').setOrigin(0, 0);
+        if(game.renderer.type === 1 && checkCookie("renderer") !== "canvas")
+            rendererBtn.visible = false;
+        else
+        {
+            rendererBtn.setInteractive().on('pointerdown', () => {
+                if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
+                {
+                    rendererBtn.anims.play('squareBtnClicked');
+                    switch(game.renderer.type)
+                    {
+                        case 1:
+                            this.showMessage("CONFIRM RENDERER CHANGE", "You are switching to the WebGL renderer, which may result in better quality, but worse performance on weaker machines.\n\nThe page will be reloaded if you confirm the change, continue?", "true", () => {
+                                setCookie("renderer", "", 0);
+                                location.reload();
+                            });
+                            break;
+                        case 2:
+                            this.showMessage("CONFIRM RENDERER CHANGE", "You are switching to the CANVAS renderer, which may result in worse quality, but better performance on weaker machines.\nWebGL is the default setting.\nThe page will be reloaded if you confirm the change, continue?", "true", () => {
+                                setCookie("renderer", "canvas", 365);
+                                location.reload();
+                            });
+                            break;
+                    }
+                }
+            });
+        }
+        if(game.renderer.type === 1)
+            rendererIcon.setFrame('rendererIcon0002.png');
+
+        this.centerInContainer(muteMusicBtn, muteMusicTxt);
+        this.centerInContainer(muteSoundsBtn, muteSoundsTxt);
+        this.centerInContainer(rendererBtn, rendererTxt);
     }
 
     showHowToPlay()
@@ -347,8 +441,10 @@ class LobbyScene extends Phaser.Scene
         }
     }
 
-    centerInContainer(container, element)
+    centerInContainer(container, element, y = false)
     {
         element.x = container.x + Math.floor((container.width - element.width) / 2);
+        if(y)
+            element.y = container.y + Math.floor((container.height - element.height) / 2);
     }
 }

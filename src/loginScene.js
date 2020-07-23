@@ -64,6 +64,11 @@ class LoginScene extends Phaser.Scene
         this.load.multiatlas('mediumThinBtn', 'assets/forms/mediumThinBtn.json', 'assets/forms');
         this.load.image('lobbyButtonsRightBg', 'assets/lobby/buttonsRightBg.png');
         this.load.image('lobbyBottomRightButtonsBg', 'assets/lobby/bottomRightButtonsBg.png');
+        this.load.image('lobbySoundControlButtonsBg', 'assets/lobby/soundControlButtonsBg.png');
+        this.load.multiatlas('squareBtn', 'assets/forms/squareBtn.json', 'assets/forms');
+        this.load.multiatlas('musicIcon', 'assets/lobby/musicIcon.json', 'assets/lobby');
+        this.load.multiatlas('soundIcon', 'assets/lobby/soundIcon.json', 'assets/lobby');
+        this.load.multiatlas('rendererIcon', 'assets/lobby/rendererIcon.json', 'assets/lobby');
         //Login plugins
         this.load.scenePlugin({
             key: 'rexuiplugin',
@@ -90,6 +95,8 @@ class LoginScene extends Phaser.Scene
     
     create()
     {
+        //all button and connecting animations here 
+
         var loginBtnClicked = this.anims.generateFrameNames('mediumBtn', {
             start: 2, end: 14, zeroPad: 4,
             prefix: 'mediumBtn', suffix: '.png'
@@ -103,6 +110,29 @@ class LoginScene extends Phaser.Scene
         });
 
         this.anims.create({ key: 'connectingAnimation', frames: connectingAnimFrames, frameRate: 24, repeat: -1 });
+
+        var squareBtnClicked = this.anims.generateFrameNames('squareBtn', {
+            start: 2, end: 14, zeroPad: 4,
+            prefix: 'squareBtn', suffix: '.png'
+        });
+
+        this.anims.create({ key: 'squareBtnClicked', frames: squareBtnClicked, frameRate: 24});
+
+        var wideBtnClicked = this.anims.generateFrameNames('wideBtn', {
+            start: 2, end: 14, zeroPad: 4,
+            prefix: 'wideBtn', suffix: '.png'
+        });
+
+        this.anims.create({ key: 'wideBtnClicked', frames: wideBtnClicked, frameRate: 24});
+
+        var mediumThinBtnClicked = this.anims.generateFrameNames('mediumThinBtn', {
+            start: 2, end: 14, zeroPad: 4,
+            prefix: 'mediumThinBtn', suffix: '.png'
+        });
+
+        this.anims.create({ key: 'mediumThinBtnClicked', frames: mediumThinBtnClicked, frameRate: 24});
+
+        //end button and connecting animations
 
         this.messageContainer = this.add.container(0, 0);
         var shadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
@@ -159,13 +189,11 @@ class LoginScene extends Phaser.Scene
             var server = "login" + String(loginServerId);
             if(loginConfig[server].address && loginConfig[server].port && loginConfig[server].protocol)
             {
-                var socket = io(loginConfig[server].protocol + loginConfig[server].address + ":" + loginConfig[server].port, {secure: true, timeout: 1000, transport: ['websocket']});
-                console.log(new Date().valueOf());
+                var socket = io(loginConfig[server].protocol + loginConfig[server].address + ":" + loginConfig[server].port, {secure: true, transport: ['websocket']});
                 socket.on('loginExt', (responseType, args) => {
                     this.handleLoginResponse(socket, responseType, args);
                 });
                 socket.on('connect_error', (error) => {
-                    console.log(new Date().valueOf());
                     if(!this.hasConnected)
                     {
                         try 
@@ -323,7 +351,7 @@ class LoginScene extends Phaser.Scene
             else if(this.serversProcessed < this.servers.length)
             {
                 this.pingTimes[this.servers[this.serversProcessed]] = {ping: -1, begin: 0, end: 0, name: "", address: this.servers[this.serversProcessed]};
-                var socket = io(this.servers[this.serversProcessed], {secure: true, reconnection: false, transport: ['websocket']});
+                var socket = io(this.servers[this.serversProcessed], {secure: true, timeout: 1000, transport: ['websocket']});
                 socket.on('gameExt', (recvResponse, args) => {
                     if(recvResponse == "connectionSuccessful")
                     {

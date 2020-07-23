@@ -26,13 +26,6 @@ class ServersScene extends Phaser.Scene
         this.loginText.setOrigin(0.5, 0.5);
         this.loginText.alpha = 0;
 
-        var wideBtnClicked = this.anims.generateFrameNames('wideBtn', {
-            start: 2, end: 14, zeroPad: 4,
-            prefix: 'wideBtn', suffix: '.png'
-        });
-
-        this.anims.create({ key: 'wideBtnClicked', frames: wideBtnClicked, frameRate: 24});
-
         var serversAdded = 0;
 
         for(var j = 0; j < 8; j++)

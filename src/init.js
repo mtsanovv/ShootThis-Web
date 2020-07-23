@@ -1,5 +1,8 @@
+var renderer = getCookie("renderer") === "canvas" ? Phaser.CANVAS : Phaser.AUTO;
+var gameSoundMuted = false;
+
 var config = {
-    type: Phaser.AUTO,
+    type: renderer,
     width: 1920,
     height: 1080,
     parent: "game",
