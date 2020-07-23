@@ -10,11 +10,10 @@ class LoaderScene extends Phaser.Scene
 
     preload ()
     {
-        if(!this.textures.exists('loadingScreen'))
-            this.load.multiatlas('loadingScreen', 'assets/loading/loading.json', 'assets/loading');
+        this.load.multiatlas('loadingScreen', 'assets/loading/loading.json', 'assets/loading');
     }
 
-    create(data)
+    create()
     {
         this.loadingText = this.add.sprite(0, 479, 'loadingScreen', 'loading0001.png');
 
@@ -26,7 +25,7 @@ class LoaderScene extends Phaser.Scene
         this.anims.create({ key: 'moveLogo', frames: frameNames, frameRate: 24, repeat: -1 });
         this.loadingText.anims.play('moveLogo');
 
-        game.scene.add(data.loadScene, data.loadSceneClass, true, { x: data.loadSceneX, y: data.loadSceneY});
+        game.scene.add("LoginScene", LoginScene, true, { x: 960, y: 540 });
     }
 
     update(time, delta)

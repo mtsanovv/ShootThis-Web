@@ -27,4 +27,4 @@ var config = {
 
 var game = new Phaser.Game(config);
 
-game.scene.add("LoaderScene", LoaderScene, true, { x: 960, y: 540, loadScene: "LoginScene", loadSceneClass: LoginScene, loadSceneX: 960, loadSceneY: 540});
+game.scene.add("LoaderScene", LoaderScene, true, { x: 960, y: 540 });
