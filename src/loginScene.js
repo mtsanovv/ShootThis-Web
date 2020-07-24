@@ -45,7 +45,7 @@ class LoginScene extends Phaser.Scene
 
         this.loadingPercentage = this.add.text(960, 830, "Loading: ", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'});
         this.loadingPercentage.setOrigin(0.5, 0.5);
-        //Login all game assets
+        //Load game assets
         this.load.image('loginbg', 'assets/loginbg.png');
         this.load.image('loginlogo', 'assets/loginlogo.png');
         this.load.multiatlas('formFields', 'assets/forms/fields.json', 'assets/forms');
@@ -70,6 +70,12 @@ class LoginScene extends Phaser.Scene
         this.load.multiatlas('soundIcon', 'assets/lobby/soundIcon.json', 'assets/lobby');
         this.load.multiatlas('rendererIcon', 'assets/lobby/rendererIcon.json', 'assets/lobby');
         this.load.image('xpprogressbarbgCANVAS', 'assets/lobby/xpProgessBarCANVAS.png');
+        this.load.image('characterSelectionCharacterBackground', 'assets/lobby/characterSelectionCharacterBackground.png');
+
+        //Load character assets
+        this.load.image('characterLobby0', 'assets/lobby/characters/0.png');
+        this.load.image('characterLobby1', 'assets/lobby/characters/1.png');
+
         //Login plugins
         this.load.scenePlugin({
             key: 'rexuiplugin',

@@ -22,6 +22,7 @@ class LobbyScene extends Phaser.Scene
         this.musicVolume = 0.1;
         this.cloudsPlaying = 0;
         this.clouds = [];
+        this.character;
     }
 
     create(data)
@@ -38,27 +39,26 @@ class LobbyScene extends Phaser.Scene
         this.messageContainer.add(msgbg);
         this.messageContainer.add(this.messageTitle);
         this.messageContainer.add(this.messageText);
-        this.messageContainer.setDepth(100);
         this.messageContainer.alpha = 0;
 
-        this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
+        this.loadingShadow = this.add.rectangle(0, 0, 1920, 1080, "0x000000", 0.6).setOrigin(0, 0);
         this.loadingShadow.alpha = 0;
-        this.loadingShadow.setDepth(10000);
 
         if(data.socket === false)
         {
             this.background = this.add.image(960, 540, 'loginbg');
 
             this.loadingShadow.alpha = 1;
+            this.children.bringToTop(this.loadingShadow);
 
             this.loadingText = this.add.sprite(960, 550, 'connectingAnim', 'connectingAnim0001.png');
-            this.loadingText.setDepth(this.loadingShadow.depth + 1);
+            this.children.bringToTop(this.loadingText);
 
             this.loadingText.anims.play('connectingAnimation');
 
             this.loadingPercentage = this.add.text(960, 790, "Connecting to game server...", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'});
             this.loadingPercentage.setOrigin(0.5, 0.5);
-            this.loadingPercentage.setDepth(this.loadingShadow.depth + 1);
+            this.children.bringToTop(this.loadingPercentage);
 
             if(!getCookie("gameServer") || !getCookie("loginToken"))
             {
@@ -139,6 +139,12 @@ class LobbyScene extends Phaser.Scene
             case "userInfo":
                 this.showPlayer(socket, args);
                 break;
+            case "charactersData":
+                this.showCharacterSelection(socket, args);
+                break;
+            case "changeCharacter":
+                this.changeCharacter(socket, args);
+                break;
         }
     }
 
@@ -197,16 +203,87 @@ class LobbyScene extends Phaser.Scene
             if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
             {
                 changeCharacterBtn.anims.play('mediumThinBtnClicked');
-                this.showCharacterSelection(socket);
+                socket.emit("gameExt", "getCharacters");
             }
+        });
+
+        this.character = this.add.image(480, 0, 'characterLobby' + args[1].character).setOrigin(0, 0);
+        this.character.y = 1080 - this.character.height - 5;
+    }
+
+    showCharacterSelection(socket, args)
+    {
+        var overlayItems = [];
+        var inputGroup = [];
+
+        this.loadingShadow.alpha = 1;
+        this.children.bringToTop(this.loadingShadow);
+        
+        var titleText = this.add.text(0, 10, "CHOOSE YOUR CHARACTER", { fontFamily: 'Rubik', fontSize: '70px', fontStyle: 'bold'}).setOrigin(0, 0);
+        this.centerInContainer(this.loadingShadow, titleText);
+        var closeBtn = this.add.sprite(0, 965, 'mediumBtn', 'mediumBtn0001.png').setOrigin(0, 0);
+        this.centerInContainer(this.loadingShadow, closeBtn);
+        var closeBtnText = this.add.text(0, 985, "Back", { fontFamily: 'Rubik', fontSize: '60px'}).setOrigin(0, 0);
+        this.centerInContainer(closeBtn, closeBtnText);
+
+        for(var i in args[0])
+        {
+            var characterBg = this.add.image(Math.floor((1920 - Object.keys(args[0]).length * 450 - (Object.keys(args[0]).length - 1) * 40 ) / 2) + i * (450 + 40), 125, 'characterSelectionCharacterBackground').setOrigin(0, 0);
+            var character = this.add.image(480, 105, 'characterLobby' + i).setOrigin(0, 0).setScale(0.7, 0.7);
+            character.width = character.width * character.scaleX;
+            character.height = character.height * character.scaleY;
+            this.centerInContainer(characterBg, character);
+            var characterName = this.add.text(0, character.y + character.height + 15, args[0][i].name, { fontFamily: 'Rubik', fontSize: '60px'}).setOrigin(0, 0);
+            this.centerInContainer(characterBg, characterName);
+            var characterTitle = this.add.text(0, characterName.y + characterName.height, args[0][i].title, { fontFamily: 'Rubik', fontSize: '30px'}).setOrigin(0, 0);
+            this.centerInContainer(characterBg, characterTitle);
+            character.y = characterBg.y + Math.floor((characterBg.height - character.height - characterName.height - characterTitle.height - 15) / 2);
+            characterName.y = character.y + character.height + 15;
+            characterTitle.y = characterName.y + characterName.height;
+
+            inputGroup.push(characterBg);
+            
+            overlayItems.push(characterBg);
+            overlayItems.push(character);
+            overlayItems.push(characterName);
+            overlayItems.push(characterTitle);
+        }
+
+        var characterSelection = this.add.group(inputGroup);
+
+        this.input.setHitArea(characterSelection.getChildren()).on('gameobjectdown', function(pointer, gameObject) {
+            var id = String(Math.floor((gameObject.x - 245 * (-Object.keys(args[0]).length + 4)) / 490));
+            socket.emit("gameExt", "changeCharacter", [id]);
+            for(var j in overlayItems)
+            {
+                try { overlayItems[j].destroy(); } catch(e) {}
+            }
+            this.scene.input.removeAllListeners('gameobjectdown'); 
+            this.scene.loadingShadow.alpha = 0;
+        });
+
+        overlayItems.push(closeBtn);
+        overlayItems.push(closeBtnText);
+        overlayItems.push(titleText);
+
+        for(var i in overlayItems)
+            this.children.bringToTop(overlayItems[i]);
+
+        closeBtn.setInteractive().on('pointerdown', () => {
+            for(var i in overlayItems)
+            {
+                try { overlayItems[i].destroy() } catch(e) {}
+            }
+            this.input.removeAllListeners('gameobjectdown'); 
+            this.loadingShadow.alpha = 0;
         });
     }
 
-    showCharacterSelection(socket)
+    changeCharacter(socket, args)
     {
-        var overlayItems = [];
-        this.loadingShadow.alpha = 1;
-        //character selection screen
+        try { this.character.destroy(); } catch(e) {}
+        this.character = this.add.image(480, 0, 'characterLobby' + args[0]).setOrigin(0, 0);
+        this.character.y = 1080 - this.character.height - 5;
     }
 
     askForAudio(socket)
@@ -396,6 +473,7 @@ class LobbyScene extends Phaser.Scene
     {
         this.messageTitle.text = title;
         this.messageText.text = message;
+        this.children.bringToTop(this.messageContainer);
 8
         try { this.messageYesBtn.destroy(); } catch(e) {}
         try { this.yesText.destroy(); } catch(e) {}
@@ -446,9 +524,10 @@ class LobbyScene extends Phaser.Scene
         }
     }
 
-    centerInContainer(container, element, y = false)
+    centerInContainer(container, element, y = false, x = true)
     {
-        element.x = container.x + Math.floor((container.width - element.width) / 2);
+        if(x)
+            element.x = container.x + Math.floor((container.width - element.width) / 2);
         if(y)
             element.y = container.y + Math.floor((container.height - element.height) / 2);
     }
