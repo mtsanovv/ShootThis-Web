@@ -149,6 +149,9 @@ class LobbyScene extends Phaser.Scene
             case "changeCharacter":
                 this.changeCharacter(socket, args);
                 break;
+            case "minPlayersForMatch":
+                this.showHowToPlay(1, args);
+                break;
         }
     }
 
@@ -330,7 +333,7 @@ class LobbyScene extends Phaser.Scene
             if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
             {
                 howToPlayBtn.anims.play('loginBtnClicked');
-                this.showHowToPlay(1);
+                socket.emit("gameExt", "requestMinPlayersForMatch");
             }
         });
 
@@ -449,7 +452,7 @@ class LobbyScene extends Phaser.Scene
         this.centerInContainer(rendererBtn, rendererTxt);
     }
 
-    showHowToPlay(screen)
+    showHowToPlay(screen, args)
     {
         var overlayItems = [];
         var pageTitle;
@@ -471,7 +474,7 @@ class LobbyScene extends Phaser.Scene
                 this.centerInContainer(this.loadingShadow, pageTitle);
                 var lobbyText1 = this.add.text(0, pageTitle.y + pageTitle.height + 20, "The lobby is basically the main menu of ShootThis. From it, you can access your stats, personalize your account and control your gaming experience. There are 3 sections: experience controls, player customization and match controls.", { fontFamily: 'Rubik', fontSize: '25px', wordWrap: { width: 1800, useAdvancedWrap: true }}).setOrigin(0, 0);
                 this.centerInContainer(this.loadingShadow, lobbyText1);
-                var lobbyText2 = this.add.text(lobbyText1.x, lobbyText1.y + lobbyText1.height, "\nExperience controls:\nThese are located on the bottom left of your screen and consists of the following: a button to control the music, a button to control the sound and a button to control the game quality/performance (Renderer).\n\n\t- Mute/Unmute Music - this option mutes or unmutes all music game-wide, respectively. The default of that button is whatever you chose at the \"Enable Audio\" prompt when you first logged in. If you change this setting, it is saved and the only way to toggle music is to click that button.\n\t- Mute/Allow Sounds - mutes/unmutes all audio from the game for the current session (until you refresh the page), which means that no sound or music will be played, anywhere. The way to toggle audio again is to click that button or refresh the page.\n\t- Renderer - this toggles between WebGL and CANVAS mode. WebGL has more extras when displaying graphics and is supported by most modern browsers, however, it can be very resource-demanding, especially on older machines. CANVAS is the more lightweight solution, but the graphical effects may not be as amazing as WebGL. The default value is WebGL (if your browser supports it), otherwise CANVAS will be chosen by default. The only way to change between the rendering engines is to use that toggle.\n\nPlayer customization/stats:\nThis is right next to the experience controls. It displays your character, as well as other stats. You can change your character through the \"Change Character\" menu.\n\nMatch controls:\nThey are next to the player stats section. Using the \"Join Match\" button you can join a queue for a match. Underneath it, you can see the current status of the queue. Whenever the current queue is created, a host is automatically assigned. The host is allowed to start the match only when there are at least 5 players. If enough players join the queue, it's better to wait for the system to automatically start a full match. If you want the host to be reassigned, you need to click \"Vote: Change Host\" and if at least 2/3 of players in the queue vote (and there are at least 5 players) the system will assign the host role to someone else.", { fontFamily: 'Rubik', fontSize: '25px', wordWrap: { width: 1800 }}).setOrigin(0, 0);
+                var lobbyText2 = this.add.text(lobbyText1.x, lobbyText1.y + lobbyText1.height, "\nExperience controls:\nThese are located on the bottom left of your screen and consists of the following: a button to control the music, a button to control the sound and a button to control the game quality/performance (Renderer).\n\n\t- Mute/Unmute Music - this option mutes or unmutes all music game-wide, respectively. The default of that button is whatever you chose at the \"Enable Audio\" prompt when you first logged in. If you change this setting, it is saved and the only way to toggle music is to click that button.\n\t- Mute/Allow Sounds - mutes/unmutes all audio from the game for the current session (until you refresh the page), which means that no sound or music will be played, anywhere. The way to toggle audio again is to click that button or refresh the page.\n\t- Renderer - this toggles between WebGL and CANVAS mode. WebGL has more extras when displaying graphics and is supported by most modern browsers, however, it can be very resource-demanding, especially on older machines. CANVAS is the more lightweight solution, but the graphical effects may not be as amazing as WebGL. The default value is WebGL (if your browser supports it), otherwise CANVAS will be chosen by default. The only way to change between the rendering engines is to use that toggle.\n\nPlayer customization/stats:\nThis is right next to the experience controls. It displays your character, as well as other stats. You can change your character through the \"Change Character\" menu.\n\nMatch controls:\nThey are next to the player stats section. Using the \"Join Match\" button you can join a queue for a match. Underneath it, you can see the current status of the queue. Whenever the current queue is created, a host is automatically assigned. The host is allowed to start the match only when there are at least " + args[0] + " players. If enough players join the queue, it's better to wait for the system to automatically start a full match. If you want the host to be reassigned, you need to click \"Vote: Change Host\" and if at least 2/3 of players in the queue vote (and there are at least 5 players) the system will assign the host role to someone else.", { fontFamily: 'Rubik', fontSize: '25px', wordWrap: { width: 1800 }}).setOrigin(0, 0);
                 
                 var instructionsBg = this.add.rectangle(lobbyText1.x - 10, lobbyText1.y - 10, 1810, lobbyText1.height + lobbyText2.height + 20, "0x622e00", 0.8).setOrigin(0, 0);
                 
@@ -485,7 +488,7 @@ class LobbyScene extends Phaser.Scene
                         try { overlayItems[i].destroy() } catch(e) {}
                     }
                     this.input.removeAllListeners('gameobjectdown'); 
-                    this.showHowToPlay(screen + 1);
+                    this.showHowToPlay(screen + 1, args);
                 });
 
                 overlayItems.push(instructionsBg);
@@ -512,7 +515,7 @@ class LobbyScene extends Phaser.Scene
                         try { overlayItems[i].destroy() } catch(e) {}
                     }
                     this.input.removeAllListeners('gameobjectdown'); 
-                    this.showHowToPlay(screen - 1);
+                    this.showHowToPlay(screen - 1, args);
                 });
 
                 overlayItems.push(instructionsBg);
