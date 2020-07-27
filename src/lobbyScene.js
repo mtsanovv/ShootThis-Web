@@ -23,6 +23,10 @@ class LobbyScene extends Phaser.Scene
         this.cloudsPlaying = 0;
         this.clouds = [];
         this.character;
+        this.isJoiningMatch = false;
+        this.matchStatusText;
+        this.matchLoadingIcon;
+        this.matchMenuBg
     }
 
     create(data)
@@ -330,9 +334,9 @@ class LobbyScene extends Phaser.Scene
             }
         });
 
-        var matchMenuBg = this.add.image(1340, 720, 'lobbyBottomRightButtonsBg').setOrigin(0, 0);
+        this.matchMenuBg = this.add.image(1340, 720, 'lobbyBottomRightButtonsBg').setOrigin(0, 0);
         var joinMatchBtn = this.add.sprite(1340, 730, 'mediumBtn', 'mediumBtn0001.png').setOrigin(0, 0);
-        this.centerInContainer(matchMenuBg, joinMatchBtn);
+        this.centerInContainer(this.matchMenuBg, joinMatchBtn);
         var joinMatchBtnText = this.add.text(1340, 745, "Join match", { fontFamily: 'Rubik', fontSize: '60px'}).setOrigin(0, 0);
         this.centerInContainer(joinMatchBtn, joinMatchBtnText);
 
@@ -340,7 +344,7 @@ class LobbyScene extends Phaser.Scene
             if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
             {
                 joinMatchBtn.anims.play('loginBtnClicked');
-                this.joinMatch(socket, joinMatchBtnText);
+                this.joinMatch(socket, joinMatchBtnText, joinMatchBtn);
             }
         });
 
@@ -538,9 +542,43 @@ class LobbyScene extends Phaser.Scene
 
     }
 
-    joinMatch(socket, joinMatchBtnText)
+    joinMatch(socket, joinMatchBtnText, joinMatchBtn)
     {
+        if(this.isJoiningMatch)
+        {
+            this.isJoiningMatch = false;
+            socket.emit("gameExt", "cancelJoin");
+            this.sound.play('quitMatchBtnSound');
+            joinMatchBtnText.text = "Join match";
+            this.centerInContainer(joinMatchBtn, joinMatchBtnText);
+            try 
+            { 
+                this.matchLoadingIcon.destroy(); 
+                this.matchStatusText.destroy();
+            } catch(e) {}
+        }
+        else
+        {
+            this.isJoiningMatch = true;
+            socket.emit("gameExt", "joinMatch");
+            this.sound.play('joinMatchBtnSound');
+            joinMatchBtnText.text = "Quit queue";
+            this.centerInContainer(joinMatchBtn, joinMatchBtnText);
+            this.matchLoadingIcon = this.add.sprite(1340, 850, 'connectingAnim', 'connectingAnim0001.png').setOrigin(0, 0).setScale(0.1, 0.1);
+            this.matchLoadingIcon.anims.play('connectingAnimation');
+            this.setMatchStatusText(["Looking for available matches..."]);
+        }
+    }
 
+    setMatchStatusText(args)
+    {
+        if(this.isJoiningMatch)
+        {
+            try { this.matchStatusText.destroy(); } catch(e) {}
+            this.matchStatusText = this.add.text(1340, 855, args[0], { fontFamily: 'Rubik', fontSize: '25px'}).setOrigin(0, 0);
+            this.matchLoadingIcon.x = this.matchMenuBg.x + Math.floor((this.matchMenuBg.width - this.matchLoadingIcon.displayWidth - this.matchStatusText.width - 10) / 2);
+            this.matchStatusText.x = this.matchLoadingIcon.x + this.matchLoadingIcon.displayWidth + 10;
+        }
     }
 
     spawnClouds()

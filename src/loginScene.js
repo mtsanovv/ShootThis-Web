@@ -71,6 +71,8 @@ class LoginScene extends Phaser.Scene
         this.load.multiatlas('rendererIcon', 'assets/lobby/rendererIcon.json', 'assets/lobby');
         this.load.image('xpprogressbarbgCANVAS', 'assets/lobby/xpProgessBarCANVAS.png');
         this.load.image('characterSelectionCharacterBackground', 'assets/lobby/characterSelectionCharacterBackground.png');
+        this.load.audio('quitMatchBtnSound', ['assets/sound/quitmatchbtn.mp3', 'assets/sound/quitmatchbtn.ogg']);
+        this.load.audio('joinMatchBtnSound', ['assets/sound/joinmatchbtn.mp3', 'assets/sound/joinmatchbtn.ogg']);
 
         //Load character assets
         this.load.image('characterLobby0', 'assets/lobby/characters/0.png');
