@@ -26,7 +26,14 @@ class LobbyScene extends Phaser.Scene
         this.isJoiningMatch = false;
         this.matchStatusText;
         this.matchLoadingIcon;
-        this.matchMenuBg
+        this.matchMenuBg;
+        this.isHost = false;
+        this.minPlayersPerMatch = 5;
+        this.voteChangeHostBtn = null;
+        this.startMatchBtn = null;
+        this.voteChangeHostBtnText = null;
+        this.startMatchBtnText = null;
+        this.hasVoted = false;
     }
 
     create(data)
@@ -152,6 +159,15 @@ class LobbyScene extends Phaser.Scene
             case "minPlayersForMatch":
                 this.showHowToPlay(1, args);
                 break;
+            case "joinMatch":
+                this.matchJoined(socket, args);
+                break;
+            case "updateMatch":
+                this.updateMatch(socket, args);
+                break;
+            case "changeHost":
+                this.changeHost(socket, args);
+                break;
         }
     }
 
@@ -259,14 +275,17 @@ class LobbyScene extends Phaser.Scene
         var characterSelection = this.add.group(inputGroup);
 
         this.input.setHitArea(characterSelection.getChildren()).on('gameobjectdown', function(pointer, gameObject) {
-            var id = String(Math.floor((gameObject.x - 245 * (-Object.keys(args[0]).length + 4)) / 490));
-            socket.emit("gameExt", "changeCharacter", [id]);
-            for(var j in overlayItems)
+            if(!this.scene.messageContainer.alpha)
             {
-                try { overlayItems[j].destroy(); } catch(e) {}
+                var id = String(Math.floor((gameObject.x - 245 * (-Object.keys(args[0]).length + 4)) / 490));
+                socket.emit("gameExt", "changeCharacter", [id]);
+                for(var j in overlayItems)
+                {
+                    try { overlayItems[j].destroy(); } catch(e) {}
+                }
+                this.scene.input.removeAllListeners('gameobjectdown'); 
+                this.scene.loadingShadow.alpha = 0;
             }
-            this.scene.input.removeAllListeners('gameobjectdown'); 
-            this.scene.loadingShadow.alpha = 0;
         });
 
         overlayItems.push(closeBtn);
@@ -277,12 +296,15 @@ class LobbyScene extends Phaser.Scene
             this.children.bringToTop(overlayItems[i]);
 
         closeBtn.setInteractive().on('pointerdown', () => {
-            for(var i in overlayItems)
+            if(!this.messageContainer.alpha)
             {
-                try { overlayItems[i].destroy() } catch(e) {}
+                for(var i in overlayItems)
+                {
+                    try { overlayItems[i].destroy() } catch(e) {}
+                }
+                this.input.removeAllListeners('gameobjectdown'); 
+                this.loadingShadow.alpha = 0;
             }
-            this.input.removeAllListeners('gameobjectdown'); 
-            this.loadingShadow.alpha = 0;
         });
     }
 
@@ -470,11 +492,11 @@ class LobbyScene extends Phaser.Scene
         switch(screen)
         {
             case 1:
-                pageTitle = this.add.text(0, 140, "ABOUT THE LOBBY", { fontFamily: 'Rubik', fontSize: '70px'}).setOrigin(0, 0);
+                pageTitle = this.add.text(0, 120, "ABOUT THE LOBBY", { fontFamily: 'Rubik', fontSize: '70px'}).setOrigin(0, 0);
                 this.centerInContainer(this.loadingShadow, pageTitle);
                 var lobbyText1 = this.add.text(0, pageTitle.y + pageTitle.height + 20, "The lobby is basically the main menu of ShootThis. From it, you can access your stats, personalize your account and control your gaming experience. There are 3 sections: experience controls, player customization and match controls.", { fontFamily: 'Rubik', fontSize: '25px', wordWrap: { width: 1800, useAdvancedWrap: true }}).setOrigin(0, 0);
                 this.centerInContainer(this.loadingShadow, lobbyText1);
-                var lobbyText2 = this.add.text(lobbyText1.x, lobbyText1.y + lobbyText1.height, "\nExperience controls:\nThese are located on the bottom left of your screen and consists of the following: a button to control the music, a button to control the sound and a button to control the game quality/performance (Renderer).\n\n\t- Mute/Unmute Music - this option mutes or unmutes all music game-wide, respectively. The default of that button is whatever you chose at the \"Enable Audio\" prompt when you first logged in. If you change this setting, it is saved and the only way to toggle music is to click that button.\n\t- Mute/Allow Sounds - mutes/unmutes all audio from the game for the current session (until you refresh the page), which means that no sound or music will be played, anywhere. The way to toggle audio again is to click that button or refresh the page.\n\t- Renderer - this toggles between WebGL and CANVAS mode. WebGL has more extras when displaying graphics and is supported by most modern browsers, however, it can be very resource-demanding, especially on older machines. CANVAS is the more lightweight solution, but the graphical effects may not be as amazing as WebGL. The default value is WebGL (if your browser supports it), otherwise CANVAS will be chosen by default. The only way to change between the rendering engines is to use that toggle.\n\nPlayer customization/stats:\nThis is right next to the experience controls. It displays your character, as well as other stats. You can change your character through the \"Change Character\" menu.\n\nMatch controls:\nThey are next to the player stats section. Using the \"Join Match\" button you can join a queue for a match. Underneath it, you can see the current status of the queue. Whenever the current queue is created, a host is automatically assigned. The host is allowed to start the match only when there are at least " + args[0] + " players. If enough players join the queue, it's better to wait for the system to automatically start a full match. If you want the host to be reassigned, you need to click \"Vote: Change Host\" and if at least 2/3 of players in the queue vote (and there are at least 5 players) the system will assign the host role to someone else.", { fontFamily: 'Rubik', fontSize: '25px', wordWrap: { width: 1800 }}).setOrigin(0, 0);
+                var lobbyText2 = this.add.text(lobbyText1.x, lobbyText1.y + lobbyText1.height, "\nExperience controls:\nThese are located on the bottom left of your screen and consists of the following: a button to control the music, a button to control the sound and a button to control the game quality/performance (Renderer).\n\n\t- Mute/Unmute Music - this option mutes or unmutes all music game-wide, respectively. The default of that button is whatever you chose at the \"Enable Audio\" prompt when you first logged in. If you change this setting, it is saved and the only way to toggle music is to click that button.\n\t- Mute/Allow Sounds - mutes/unmutes all audio from the game for the current session (until you refresh the page), which means that no sound or music will be played, anywhere. The way to toggle audio again is to click that button or refresh the page.\n\t- Renderer - this toggles between WebGL and CANVAS mode. WebGL has more extras when displaying graphics and is supported by most modern browsers, however, it can be very resource-demanding, especially on older machines. CANVAS is the more lightweight solution, but the graphical effects may not be as amazing as WebGL. The default value is WebGL (if your browser supports it), otherwise CANVAS will be chosen by default. The only way to change between the rendering engines is to use that toggle.\n\nPlayer customization/stats:\nThis is right next to the experience controls. It displays your character, as well as other stats. You can change your character through the \"Change Character\" menu.\n\nMatch controls:\nThey are next to the player stats section. Using the \"Join Match\" button you can join a queue for a match. Underneath it, you can see the current status of the queue. Whenever the current queue is created, a host is automatically assigned. The host is allowed to start the match only when there are at least " + args[0] + " players. If enough players join the queue, it's better to wait for the system to automatically start a full match. If you want the host to be reassigned, you need to click \"Vote: Change Host\" and if at least " + args[1] + "/" + args[2] + " of players in the queue vote (and there are at least 5 players) the system will assign the host role to someone else. Voting to change the host is useful when everyone is tired of waiting and they want a smaller match and the current host is unwilling to start one.", { fontFamily: 'Rubik', fontSize: '25px', wordWrap: { width: 1800 }}).setOrigin(0, 0);
                 
                 var instructionsBg = this.add.rectangle(lobbyText1.x - 10, lobbyText1.y - 10, 1810, lobbyText1.height + lobbyText2.height + 20, "0x622e00", 0.8).setOrigin(0, 0);
                 
@@ -483,12 +505,15 @@ class LobbyScene extends Phaser.Scene
                 this.centerInContainer(nextPageBtn, nextPageText);
 
                 nextPageBtn.setInteractive().on('pointerdown', () => {
-                    for(var i in overlayItems)
+                    if(!this.messageContainer.alpha)
                     {
-                        try { overlayItems[i].destroy() } catch(e) {}
+                        for(var i in overlayItems)
+                        {
+                            try { overlayItems[i].destroy() } catch(e) {}
+                        }
+                        this.input.removeAllListeners('gameobjectdown'); 
+                        this.showHowToPlay(screen + 1, args);
                     }
-                    this.input.removeAllListeners('gameobjectdown'); 
-                    this.showHowToPlay(screen + 1, args);
                 });
 
                 overlayItems.push(instructionsBg);
@@ -498,7 +523,7 @@ class LobbyScene extends Phaser.Scene
                 overlayItems.push(nextPageText);
                 break;
             case 2:
-                pageTitle = this.add.text(0, 140, "ABOUT THE MATCHES", { fontFamily: 'Rubik', fontSize: '70px'}).setOrigin(0, 0);
+                pageTitle = this.add.text(0, 120, "ABOUT THE MATCHES", { fontFamily: 'Rubik', fontSize: '70px'}).setOrigin(0, 0);
                 this.centerInContainer(this.loadingShadow, pageTitle);
                 var lobbyText1 = this.add.text(0, pageTitle.y + pageTitle.height + 20, "TBA", { fontFamily: 'Rubik', fontSize: '25px', wordWrap: { width: 1800, useAdvancedWrap: true }}).setOrigin(0, 0);
                 this.centerInContainer(this.loadingShadow, lobbyText1);
@@ -510,12 +535,15 @@ class LobbyScene extends Phaser.Scene
                 this.centerInContainer(prevPageBtn, prevPageText);
 
                 prevPageBtn.setInteractive().on('pointerdown', () => {
-                    for(var i in overlayItems)
+                    if(!this.messageContainer.alpha)
                     {
-                        try { overlayItems[i].destroy() } catch(e) {}
+                        for(var i in overlayItems)
+                        {
+                            try { overlayItems[i].destroy() } catch(e) {}
+                        }
+                        this.input.removeAllListeners('gameobjectdown'); 
+                        this.showHowToPlay(screen - 1, args);
                     }
-                    this.input.removeAllListeners('gameobjectdown'); 
-                    this.showHowToPlay(screen - 1, args);
                 });
 
                 overlayItems.push(instructionsBg);
@@ -535,12 +563,15 @@ class LobbyScene extends Phaser.Scene
             this.children.bringToTop(overlayItems[i]);
 
         closeBtn.setInteractive().on('pointerdown', () => {
-            for(var i in overlayItems)
+            if(!this.messageContainer.alpha)
             {
-                try { overlayItems[i].destroy() } catch(e) {}
+                for(var i in overlayItems)
+                {
+                    try { overlayItems[i].destroy() } catch(e) {}
+                }
+                this.input.removeAllListeners('gameobjectdown'); 
+                this.loadingShadow.alpha = 0;
             }
-            this.input.removeAllListeners('gameobjectdown'); 
-            this.loadingShadow.alpha = 0;
         });
 
     }
@@ -559,6 +590,18 @@ class LobbyScene extends Phaser.Scene
                 this.matchLoadingIcon.destroy(); 
                 this.matchStatusText.destroy();
             } catch(e) {}
+            try
+            {
+                this.voteChangeHostBtnText.destroy();
+                this.voteChangeHostBtn.destroy();
+            } catch(e) {}
+            try
+            {
+                this.startMatchBtnText.destroy();
+                this.startMatchBtn.destroy();
+            } catch(e) {}
+            this.isHost = false;
+            this.hasVoted = false;
         }
         else
         {
@@ -581,6 +624,103 @@ class LobbyScene extends Phaser.Scene
             this.matchStatusText = this.add.text(1340, 855, args[0], { fontFamily: 'Rubik', fontSize: '25px'}).setOrigin(0, 0);
             this.matchLoadingIcon.x = this.matchMenuBg.x + Math.floor((this.matchMenuBg.width - this.matchLoadingIcon.displayWidth - this.matchStatusText.width - 10) / 2);
             this.matchStatusText.x = this.matchLoadingIcon.x + this.matchLoadingIcon.displayWidth + 10;
+        }
+    }
+
+    matchJoined(socket, args)
+    {
+        if(this.isJoiningMatch)
+        {
+            this.isHost = args[3];
+            this.minPlayersPerMatch = args[1];
+            this.setMatchStatusText([args[0] + "/" + args[2] + " players in queue"]);
+            this.showAdditionalJoinButtons(socket, args);
+        }
+    }
+
+    showAdditionalJoinButtons(socket, args)
+    {
+        if(args[0] >= this.minPlayersPerMatch)
+        {
+            try
+            {
+                this.voteChangeHostBtnText.destroy();
+                this.voteChangeHostBtn.destroy();
+            } catch(e) {}
+            try
+            {
+                this.startMatchBtnText.destroy();
+                this.startMatchBtn.destroy();
+            } catch(e) {}
+
+            if(!this.hasVoted && args[0] > 1)
+            {
+                this.voteChangeHostBtn = this.add.sprite(950, 950, 'mediumThinBtn', 'mediumThinBtn0001.png').setOrigin(0, 0);
+                this.centerInContainer(this.matchMenuBg, this.voteChangeHostBtn);
+                this.voteChangeHostBtnText = this.add.text(950, 955, "Vote: Change Host", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+                this.centerInContainer(this.voteChangeHostBtn, this.voteChangeHostBtnText);
+
+                this.voteChangeHostBtn.setInteractive().on('pointerdown', () => {
+                    if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
+                    {
+                        this.voteChangeHostBtn.anims.play('mediumThinBtnClicked');
+                        this.hasVoted = true;
+                        socket.emit("gameExt", "voteChangeHost");
+                        try { this.voteChangeHostBtnText.destroy(); } catch(e) {}
+                        this.voteChangeHostBtnText = this.add.text(950, 920, "This text will disappear when the host is changed,\nthat is, when enough players vote.\nLearn more by clicking on \"How to Play\".", { align: 'center', fontFamily: 'Rubik', fontSize: '25px'}).setOrigin(0, 0);
+                        this.centerInContainer(this.matchMenuBg, this.voteChangeHostBtnText);
+                        try { this.voteChangeHostBtn.destroy(); } catch(e) {}
+                    }
+                });
+            }
+            else if(this.hasVoted)
+            {
+                this.voteChangeHostBtnText = this.add.text(950, 920, "This text will disappear when the host is changed,\nthat is, when enough players vote.\nLearn more by clicking on \"How to Play\".", { align: 'center', fontFamily: 'Rubik', fontSize: '25px'}).setOrigin(0, 0);
+                this.centerInContainer(this.matchMenuBg, this.voteChangeHostBtnText);
+            }
+
+            if(this.isHost)
+            {
+                this.startMatchBtn = this.add.sprite(950, 1010, 'mediumThinBtn', 'mediumThinBtn0001.png').setOrigin(0, 0);
+                this.centerInContainer(this.matchMenuBg, this.startMatchBtn);
+                this.startMatchBtnText = this.add.text(950, this.startMatchBtn.y + 5, "Start Match", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+                this.centerInContainer(this.startMatchBtn, this.startMatchBtnText);
+
+                this.startMatchBtn.setInteractive().on('pointerdown', () => {
+                    if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
+                    {
+                        this.startMatchBtn.anims.play('mediumThinBtnClicked');
+                        socket.emit("gameExt", "startMatch");
+                    }
+                });
+            }
+        }
+    }
+
+    updateMatch(socket, args)
+    {
+        if(this.isJoiningMatch)
+        {
+            this.setMatchStatusText([args[0] + "/" + args[2] + " players in queue"]);
+            this.showAdditionalJoinButtons(socket, args);
+        }
+    }
+
+    changeHost(socket, args)
+    {
+        if(this.isJoiningMatch)
+        {
+            this.hasVoted = false;
+            if(this.isHost)
+            {
+                try
+                {
+                    this.startMatchBtnText.destroy();
+                    this.startMatchBtn.destroy();
+                } catch(e) {}
+            }
+            this.isHost = args[1];
+            this.showAdditionalJoinButtons(socket, args);
         }
     }
 
