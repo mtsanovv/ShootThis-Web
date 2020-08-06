@@ -117,8 +117,6 @@ class LobbyScene extends Phaser.Scene
                 });
             }
         }
-        else
-            this.initLobby(data.socket);
     }
 
     handleWorldResponse(socket, responseType, args)
@@ -137,9 +135,11 @@ class LobbyScene extends Phaser.Scene
                 if(checkCookie("music") === false)  
                     this.askForAudio(socket);
                 else
+                {
                     if(getCookie("music") === "true")
                         this.lobbyMusic = this.sound.play('lobbyMusic', {volume: this.musicVolume, loop: true});
                     this.initLobby(socket);
+                }
                 break;
             case "joinFail":
                 this.loadingShadow.alpha = 0;
@@ -167,6 +167,9 @@ class LobbyScene extends Phaser.Scene
                 break;
             case "changeHost":
                 this.changeHost(socket, args);
+                break;
+            case "startMatch":
+                this.startMatch(socket, args);
                 break;
         }
     }
@@ -638,6 +641,21 @@ class LobbyScene extends Phaser.Scene
         }
     }
 
+    startMatch(socket, args)
+    {
+        this.sound.play('joinMatchBtnSound');
+        try
+        {
+            game.scene.add("MatchScene", MatchScene, true, { x: 960, y: 540, socket: socket, timeToWait: args[0], createMatchExtListener: true});
+        }
+        catch(e)
+        {
+            game.scene.start("MatchScene", { x: 960, y: 540, socket: socket, timeToWait: args[0], createMatchExtListener: false});
+        }
+        this.sound.removeByKey('lobbyMusic');
+        game.scene.remove("LobbyScene");
+    }
+
     showAdditionalJoinButtons(socket, args)
     {
         if(args[0] >= this.minPlayersPerMatch)
@@ -741,7 +759,7 @@ class LobbyScene extends Phaser.Scene
         this.messageTitle.text = title;
         this.messageText.text = message;
         this.children.bringToTop(this.messageContainer);
-8
+
         try { this.messageYesBtn.destroy(); } catch(e) {}
         try { this.yesText.destroy(); } catch(e) {}
         try { this.messageNoBtn.destroy(); } catch(e) {}

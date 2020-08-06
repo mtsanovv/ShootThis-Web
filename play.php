@@ -6,19 +6,19 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<title>ShootThis - a 2D HTML5 online shooter</title>
 		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700|Material+Icons|Kaushan+Script|Rubik|Montserrat">
-		<link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:100,300,400,500,700|Material+Icons|Kaushan+Script|Rubik|Montserrat">
+		<link rel="stylesheet" href="//unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
 		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/1.0.10/cookieconsent.min.js"></script>
 		<script type="text/javascript">
 			window.cookieconsent_options = {"message":"This website uses cookies to improve your experience.","dismiss":"Got It","learnMore":"Learn More","link":"https://cookie-consent.app.forthe.top/why-websites-use-cookies/","target": "_blank", "theme":"light-bottom"};
 		</script>
-		<script src="https://cdn.jsdelivr.net/npm/phaser@3.24.1/dist/phaser.min.js"></script>
+		<script src="//cdn.jsdelivr.net/npm/phaser@3.24.1/dist/phaser.min.js"></script>
 		<!--Alternative location for Phaser 3.24.1 -> js/phaser.min.js-->
 	</head>
 	<body style="background-image: url('images/background.png'); color: #ffffff;">
-		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-		<script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
-		<script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+		<script src="//code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="//unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+		<script src="//unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
 		<script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
 		<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(255,255,255, 0.1); box-shadow: none !important; border-bottom: 1px solid rgba(255, 255, 255, 0.7) !important;">
 		  <div class="navbar-brand" style="font-family: 'Kaushan Script' !important;" >ShootThis</div>
