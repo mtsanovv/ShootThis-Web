@@ -129,6 +129,7 @@ class LobbyScene extends Phaser.Scene
                 break;
             case "joinOk":
                 this.hasConnected = true;
+                this.isJoiningMatch = false;
                 this.loadingShadow.alpha = 0;
                 this.loadingText.destroy();
                 this.loadingPercentage.destroy();
@@ -341,7 +342,6 @@ class LobbyScene extends Phaser.Scene
             this.background.destroy();
         }
         catch(e) {}
-
         this.background = this.add.image(960, 540, 'lobbybg');
 
         this.spawnClouds();
@@ -653,7 +653,7 @@ class LobbyScene extends Phaser.Scene
             game.scene.start("MatchScene", { x: 960, y: 540, socket: socket, timeToWait: args[0], createMatchExtListener: false});
         }
         this.sound.removeByKey('lobbyMusic');
-        game.scene.remove("LobbyScene");
+        game.scene.stop("LobbyScene");
     }
 
     showAdditionalJoinButtons(socket, args)

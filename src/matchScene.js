@@ -20,6 +20,7 @@ class MatchScene extends Phaser.Scene
         this.timeToWait = 0;
         this.waitingForMatch = false;
         this.socket;
+        this.showingOptions = false;
     }
 
     create(data)
@@ -73,7 +74,14 @@ class MatchScene extends Phaser.Scene
             this.waitingForMatch = true;
 
             this.input.keyboard.on('keydown', (event) => {
-                switch(event.code)
+                switch(event.which)
+                {
+                    //for player movement etc
+                }
+            });
+
+            this.input.keyboard.on('keyup', (event) => {
+                switch(event.which)
                 {
                     case 27:
                         this.showOptions(data.socket);
@@ -85,7 +93,57 @@ class MatchScene extends Phaser.Scene
 
     showOptions(socket)
     {
-        console.log("settings menu");
+        if(!this.showingOptions)
+        {
+            this.showingOptions = true;
+            var overlayItems = [];
+
+            var shadow = this.add.rectangle(0, 0, 1920, 1080, "0x000000", 0.6).setOrigin(0, 0);
+
+            var returnToMatchBtn = this.add.sprite(0, 500, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
+            this.centerInContainer(this.loadingShadow, returnToMatchBtn);
+            var returnToMatchBtnText = this.add.text(0, 510, "Return to Match", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
+            this.centerInContainer(returnToMatchBtn, returnToMatchBtnText);
+
+            var returnToLobbyBtn = this.add.sprite(0, 600, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
+            this.centerInContainer(this.loadingShadow, returnToLobbyBtn);
+            var returnToLobbyBtnText = this.add.text(0, 610, "Return to Lobby", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
+            this.centerInContainer(returnToLobbyBtn, returnToLobbyBtnText);
+
+            overlayItems.push(shadow);
+            overlayItems.push(returnToMatchBtn);
+            overlayItems.push(returnToMatchBtnText);
+            overlayItems.push(returnToLobbyBtn);
+            overlayItems.push(returnToLobbyBtnText);
+
+            for(var i in overlayItems)
+                this.children.bringToTop(overlayItems[i]);
+
+            returnToMatchBtn.setInteractive().on('pointerdown', () => {
+                if(!this.messageContainer.alpha)
+                {
+                    for(var i in overlayItems)
+                    {
+                        try { overlayItems[i].destroy() } catch(e) {}
+                    }
+                    this.loadingShadow.alpha = 0;
+                    this.showingOptions = false;
+                }
+            });
+
+            returnToLobbyBtn.setInteractive().on('pointerdown', () => {
+                if(!this.messageContainer.alpha)
+                {
+                    for(var i in overlayItems)
+                    {
+                        try { overlayItems[i].destroy() } catch(e) {}
+                    }
+                    this.loadingShadow.alpha = 0;
+                    this.showingOptions = false;
+                    this.leaveMatch(socket);
+                }
+            });
+        }
     }
 
     update(time, delta)
@@ -125,9 +183,9 @@ class MatchScene extends Phaser.Scene
 
     leaveMatch(socket)
     {
-        game.scene.add("LobbyScene", LobbyScene, true, { x: 960, y: 540, socket: this.socket});
+        game.scene.start("LobbyScene", { x: 960, y: 540, socket: this.socket});
         socket.emit("gameExt", "cancelJoin");
-        game.scene.remove("MatchScene");
+        game.scene.stop("MatchScene");
     }
 
     matchFail(socket)
