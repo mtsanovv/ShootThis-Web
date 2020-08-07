@@ -4,6 +4,10 @@ class LobbyScene extends Phaser.Scene
     constructor (config)
     {
         super(config);
+    }
+
+    initVariables()
+    {
         this.loadingPercentage;
         this.messageContainer;
         this.messageTitle;
@@ -80,7 +84,7 @@ class LobbyScene extends Phaser.Scene
             }
             else
             {
-                var socket = io(getCookie("gameServer"), {secure: true, reconnection: false, transport: ['websocket']});
+                var socket = io(getCookie("gameServer"), {secure: true, reconnection: false, transport: ['websocket'], timeout: 40000});
                 socket.on('gameExt', (responseType, args) => {
                     this.handleWorldResponse(socket, responseType, args);
                 });
@@ -107,12 +111,18 @@ class LobbyScene extends Phaser.Scene
                         } 
                         catch(e){}
                     }
-                    if(!this.messageContainer.alpha)
+                    for(var scene in game.scene.scenes)
                     {
-                        this.loadingShadow.alpha = 0;
-                        this.loadingText.destroy();
-                        this.loadingPercentage.destroy();
-                        this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
+                        try
+                        {
+                            if(!game.scene.scenes[scene].messageContainer.alpha)
+                            {
+                                game.scene.scenes[scene].loadingShadow.alpha = 0;
+                                game.scene.scenes[scene].loadingText.destroy();
+                                game.scene.scenes[scene].loadingPercentage.destroy();
+                                game.scene.scenes[scene].showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
+                            }
+                        } catch(e) {}
                     }
                 });
             }
@@ -128,8 +138,8 @@ class LobbyScene extends Phaser.Scene
                 socket.emit("gameExt", "joinServer", getCookie("loginToken").split(","));
                 break;
             case "joinOk":
+                this.initVariables();
                 this.hasConnected = true;
-                this.isJoiningMatch = false;
                 this.loadingShadow.alpha = 0;
                 this.loadingText.destroy();
                 this.loadingPercentage.destroy();

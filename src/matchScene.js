@@ -4,6 +4,10 @@ class MatchScene extends Phaser.Scene
     constructor (config)
     {
         super(config);
+    }
+
+    initVariables()
+    {
         this.loadingPercentage;
         this.messageContainer;
         this.messageTitle;
@@ -27,6 +31,7 @@ class MatchScene extends Phaser.Scene
     {
         if(data.socket && data.timeToWait)
         {
+            this.initVariables();
             this.socket = data.socket;
 
             this.messageContainer = this.add.container(0, 0);
@@ -148,24 +153,27 @@ class MatchScene extends Phaser.Scene
 
     update(time, delta)
     {
-        if(this.waitingForMatch)
+        try
         {
-            if(this.timeToWait <= 1)
+            if(this.waitingForMatch)
             {
-                this.loadingPercentage.text = "Waiting for response from server...";
-                this.centerInContainer(this.background, this.loadingPercentage);
-                this.waitingForMatch = false;
-            }
-            else
-            {
-                this.timeToWait -= delta;
-                if(Math.ceil(this.timeToWait / 1000) != Math.ceil((this.timeToWait + delta) / 1000))
+                if(this.timeToWait <= 1)
                 {
-                    this.loadingPercentage.text = "Match starting in " + Math.ceil(this.timeToWait / 1000) + "...";
+                    this.loadingPercentage.text = "Waiting for response from server...";
                     this.centerInContainer(this.background, this.loadingPercentage);
+                    this.waitingForMatch = false;
+                }
+                else
+                {
+                    this.timeToWait -= delta;
+                    if(Math.ceil(this.timeToWait / 1000) != Math.ceil((this.timeToWait + delta) / 1000))
+                    {
+                        this.loadingPercentage.text = "Match starting in " + Math.ceil(this.timeToWait / 1000) + "...";
+                        this.centerInContainer(this.background, this.loadingPercentage);
+                    }
                 }
             }
-        }
+        } catch(e) {}
     }
 
     handleWorldResponse(socket, responseType, args)
@@ -183,6 +191,7 @@ class MatchScene extends Phaser.Scene
 
     leaveMatch(socket)
     {
+        console.log("leaving match");
         game.scene.start("LobbyScene", { x: 960, y: 540, socket: this.socket});
         socket.emit("gameExt", "cancelJoin");
         game.scene.stop("MatchScene");
@@ -190,9 +199,13 @@ class MatchScene extends Phaser.Scene
 
     matchFail(socket)
     {
+        this.loadingShadow.alpha = 0;
+        this.loadingText.destroy();
+        this.loadingPercentage.destroy();
         this.showMessage("CANNOT JOIN MATCH", "Everybody has left the match. You can try joining another one in the lobby.", "false", null, null, () => {
             this.messageOkBtn.anims.play('loginBtnClicked'); 
             this.messageContainer.alpha = 0;
+            console.log("clicked");
             this.leaveMatch(socket);
         });
     }
