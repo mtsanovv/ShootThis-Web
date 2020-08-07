@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 16, 2020 at 05:02 PM
+-- Generation Time: Aug 07, 2020 at 06:30 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.1.33
 
@@ -53,7 +53,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `ipfromreg` varchar(45) NOT NULL,
   `ip` varchar(45) NOT NULL,
-  `playerData` longtext NOT NULL DEFAULT '{"level": 1, "character": 0, "xp": 0, "xpToLevel": 2600, "kills": 0, "kdr": 0, "deaths": 0, "totalGames": 0, "lastMatchKills": 0, "lastMatchXp": 0, "lastMatchDamageDone": 0, "lastMatchTimeElapsed": 0}',
+  `playerData` longtext NOT NULL DEFAULT '{"level": 1, "character": 0, "xp": 0, "kills": 0, "deaths": 0, "totalGames": 0, "lastMatchKills": 0, "lastMatchXp": 0, "lastMatchDamageDone": 0, "lastMatchTimeElapsed": 0}',
   `savedLoginCookie` varchar(72) NOT NULL,
   `savedLoginCookieValidUntil` datetime NOT NULL,
   `loginToken` varchar(72) NOT NULL,
