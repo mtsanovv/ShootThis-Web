@@ -78,6 +78,9 @@ class LoginScene extends Phaser.Scene
         this.load.image('characterLobby0', 'assets/lobby/characters/0.png');
         this.load.image('characterLobby1', 'assets/lobby/characters/1.png');
 
+        //Load match assets
+        this.load.multiatlas('characterSprites', 'assets/match/characters.json', 'assets/match');
+
         //Login plugins
         this.load.scenePlugin({
             key: 'rexuiplugin',
