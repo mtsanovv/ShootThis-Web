@@ -25,6 +25,10 @@ class MatchScene extends Phaser.Scene
         this.waitingForMatch = false;
         this.socket;
         this.showingOptions = false;
+        this.players = {};
+        this.spawnables = {};
+        this.obstacles = {};
+        this.backgroundTile;
     }
 
     create(data)
@@ -78,22 +82,24 @@ class MatchScene extends Phaser.Scene
 
             this.waitingForMatch = true;
 
-            this.input.keyboard.on('keydown', (event) => {
-                switch(event.which)
-                {
-                    //for player movement etc
-                }
-            });
-
-            this.input.keyboard.on('keyup', (event) => {
-                switch(event.which)
-                {
-                    case 27:
-                        this.showOptions(data.socket);
-                        break;
-                }
-            });
+            this.initiateControls(data.socket);
         }
+    }
+
+    initiateControls(socket)
+    {
+        this.input.keyboard.on('keydown', (event) => {
+            
+        });
+
+        this.input.keyboard.on('keyup', (event) => {
+            switch(event.which)
+            {
+                case 27:
+                    this.showOptions(data.socket);
+                    break;
+            }
+        });
     }
 
     showOptions(socket)
@@ -186,7 +192,28 @@ class MatchScene extends Phaser.Scene
             case "matchFail":
                 this.matchFail(socket);
                 break;
+            case "startMatch":
+                this.startMatch(socket, args);
+                break;
         }
+    }
+
+    startMatch(socket, args)
+    {
+        try
+        {
+            this.background.destroy();
+            this.loadingShadow.alpha = 0;
+            this.loadingText.destroy();
+            this.loadingPercentage.destroy();
+        }
+        catch(e) {}
+        this.physics.world.setBounds(0, 0, args[0], args[1], 1, 1, 1, 1);
+        this.cameras.main.centerOn(0, 0);
+        this.cameras.main.setBounds(0, 0, args[0], args[1]);
+        this.backgroundTile = this.add.tileSprite(0, 0, args[0], args[1], 'matchTile').setOrigin(0, 0);
+        console.log(this.backgroundTile.width);
+        console.log(this.backgroundTile.displayWidth);
     }
 
     leaveMatch(socket)

@@ -77,6 +77,7 @@ class LoginScene extends Phaser.Scene
         //Load character assets
         this.load.image('characterLobby0', 'assets/lobby/characters/0.png');
         this.load.image('characterLobby1', 'assets/lobby/characters/1.png');
+        this.load.image('matchTile', 'assets/match/tile.png');
 
         //Load match assets
         this.load.multiatlas('characterSprites', 'assets/match/characters.json', 'assets/match');
