@@ -29,6 +29,8 @@ class MatchScene extends Phaser.Scene
         this.spawnables = {};
         this.obstacles = {};
         this.backgroundTile;
+        this.focusedPlayer = null;
+        this.focusedPlayerId = -1;
     }
 
     create(data)
@@ -89,17 +91,39 @@ class MatchScene extends Phaser.Scene
     initiateControls(socket)
     {
         this.input.keyboard.on('keydown', (event) => {
-            
+            switch(event.which)
+            {
+                case 87:
+                    //player moves up
+                    break;
+                case 83:
+                    //player moves down
+                    break;
+                case 65:
+                    //player moves left
+                    break;
+                case 68:
+                    //player moves right
+                    break;
+            }
         });
 
         this.input.keyboard.on('keyup', (event) => {
             switch(event.which)
             {
                 case 27:
-                    this.showOptions(data.socket);
+                    this.showOptions(socket);
                     break;
             }
         });
+
+        this.input.on('pointermove', function (pointer) {
+            if(this.focusedPlayer)
+            {
+                var angle = Phaser.Math.Angle.Between(1920 / 2, 1080 / 2, pointer.x, pointer.y);
+                this.focusedPlayer.rotation = angle;
+            }
+        }, this);
     }
 
     showOptions(socket)
@@ -195,7 +219,15 @@ class MatchScene extends Phaser.Scene
             case "startMatch":
                 this.startMatch(socket, args);
                 break;
+            case "focusedPlayer":
+                this.setFocusedPlayerId(args);
+                break;
         }
+    }
+
+    setFocusedPlayerId(args)
+    {
+        this.focusedPlayerId = args[0];
     }
 
     startMatch(socket, args)
@@ -209,16 +241,32 @@ class MatchScene extends Phaser.Scene
         }
         catch(e) {}
         this.physics.world.setBounds(0, 0, args[0], args[1], 1, 1, 1, 1);
-        this.cameras.main.centerOn(0, 0);
-        this.cameras.main.setBounds(0, 0, args[0], args[1]);
-        this.backgroundTile = this.add.tileSprite(0, 0, args[0], args[1], 'matchTile').setOrigin(0, 0);
-        console.log(this.backgroundTile.width);
-        console.log(this.backgroundTile.displayWidth);
+        this.cameras.main.setBounds(-512, -512, args[0] + 512, args[1] + 512);
+        this.backgroundTile = this.add.tileSprite(-512, -512, args[0] + 512, args[1] + 512, 'matchTile').setOrigin(0, 0);
+        
+        this.players = args[2];
+        this.obstacles = args[3];
+        this.spawnables = args[4];
+
+        //add first obstacles to scene, then spawnables
+
+        for(var player in this.players)
+        {
+            var playerAdded = this.add.sprite(this.players[player].x, this.players[player].y, 'characterSprites', this.players[player].character + ".png");
+            if(playerAdded.width !== playerAdded.width)
+                console.log("WARNING: Misconfigured width in config file for character " + this.players[player].character);
+            if(playerAdded.height !== playerAdded.height)
+                console.log("WARNING: Misconfigured height in config file for character " + this.players[player].character);
+            if(player == this.focusedPlayerId)
+            {
+                this.focusedPlayer = playerAdded;
+                this.cameras.main.startFollow(this.focusedPlayer);
+            }
+        }
     }
 
     leaveMatch(socket)
     {
-        console.log("leaving match");
         game.scene.start("LobbyScene", { x: 960, y: 540, socket: this.socket});
         socket.emit("gameExt", "cancelJoin");
         game.scene.stop("MatchScene");
@@ -232,7 +280,6 @@ class MatchScene extends Phaser.Scene
         this.showMessage("CANNOT JOIN MATCH", "Everybody has left the match. You can try joining another one in the lobby.", "false", null, null, () => {
             this.messageOkBtn.anims.play('loginBtnClicked'); 
             this.messageContainer.alpha = 0;
-            console.log("clicked");
             this.leaveMatch(socket);
         });
     }
