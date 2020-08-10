@@ -84,10 +84,7 @@ class UIScene extends Phaser.Scene
                     {
                         try { overlayItems[i].destroy() } catch(e) {}
                     }
-                    this.loadingShadow.alpha = 0;
                     this.showingOptions = false;
-                    game.scene.sendToBack("UIScene");
-                    game.scene.sleep("UIScene");
                 }
             });
 
@@ -98,7 +95,6 @@ class UIScene extends Phaser.Scene
                     {
                         try { overlayItems[i].destroy() } catch(e) {}
                     }
-                    this.loadingShadow.alpha = 0;
                     this.showingOptions = false;
                     this.leaveMatch(socket);
                 }
@@ -106,17 +102,16 @@ class UIScene extends Phaser.Scene
         }
     }
 
-
-
     leaveMatch(socket)
     {
         game.scene.start("LobbyScene", { x: 960, y: 540, socket: this.socket});
         socket.emit("gameExt", "cancelJoin");
         game.scene.stop("MatchScene");
+        game.scene.sendToBack("UIScene");
         game.scene.stop("UIScene");
     }
 
-    showMessage(title, message, yesno = "none", yesCallback = () => {this.messageYesBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0; game.scene.sendToBack("UIScene"); game.scene.sleep("UIScene"); }, noCallback = () => {this.messageNoBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0; game.scene.sendToBack("UIScene"); game.scene.sleep("UIScene"); }, okCallback = () => {this.messageOkBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0; game.scene.sendToBack("UIScene"); game.scene.sleep("UIScene"); })
+    showMessage(title, message, yesno = "none", yesCallback = () => {this.messageYesBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, noCallback = () => {this.messageNoBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;}, okCallback = () => {this.messageOkBtn.anims.play('loginBtnClicked'); this.messageContainer.alpha = 0;})
     {
         this.messageTitle.text = title;
         this.messageText.text = message;

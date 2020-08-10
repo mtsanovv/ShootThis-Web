@@ -88,8 +88,6 @@ class MatchScene extends Phaser.Scene
             switch(event.which)
             {
                 case 27:
-                    game.scene.wake("UIScene");
-                    game.scene.bringToTop("UIScene");
                     game.scene.getScene("UIScene").showOptions(socket);
                     break;
             }
@@ -110,20 +108,18 @@ class MatchScene extends Phaser.Scene
         {
             if(this.waitingForMatch)
             {
+                this.timeToWait -= delta;
+
                 if(this.timeToWait <= 1)
                 {
                     this.loadingPercentage.text = "Waiting for response from server...";
                     this.centerInContainer(this.background, this.loadingPercentage);
                     this.waitingForMatch = false;
                 }
-                else
+                else if(Math.ceil(this.timeToWait / 1000) != Math.ceil((this.timeToWait + delta) / 1000))
                 {
-                    this.timeToWait -= delta;
-                    if(Math.ceil(this.timeToWait / 1000) != Math.ceil((this.timeToWait + delta) / 1000))
-                    {
-                        this.loadingPercentage.text = "Match starting in " + Math.ceil(this.timeToWait / 1000) + "...";
-                        this.centerInContainer(this.background, this.loadingPercentage);
-                    }
+                    this.loadingPercentage.text = "Match starting in " + Math.ceil(this.timeToWait / 1000) + "...";
+                    this.centerInContainer(this.background, this.loadingPercentage);
                 }
             }
         } catch(e) {}
@@ -191,6 +187,7 @@ class MatchScene extends Phaser.Scene
     {
         game.scene.start("LobbyScene", { x: 960, y: 540, socket: this.socket});
         socket.emit("gameExt", "cancelJoin");
+        game.scene.sendToBack("UIScene");
         game.scene.stop("UIScene");
         game.scene.stop("MatchScene");
     }
@@ -200,8 +197,6 @@ class MatchScene extends Phaser.Scene
         this.loadingShadow.alpha = 0;
         this.loadingText.destroy();
         this.loadingPercentage.destroy();
-        game.scene.wake("UIScene");
-        game.scene.bringToTop("UIScene");
         game.scene.getScene("UIScene").showMessage("CANNOT JOIN MATCH", "Everybody has left the match. You can try joining another one in the lobby.", "false", null, null, () => {
             game.scene.getScene("UIScene").messageOkBtn.anims.play('loginBtnClicked'); 
             game.scene.getScene("UIScene").messageContainer.alpha = 0;
