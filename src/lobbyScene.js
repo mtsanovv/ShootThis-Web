@@ -111,17 +111,26 @@ class LobbyScene extends Phaser.Scene
                         } 
                         catch(e){}
                     }
-                    for(var scene in game.scene.scenes)
+
+                    if(game.scene.isActive("LobbyScene"))
                     {
                         try
                         {
-                            if(!game.scene.scenes[scene].messageContainer.alpha)
-                            {
-                                game.scene.scenes[scene].loadingShadow.alpha = 0;
-                                game.scene.scenes[scene].loadingText.destroy();
-                                game.scene.scenes[scene].loadingPercentage.destroy();
-                                game.scene.scenes[scene].showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
-                            }
+                            this.loadingShadow.alpha = 0;
+                            this.loadingText.destroy();
+                            this.loadingPercentage.destroy();
+                            this.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
+                        } catch(e) {}
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var UIScene = game.scene.getScene("UIScene");
+                            game.scene.wake("UIScene");
+                            game.scene.bringToTop("UIScene");
+                            UIScene.loadingShadow.alpha = 0;
+                            UIScene.showMessage("DISCONNECTED", "You have been disconnected from ShootThis. Please refresh the page to connect again.");
                         } catch(e) {}
                     }
                 });
@@ -656,10 +665,14 @@ class LobbyScene extends Phaser.Scene
         this.sound.play('joinMatchBtnSound');
         try
         {
+            game.scene.add("UIScene", UIScene, true, {  x: 960, y: 540, socket: socket });
+            game.scene.sleep("UIScene");
             game.scene.add("MatchScene", MatchScene, true, { x: 960, y: 540, socket: socket, timeToWait: args[0], createMatchExtListener: true});
         }
         catch(e)
         {
+            game.scene.start("UIScene", {  x: 960, y: 540, socket: socket });
+            game.scene.sleep("UIScene");
             game.scene.start("MatchScene", { x: 960, y: 540, socket: socket, timeToWait: args[0], createMatchExtListener: false});
         }
         this.sound.removeByKey('lobbyMusic');
