@@ -163,9 +163,8 @@ class MatchScene extends Phaser.Scene
             this.loadingPercentage.destroy();
         }
         catch(e) {}
-        this.physics.world.setBounds(0, 0, args[0], args[1], 1, 1, 1, 1);
-        this.cameras.main.setBounds(-512, -512, args[0] + 512, args[1] + 512);
-        this.backgroundTile = this.add.tileSprite(-512, -512, args[0] + 512, args[1] + 512, 'matchTile').setOrigin(0, 0);
+        this.cameras.main.setBounds(-1024, -1024, args[0] + 1024, args[1] + 1024);
+        this.backgroundTile = this.add.tileSprite(-1024, -1024, args[0] + 1024, args[1] + 1024, 'matchTile').setOrigin(0, 0);
         
         this.players = args[2];
         this.obstacles = args[3];
