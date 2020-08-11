@@ -67,20 +67,17 @@ class MatchScene extends Phaser.Scene
     initiateControls(socket)
     {
         this.input.keyboard.on('keydown', (event) => {
-            switch(event.which)
+            if(this.focusedPlayer)
             {
-                case 87:
-                    //player moves up
-                    break;
-                case 83:
-                    //player moves down
-                    break;
-                case 65:
-                    //player moves left
-                    break;
-                case 68:
-                    //player moves right
-                    break;
+                switch(event.which)
+                {
+                    case 87:
+                        socket.emit("matchExt", "movePlayer", ["plus"]);
+                        break;
+                    case 83:
+                        socket.emit("matchExt", "movePlayer", ["minus"]);
+                        break;
+                }
             }
         });
 
@@ -98,6 +95,7 @@ class MatchScene extends Phaser.Scene
             {
                 var angle = Phaser.Math.Angle.Between(1920 / 2, 1080 / 2, pointer.x, pointer.y);
                 this.focusedPlayer.rotation = angle;
+                socket.emit("matchExt", "rotatePlayer", [angle]);
             }
         }, this);
     }
@@ -141,7 +139,25 @@ class MatchScene extends Phaser.Scene
             case "focusedPlayer":
                 this.setFocusedPlayerId(args);
                 break;
+            case "playerRotated":
+                this.playerRotated(args);
+                break;
+            case "playerMoved":
+                this.playerMoved(args);
+                break;
         }
+    }
+
+    playerMoved(args)
+    {
+        this.players[args[0]].playerSprite.x = args[1];
+        this.players[args[0]].playerSprite.y = args[2];
+        this.players[args[0]].playerSprite.rotation = args[3];
+    }
+
+    playerRotated(args)
+    {
+        this.players[args[0]].playerSprite.rotation = args[1];
     }
 
     setFocusedPlayerId(args)
@@ -170,14 +186,14 @@ class MatchScene extends Phaser.Scene
 
         for(var player in this.players)
         {
-            var playerAdded = this.add.sprite(this.players[player].x, this.players[player].y, 'characterSprites', this.players[player].character + ".png");
-            if(playerAdded.width !== playerAdded.width)
+            this.players[player].playerSprite = this.add.sprite(this.players[player].x, this.players[player].y, 'characterSprites', this.players[player].character + ".png");
+            if(this.players[player].playerSprite.width !== this.players[player].width)
                 console.log("WARNING: Misconfigured width in config file for character " + this.players[player].character);
-            if(playerAdded.height !== playerAdded.height)
+            if(this.players[player].playerSprite.height !== this.players[player].height)
                 console.log("WARNING: Misconfigured height in config file for character " + this.players[player].character);
             if(player == this.focusedPlayerId)
             {
-                this.focusedPlayer = playerAdded;
+                this.focusedPlayer = this.players[player].playerSprite;
                 this.cameras.main.startFollow(this.focusedPlayer);
             }
         }
