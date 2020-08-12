@@ -18,7 +18,6 @@ class MatchScene extends Phaser.Scene
         this.players = {};
         this.spawnables = {};
         this.obstacles = {};
-        this.backgroundTile;
         this.focusedPlayer = null;
         this.focusedPlayerId = -1;
     }
@@ -176,7 +175,14 @@ class MatchScene extends Phaser.Scene
         }
         catch(e) {}
         this.cameras.main.setBounds(-1024, -1024, args[0] + 1024, args[1] + 1024);
-        this.backgroundTile = this.add.tileSprite(-1024, -1024, args[0] + 1024, args[1] + 1024, 'matchTile').setOrigin(0, 0);
+        this.add.tileSprite(-1024, -1024, args[0] + 1024, args[1] + 1024, 'matchTile').setOrigin(0, 0);
+        //          2
+        // walls - 1 3
+        //          4
+        this.add.tileSprite(-90, -90, 35, Math.ceil(args[6] / 55) * 55 + 150, 'wallSprite', 'wall-tile1.png').setOrigin(0, 0); //wall 1
+        this.add.tileSprite(-55, -90, Math.ceil(args[5] / 55) * 55 + 2 * 55, 35, 'wallSprite', 'wall-tile2.png').setOrigin(0, 0); //wall 2
+        this.add.tileSprite(Math.ceil(args[5] / 55) * 55 + 55, -90, 35, Math.ceil(args[6] / 55) * 55 + 180, 'wallSprite', 'wall-tile1.png').setOrigin(0, 0); //wall 3
+        this.add.tileSprite(-90, Math.ceil(args[6] / 55) * 55 + 60, Math.ceil(args[5] / 55) * 55 + 177, 35, 'wallSprite', 'wall-tile2.png').setOrigin(0, 0); //wall 4
         
         this.players = args[2];
         this.obstacles = args[3];
