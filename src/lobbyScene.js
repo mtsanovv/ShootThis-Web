@@ -454,7 +454,7 @@ class LobbyScene extends Phaser.Scene
         if(game.sound.mute || gameSoundMuted)
         {
             muteSoundsTxt.text = "Allow Sounds";
-            soundsIcon.setFrame('soundIcon0001.png');
+            soundsIcon.setFrame('soundIcon0002.png');
         }
 
         var rendererTxt = this.add.text(0, 1050, "Renderer", { fontFamily: 'Rubik', fontSize: '25px'}).setOrigin(0, 0);

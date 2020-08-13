@@ -58,21 +58,34 @@ class UIScene extends Phaser.Scene
 
             var shadow = this.add.rectangle(0, 0, 1920, 1080, "0x000000", 0.6).setOrigin(0, 0);
 
-            var returnToMatchBtn = this.add.sprite(0, 500, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
+            var returnToMatchBtn = this.add.sprite(0, 400, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
             this.centerInContainer(this.loadingShadow, returnToMatchBtn);
-            var returnToMatchBtnText = this.add.text(0, 510, "Return to Match", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
+            var returnToMatchBtnText = this.add.text(0, 410, "Return to Match", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
             this.centerInContainer(returnToMatchBtn, returnToMatchBtnText);
 
-            var returnToLobbyBtn = this.add.sprite(0, 600, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
+            var returnToLobbyBtn = this.add.sprite(0, 500, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
             this.centerInContainer(this.loadingShadow, returnToLobbyBtn);
-            var returnToLobbyBtnText = this.add.text(0, 610, "Return to Lobby", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
+            var returnToLobbyBtnText = this.add.text(0, 510, "Return to Lobby", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
             this.centerInContainer(returnToLobbyBtn, returnToLobbyBtnText);
+
+            var muteSoundsBtn = this.add.sprite(0, 600, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
+            this.centerInContainer(this.loadingShadow, muteSoundsBtn);
+            var muteSoundsBtnText = this.add.text(0, 610, "Mute Sounds", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
+            this.centerInContainer(muteSoundsBtn, muteSoundsBtnText);
+
+            if(game.sound.mute || gameSoundMuted)
+            {
+                muteSoundsBtnText.text = "Unmute Sounds";
+                this.centerInContainer(muteSoundsBtn, muteSoundsBtnText);
+            }
 
             overlayItems.push(shadow);
             overlayItems.push(returnToMatchBtn);
             overlayItems.push(returnToMatchBtnText);
             overlayItems.push(returnToLobbyBtn);
             overlayItems.push(returnToLobbyBtnText);
+            overlayItems.push(muteSoundsBtn);
+            overlayItems.push(muteSoundsBtnText);
 
             for(var i in overlayItems)
                 this.children.bringToTop(overlayItems[i]);
@@ -97,6 +110,24 @@ class UIScene extends Phaser.Scene
                     }
                     this.showingOptions = false;
                     this.leaveMatch(socket);
+                }
+            });
+
+            muteSoundsBtn.setInteractive().on('pointerdown', () => {
+                muteSoundsBtn.anims.play('wideBtnClicked');
+                if(game.sound.mute || gameSoundMuted)
+                {
+                    muteSoundsBtnText.text = "Mute Sounds";
+                    game.sound.mute = false;
+                    gameSoundMuted = false;
+                    this.centerInContainer(muteSoundsBtn, muteSoundsBtnText);
+                }
+                else
+                {
+                    muteSoundsBtnText.text = "Unmute Sounds";
+                    game.sound.mute = true;
+                    gameSoundMuted = true;
+                    this.centerInContainer(muteSoundsBtn, muteSoundsBtnText);
                 }
             });
         }
