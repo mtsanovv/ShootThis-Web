@@ -193,10 +193,6 @@ class MatchScene extends Phaser.Scene
         for(var player in this.players)
         {
             this.players[player].playerSprite = this.add.sprite(this.players[player].x, this.players[player].y, 'characterSprites', this.players[player].character + ".png");
-            if(this.players[player].playerSprite.width !== this.players[player].width)
-                console.log("WARNING: Misconfigured width in config file for character " + this.players[player].character);
-            if(this.players[player].playerSprite.height !== this.players[player].height)
-                console.log("WARNING: Misconfigured height in config file for character " + this.players[player].character);
             if(player == this.focusedPlayerId)
             {
                 this.focusedPlayer = this.players[player].playerSprite;
