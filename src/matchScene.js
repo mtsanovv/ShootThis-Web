@@ -20,6 +20,8 @@ class MatchScene extends Phaser.Scene
         this.obstacles = {};
         this.focusedPlayer = null;
         this.focusedPlayerId = -1;
+        this.background;
+        this.tileResourceFailed = false;
     }
 
     create(data)
@@ -152,6 +154,7 @@ class MatchScene extends Phaser.Scene
         this.players[args[0]].playerSprite.x = args[1];
         this.players[args[0]].playerSprite.y = args[2];
         this.players[args[0]].playerSprite.rotation = args[3];
+        this.backgroundFollowsCamera();
     }
 
     playerRotated(args)
@@ -175,9 +178,32 @@ class MatchScene extends Phaser.Scene
         }
         catch(e) {}
         this.cameras.main.setBounds(-1024, -1024, args[0] + 1024, args[1] + 1024);
+
         try
         {
             this.add.tileSprite(-1024, -1024, args[0] + 1024, args[1] + 1024, 'matchTile').setOrigin(0, 0);
+        }
+        catch(e)
+        {
+            try
+            {
+                this.background = this.add.tileSprite(0, 0, 1920, 1080, 'matchTile');
+                this.tileResourceFailed = true;
+            }
+            catch(e)
+            {
+                var UIScene = game.scene.getScene("UIScene");
+                game.scene.bringToTop("UIScene");
+                UIScene.showMessage("GAMEPLAY ERROR", "Your device is unable to handle ShootThis' graphics. Try changing the renderer to CANVAS in the lobby.\nIf the issue persists, nothing can be done, as the problem is your hardware.\nClick OK to go back to the lobby.", "false", null, null, () => {
+                    this.leaveMatch(socket);
+                });
+                return;
+            }
+            
+        }
+
+        try
+        {
             //          2
             // walls - 1 3
             //          4
@@ -193,6 +219,7 @@ class MatchScene extends Phaser.Scene
             UIScene.showMessage("GAMEPLAY ERROR", "Your device is unable to handle ShootThis' graphics. Try changing the renderer to CANVAS in the lobby.\nIf the issue persists, nothing can be done, as the problem is your hardware.\nClick OK to go back to the lobby.", "false", null, null, () => {
                 this.leaveMatch(socket);
             });
+            return;
         }
         this.players = args[2];
         this.obstacles = args[3];
@@ -207,6 +234,7 @@ class MatchScene extends Phaser.Scene
             {
                 this.focusedPlayer = this.players[player].playerSprite;
                 this.cameras.main.startFollow(this.focusedPlayer);
+                this.backgroundFollowsCamera();
             }
         }
     }
@@ -230,6 +258,15 @@ class MatchScene extends Phaser.Scene
             game.scene.getScene("UIScene").messageContainer.alpha = 0;
             game.scene.getScene("UIScene").leaveMatch(socket);
         });
+    }
+
+    backgroundFollowsCamera()
+    {
+        if(this.tileResourceFailed)
+        {
+            this.background.x = this.focusedPlayer.x;
+            this.background.y = this.focusedPlayer.y;
+        }
     }
 
     centerInContainer(container, element, y = false, x = true)
