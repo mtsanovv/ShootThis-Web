@@ -71,10 +71,10 @@ class MatchScene extends Phaser.Scene
                 switch(event.which)
                 {
                     case 87:
-                        socket.emit("matchExt", "movePlayer", ["plus"]);
+                        socket.emit("matchExt", "movePlayer", ["plus", game.loop.actualFps]);
                         break;
                     case 83:
-                        socket.emit("matchExt", "movePlayer", ["minus"]);
+                        socket.emit("matchExt", "movePlayer", ["minus", game.loop.actualFps]);
                         break;
                 }
             }
@@ -175,15 +175,25 @@ class MatchScene extends Phaser.Scene
         }
         catch(e) {}
         this.cameras.main.setBounds(-1024, -1024, args[0] + 1024, args[1] + 1024);
-        this.add.tileSprite(-1024, -1024, args[0] + 1024, args[1] + 1024, 'matchTile').setOrigin(0, 0);
-        //          2
-        // walls - 1 3
-        //          4
-        this.add.tileSprite(-90, -90, 35, Math.ceil(args[6] / 55) * 55 + 150, 'wallSprite', 'wall-tile1.png').setOrigin(0, 0); //wall 1
-        this.add.tileSprite(-55, -90, Math.ceil(args[5] / 55) * 55 + 2 * 55, 35, 'wallSprite', 'wall-tile2.png').setOrigin(0, 0); //wall 2
-        this.add.tileSprite(Math.ceil(args[5] / 55) * 55 + 55, -90, 35, Math.ceil(args[6] / 55) * 55 + 180, 'wallSprite', 'wall-tile1.png').setOrigin(0, 0); //wall 3
-        this.add.tileSprite(-90, Math.ceil(args[6] / 55) * 55 + 60, Math.ceil(args[5] / 55) * 55 + 177, 35, 'wallSprite', 'wall-tile2.png').setOrigin(0, 0); //wall 4
-        
+        try
+        {
+            this.add.tileSprite(-1024, -1024, args[0] + 1024, args[1] + 1024, 'matchTile').setOrigin(0, 0);
+            //          2
+            // walls - 1 3
+            //          4
+            this.add.tileSprite(-90, -90, 35, Math.ceil(args[6] / 55) * 55 + 150, 'wallSprite', 'wall-tile1.png').setOrigin(0, 0); //wall 1
+            this.add.tileSprite(-55, -90, Math.ceil(args[5] / 55) * 55 + 2 * 55, 35, 'wallSprite', 'wall-tile2.png').setOrigin(0, 0); //wall 2
+            this.add.tileSprite(Math.ceil(args[5] / 55) * 55 + 55, -90, 35, Math.ceil(args[6] / 55) * 55 + 180, 'wallSprite', 'wall-tile1.png').setOrigin(0, 0); //wall 3
+            this.add.tileSprite(-90, Math.ceil(args[6] / 55) * 55 + 60, Math.ceil(args[5] / 55) * 55 + 177, 35, 'wallSprite', 'wall-tile2.png').setOrigin(0, 0); //wall 4
+        }
+        catch(e)
+        {
+            var UIScene = game.scene.getScene("UIScene");
+            game.scene.bringToTop("UIScene");
+            UIScene.showMessage("GAMEPLAY ERROR", "Your device is unable to handle ShootThis' graphics. Try changing the renderer to CANVAS in the lobby.\nIf the issue persists, nothing can be done, as the problem is your hardware.\nClick OK to go back to the lobby.", "false", null, null, () => {
+                this.leaveMatch(socket);
+            });
+        }
         this.players = args[2];
         this.obstacles = args[3];
         this.spawnables = args[4];
