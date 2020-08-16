@@ -71,10 +71,10 @@ class MatchScene extends Phaser.Scene
                 switch(event.which)
                 {
                     case 87:
-                        socket.emit("matchExt", "movePlayer", ["plus", game.loop.actualFps]);
+                        socket.emit("matchExt", "movePlayer", ["plus"]);
                         break;
                     case 83:
-                        socket.emit("matchExt", "movePlayer", ["minus", game.loop.actualFps]);
+                        socket.emit("matchExt", "movePlayer", ["minus"]);
                         break;
                 }
             }
