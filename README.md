@@ -2,9 +2,9 @@
 
 A 2D HTML5 shooter, using the [Phaser 3](https://github.com/photonstorm/phaser/) engine.
 
-**ShootThis uses Phaser 3.24.1 "Rem".**
-
 **Please note that this is the Web version and it requires a backend to operate. Please refer to [ShootThis-Backend](https://github.com/mtsanovv/ShootThis-Backend).**
+
+**The external tools besides the image, code and audio editing software used in the creation process are located in [ShootThis-Tools](https://github.com/mtsanovv/ShootThis-Tools).**
 
 ## Instructions
 1. You can clone this repository or download a ZIP. 

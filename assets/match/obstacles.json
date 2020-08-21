@@ -1,0 +1,40 @@
+{
+	"textures": [
+		{
+			"image": "obstacles.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 198,
+				"h": 196
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "0.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 200,
+						"h": 200
+					},
+					"spriteSourceSize": {
+						"x": 2,
+						"y": 2,
+						"w": 196,
+						"h": 194
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 196,
+						"h": 194
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "http://free-tex-packer.com",
+		"version": "0.6.6"
+	}
+}

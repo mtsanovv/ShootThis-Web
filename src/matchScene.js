@@ -16,8 +16,8 @@ class MatchScene extends Phaser.Scene
         this.waitingForMatch = false;
         this.socket;
         this.players = {};
-        this.spawnables = {};
-        this.obstacles = {};
+        this.spawnables = [];
+        this.obstacles = [];
         this.focusedPlayer = null;
         this.focusedPlayerId = -1;
         this.background;
@@ -151,15 +151,15 @@ class MatchScene extends Phaser.Scene
 
     playerMoved(args)
     {
-        this.players[args[0]].playerSprite.x = args[1];
-        this.players[args[0]].playerSprite.y = args[2];
-        this.players[args[0]].playerSprite.rotation = args[3];
+        this.players[args[0]].sprite.x = args[1];
+        this.players[args[0]].sprite.y = args[2];
+        this.players[args[0]].sprite.rotation = args[3];
         this.backgroundFollowsCamera();
     }
 
     playerRotated(args)
     {
-        this.players[args[0]].playerSprite.rotation = args[1];
+        this.players[args[0]].sprite.rotation = args[1];
     }
 
     setFocusedPlayerId(args)
@@ -227,12 +227,15 @@ class MatchScene extends Phaser.Scene
 
         //add first obstacles to scene, then spawnables
 
+        for(var obstacle in this.obstacles)
+            this.obstacles[obstacle].sprite = this.add.sprite(this.obstacles[obstacle].x, this.obstacles[obstacle].y, 'obstacleSprites', this.obstacles[obstacle].type + ".png").setOrigin(0, 0);
+
         for(var player in this.players)
         {
-            this.players[player].playerSprite = this.add.sprite(this.players[player].x, this.players[player].y, 'characterSprites', this.players[player].character + ".png");
+            this.players[player].sprite = this.add.sprite(this.players[player].x, this.players[player].y, 'characterSprites', this.players[player].character + ".png");
             if(player == this.focusedPlayerId)
             {
-                this.focusedPlayer = this.players[player].playerSprite;
+                this.focusedPlayer = this.players[player].sprite;
                 this.cameras.main.startFollow(this.focusedPlayer);
                 this.backgroundFollowsCamera();
             }
