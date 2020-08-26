@@ -4,51 +4,51 @@
 			"image": "characters.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 236,
-				"h": 73
+				"w": 234,
+				"h": 97
 			},
 			"scale": 1,
 			"frames": [
 				{
 					"filename": "0.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
 						"w": 116,
-						"h": 71
+						"h": 95
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 116,
-						"h": 71
+						"w": 115,
+						"h": 95
 					},
 					"frame": {
 						"x": 1,
 						"y": 1,
-						"w": 116,
-						"h": 71
+						"w": 115,
+						"h": 95
 					}
 				},
 				{
 					"filename": "1.png",
 					"rotated": false,
-					"trimmed": false,
+					"trimmed": true,
 					"sourceSize": {
 						"w": 116,
-						"h": 71
+						"h": 95
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 116,
-						"h": 71
+						"w": 115,
+						"h": 95
 					},
 					"frame": {
-						"x": 119,
+						"x": 118,
 						"y": 1,
-						"w": 116,
-						"h": 71
+						"w": 115,
+						"h": 95
 					}
 				}
 			]
