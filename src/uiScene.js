@@ -21,6 +21,12 @@ class UIScene extends Phaser.Scene
         this.background;
         this.showingOptions = false;
         this.socket;
+        this.weaponMenu;
+        this.loadedAmmo;
+        this.totalAmmo;
+        this.weaponMenuIcons = {};
+        this.weaponName;
+        this.weaponBg;
     }
 
     create(data)
@@ -46,7 +52,43 @@ class UIScene extends Phaser.Scene
         this.loadingShadow = this.add.rectangle(0, 0, 1920, 1080, "0x000000", 0.6).setOrigin(0, 0);
         this.loadingShadow.alpha = 0;
 
+        this.weaponMenu = this.add.container();
+        this.weaponBg = this.add.image(1700, 860, "matchUIWeapon").setOrigin(0, 0);
+        this.loadedAmmo = this.add.text(1760, 865, "09", { fontFamily: 'Rubik', fontSize: '60px', color: "#fff", fontStyle: "bold", align: 'right'}).setOrigin(0, 0);
+        this.totalAmmo = this.add.text(1745, 932, "000", { fontFamily: 'Rubik', fontSize: '60px', color: "#fff", fontStyle: "bold", align: 'right'}).setOrigin(0, 0);
+        this.totalAmmo.alpha = 0.6;
+        this.weaponMenuIcons.hopup = this.add.sprite(1700, 995, 'matchUIHopups', '00.png').setOrigin(0, 0);
+        this.weaponMenuIcons.mag = this.add.sprite(1700, 995, 'matchUIMags', '00.png').setOrigin(0, 0);
+        this.weaponMenuIcons.hopup.x = 1715 + Math.floor((185 - (this.weaponMenuIcons.hopup.width + this.weaponMenuIcons.mag.width + 10)) / 2);
+        this.weaponMenuIcons.mag.x = this.weaponMenuIcons.hopup.x + this.weaponMenuIcons.hopup.width + 10;
+        this.weaponName = this.add.text(1700, 1032, "Weapon", { fontFamily: 'Rubik', fontSize: '25px', color: "#fff"}).setOrigin(0, 0);
+        this.centerInContainer(this.weaponBg, this.weaponName);
+        this.weaponMenu.add(this.weaponBg);
+        this.weaponMenu.add(this.loadedAmmo);
+        this.weaponMenu.add(this.totalAmmo);
+        this.weaponMenu.add(this.weaponMenuIcons.hopup);
+        this.weaponMenu.add(this.weaponMenuIcons.mag);
+        this.weaponMenu.add(this.weaponName);
+        this.weaponMenu.alpha = 0;
+
         this.children.bringToTop(this.loadingShadow);
+    }
+
+    updateWeaponHUD(args)
+    {
+        this.weaponMenu.alpha = 1;
+        if(args[0] < 10)
+            args[0] = "0" + args[0];
+        if(args[1] < 10)
+            args[1] = "00" + args[1];
+        else if(args[1] < 100)
+            args[1] = "0" + args[1];
+        this.loadedAmmo.text = args[0];
+        this.totalAmmo.text = args[1];
+        this.weaponMenuIcons.hopup.setFrame(String(args[4]) + String(args[2]) + ".png");
+        this.weaponMenuIcons.mag.setFrame(String(args[4]) + String(args[3]) + ".png");
+        this.weaponName.text = args[5];
+        this.centerInContainer(this.weaponBg, this.weaponName);
     }
 
     showOptions(socket)

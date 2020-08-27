@@ -56,6 +56,7 @@
 		<script src="config.js" type="text/javascript"></script>
 		<script src="js/socket.io.js" type="text/javascript"></script>
 		<script src="js/util.js" type="text/javascript"></script>
+		<script src="src/bullets.js" type="text/javascript"></script>
 		<script src="src/uiScene.js" type="text/javascript"></script>
 		<script src="src/matchScene.js" type="text/javascript"></script>
 		<script src="src/lobbyScene.js" type="text/javascript"></script>

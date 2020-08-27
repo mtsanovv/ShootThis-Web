@@ -146,6 +146,9 @@ class MatchScene extends Phaser.Scene
             case "playerMoved":
                 this.playerMoved(args);
                 break;
+            case "weaponUpdate":
+                game.scene.getScene("UIScene").updateWeaponHUD(args);
+                break;
         }
     }
 

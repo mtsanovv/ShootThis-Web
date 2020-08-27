@@ -18,7 +18,10 @@ var config = {
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     physics: {
-        default: 'arcade'
+        default: 'arcade',
+        arcade: {
+            gravity: {x: 0, y: 0}
+        }
     },
     dom: {
         createContainer: true
