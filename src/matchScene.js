@@ -22,6 +22,8 @@ class MatchScene extends Phaser.Scene
         this.focusedPlayerId = -1;
         this.background;
         this.tileResourceFailed = false;
+        this.enemyBullets;
+        this.playerBullets;
     }
 
     create(data)
@@ -99,6 +101,11 @@ class MatchScene extends Phaser.Scene
                 socket.emit("matchExt", "rotatePlayer", [angle]);
             }
         }, this);
+
+        this.input.on('pointerdown', function (pointer) {
+            if(this.focusedPlayer)
+                socket.emit("matchExt", "shoot");
+        }, this);
     }
 
     update(time, delta)
@@ -146,10 +153,21 @@ class MatchScene extends Phaser.Scene
             case "playerMoved":
                 this.playerMoved(args);
                 break;
+            case "playerShot":
+                this.playerShot(args);
+                break;
             case "weaponUpdate":
                 game.scene.getScene("UIScene").updateWeaponHUD(args);
                 break;
         }
+    }
+
+    playerShot(args)
+    {
+        if(args[0] === this.focusedPlayerId)
+            this.playerBullets.fireBullet(args);
+        else
+            this.enemyBullets.fireBullet(args);
     }
 
     playerMoved(args)
@@ -229,7 +247,7 @@ class MatchScene extends Phaser.Scene
         this.obstacles = args[3];
         this.spawnables = args[4];
 
-        //add first obstacles to scene, then spawnables
+        //add first obstacles to scene, then spawnables, then players
 
         for(var obstacle in this.obstacles)
             this.obstacles[obstacle].sprite = this.add.sprite(this.obstacles[obstacle].x, this.obstacles[obstacle].y, 'obstacleSprites', this.obstacles[obstacle].type + ".png").setOrigin(0, 0);
@@ -244,6 +262,10 @@ class MatchScene extends Phaser.Scene
                 this.backgroundFollowsCamera();
             }
         }
+
+        //initialize bullet groups
+        this.enemyBullets = new Bullets(this, args[8] * (Object.keys(this.players).length + 1));
+        this.playerBullets = new Bullets(this, args[8] * 2);
     }
 
     leaveMatch(socket)

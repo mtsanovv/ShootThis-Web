@@ -1,25 +1,52 @@
 class Bullet extends Phaser.Physics.Arcade.Sprite
 {
-    constructor (scene, x, y, bulletsKey)
+    constructor (scene, x, y)
     {
-        super(scene, x, y, 'bulletsKey');
+        super(scene, x, y, 'bullet');
+        this.playerId = -1;
+        this.timeFired = 0;
+        this.bulletTravelTime = 0;
+        this.bulletTravelDistance = 0;
+        this.bulletSpeed = 0;
+        this.maxX = 0;
+        this.maxY = 0;
     }
 
-    fire (x, y)
+    fire (args)
     {
+
+        console.log("bullet" + new Date().valueOf());
+        this.playerId = args[0];
+        this.timeFired = args[1];
+        this.bulletTravelTime = args[2];
+        this.bulletTravelDistance = args[3];
+        this.bulletSpeed = this.bulletTravelDistance / this.bulletTravelTime; //pixels per ms
+        
+        var x = args[4];
+        var y = args[5];
+        this.rotation = args[6];
+        this.maxX = x + this.bulletTravelDistance * Math.cos(this.rotation);
+        this.maxY = y + this.bulletTravelDistance * Math.sin(this.rotation);
+
+        this.setOrigin(0, 0.5);
+
         this.body.reset(x, y);
 
         this.setActive(true);
         this.setVisible(true);
-
-        this.setVelocityY(-300);
     }
 
     preUpdate (time, delta)
     {
         super.preUpdate(time, delta);
 
-        if (this.y <= -32)
+        this.x += delta * this.bulletSpeed * Math.cos(this.rotation);
+        this.y += delta * this.bulletSpeed * Math.sin(this.rotation);
+
+        var xEvaluated = Math.cos(this.rotation) < 0 ? this.x < this.maxX : this.x > this.maxX;
+        var yEvaluated = Math.sin(this.rotation) < 0 ? this.y < this.maxY : this.y > this.maxY; 
+
+        if (xEvaluated && yEvaluated)
         {
             this.setActive(false);
             this.setVisible(false);
@@ -29,26 +56,24 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
 
 class Bullets extends Phaser.Physics.Arcade.Group
 {
-    constructor (scene, bulletsKey, maxBullets)
+    constructor (scene, maxBullets)
     {
         super(scene.physics.world, scene);
 
         this.createMultiple({
             frameQuantity: maxBullets,
-            key: bulletsKey,
+            key: 'bullet',
             active: false,
             visible: false,
             classType: Bullet
         });
     }
 
-    fireBullet (x, y)
+    fireBullet (args)
     {
         var bullet = this.getFirstDead(false);
 
         if (bullet)
-        {
-            bullet.fire(x, y);
-        }
+            bullet.fire(args);
     }
 }
