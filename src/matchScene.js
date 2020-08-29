@@ -229,10 +229,10 @@ class MatchScene extends Phaser.Scene
             // walls - 1 3
             //          4
             //args[5] - gameWidth, args[6] - gameHeight, args[7] - shorter side of tile's length
-            this.add.tileSprite(0, 0, args[7], args[6], 'wallSprite', 'wall-tile1.png').setOrigin(0, 0); //wall 1
-            this.add.tileSprite(args[7], 0, args[5] - args[7], args[7], 'wallSprite', 'wall-tile2.png').setOrigin(0, 0); //wall 2
-            this.add.tileSprite(args[5] - args[7], 0, args[7], args[6], 'wallSprite', 'wall-tile1.png').setOrigin(0, 0); //wall 3
-            this.add.tileSprite(args[7], args[6] - args[7], args[5] - args[7], args[7], 'wallSprite', 'wall-tile2.png').setOrigin(0, 0); //wall 4
+            this.obstacles.push(this.add.tileSprite(0, 0, args[7], args[6], 'wallSprite', 'wall-tile1.png').setOrigin(0, 0)); //wall 1
+            this.obstacles.push(this.add.tileSprite(args[7], 0, args[5] - args[7], args[7], 'wallSprite', 'wall-tile2.png').setOrigin(0, 0)); //wall 2
+            this.obstacles.push(this.add.tileSprite(args[5] - args[7], 0, args[7], args[6], 'wallSprite', 'wall-tile1.png').setOrigin(0, 0)); //wall 3
+            this.obstacles.push(this.add.tileSprite(args[7], args[6] - args[7], args[5] - args[7], args[7], 'wallSprite', 'wall-tile2.png').setOrigin(0, 0)); //wall 4
         }
         catch(e)
         {
@@ -244,13 +244,13 @@ class MatchScene extends Phaser.Scene
             return;
         }
         this.players = args[2];
-        this.obstacles = args[3];
-        this.spawnables = args[4];
 
         //add first obstacles to scene, then spawnables, then players
-
-        for(var obstacle in this.obstacles)
-            this.obstacles[obstacle].sprite = this.add.sprite(this.obstacles[obstacle].x, this.obstacles[obstacle].y, 'obstacleSprites', this.obstacles[obstacle].type + ".png").setOrigin(0, 0);
+        //spawnables are args[4], they have to have their sprites in a specific array so that they can be used for collision checking
+        //player sprites need to be added as circles in another playersHitboxes array 
+        
+        for(var obstacle in args[3])
+            this.obstacles.push(this.add.sprite(args[3][obstacle].x, args[3][obstacle].y, 'obstacleSprites', args[3][obstacle].type + ".png").setOrigin(0, 0));
 
         for(var player in this.players)
         {
@@ -266,6 +266,20 @@ class MatchScene extends Phaser.Scene
         //initialize bullet groups
         this.enemyBullets = new Bullets(this, args[8] * (Object.keys(this.players).length + 1));
         this.playerBullets = new Bullets(this, args[8] * 2);
+
+        //enable arcade physics on the objects that will be checked for collision
+        this.physics.world.enable(this.obstacles);
+
+        //initialize enemy bullets' colliders
+        this.physics.add.overlap(this.enemyBullets, this.obstacles, this.justHideBullet, null, this);
+        
+        //initialize player bullets' colliders
+        this.physics.add.overlap(this.playerBullets, this.obstacles, this.justHideBullet, null, this);
+    }
+
+    justHideBullet(hitObject, bullet)
+    {
+        bullet.toggleBullet(false);
     }
 
     leaveMatch(socket)

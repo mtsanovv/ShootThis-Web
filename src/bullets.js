@@ -14,8 +14,6 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
 
     fire (args)
     {
-
-        console.log("bullet" + new Date().valueOf());
         this.playerId = args[0];
         this.timeFired = args[1];
         this.bulletTravelTime = args[2];
@@ -32,8 +30,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
 
         this.body.reset(x, y);
 
-        this.setActive(true);
-        this.setVisible(true);
+        this.toggleBullet(true);
     }
 
     preUpdate (time, delta)
@@ -47,9 +44,22 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
         var yEvaluated = Math.sin(this.rotation) < 0 ? this.y < this.maxY : this.y > this.maxY; 
 
         if (xEvaluated && yEvaluated)
+            this.toggleBullet(false);
+    }
+
+    toggleBullet(toggle)
+    {
+        if(toggle)
+        {
+            this.setActive(true);
+            this.setVisible(true);
+            this.body.enable = true;
+        }
+        else
         {
             this.setActive(false);
             this.setVisible(false);
+            this.body.enable = false;
         }
     }
 }
