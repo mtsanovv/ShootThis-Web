@@ -10,6 +10,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
         this.bulletSpeed = 0;
         this.maxX = 0;
         this.maxY = 0;
+        this.damage = 0;
     }
 
     fire (args)
@@ -19,7 +20,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
         this.bulletTravelTime = args[2];
         this.bulletTravelDistance = args[3];
         this.bulletSpeed = this.bulletTravelDistance / this.bulletTravelTime; //pixels per ms
-        
+        this.damage = args[7];
+
         var x = args[4];
         var y = args[5];
         this.rotation = args[6];
@@ -47,7 +49,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
             this.toggleBullet(false);
     }
 
-    toggleBullet(toggle)
+    toggleBullet(toggle, tint = false)
     {
         if(toggle)
         {
@@ -60,6 +62,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
             this.setActive(false);
             this.setVisible(false);
             this.body.enable = false;
+            this.scene.bulletDied(this, tint);
         }
     }
 }

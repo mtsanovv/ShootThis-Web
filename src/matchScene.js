@@ -24,6 +24,7 @@ class MatchScene extends Phaser.Scene
         this.tileResourceFailed = false;
         this.enemyBullets;
         this.playerBullets;
+        this.smokeEmitter;
     }
 
     create(data)
@@ -233,6 +234,9 @@ class MatchScene extends Phaser.Scene
             this.obstacles.push(this.add.tileSprite(args[7], 0, args[5] - args[7], args[7], 'wallSprite', 'wall-tile2.png').setOrigin(0, 0)); //wall 2
             this.obstacles.push(this.add.tileSprite(args[5] - args[7], 0, args[7], args[6], 'wallSprite', 'wall-tile1.png').setOrigin(0, 0)); //wall 3
             this.obstacles.push(this.add.tileSprite(args[7], args[6] - args[7], args[5] - args[7], args[7], 'wallSprite', 'wall-tile2.png').setOrigin(0, 0)); //wall 4
+            
+            //enable physics on the walls
+            this.physics.world.enable(this.obstacles);
         }
         catch(e)
         {
@@ -243,6 +247,7 @@ class MatchScene extends Phaser.Scene
             });
             return;
         }
+
         this.players = args[2];
 
         //add first obstacles to scene, then spawnables, then players
@@ -250,11 +255,11 @@ class MatchScene extends Phaser.Scene
         //player sprites need to be added as circles in another playersHitboxes array 
         
         for(var obstacle in args[3])
-            this.obstacles.push(this.add.sprite(args[3][obstacle].x, args[3][obstacle].y, 'obstacleSprites', args[3][obstacle].type + ".png").setOrigin(0, 0));
+            this.obstacles.push(this.physics.add.image(args[3][obstacle].x, args[3][obstacle].y, 'obstacleSprites', args[3][obstacle].type + ".png").setOrigin(0, 0));
 
         for(var player in this.players)
         {
-            this.players[player].sprite = this.add.sprite(this.players[player].x, this.players[player].y, 'characterSprites', this.players[player].character + ".png").setOrigin(this.players[player].centerX, this.players[player].centerY);
+            this.players[player].sprite = this.physics.add.sprite(this.players[player].x, this.players[player].y, 'characterSprites', this.players[player].character + ".png").setOrigin(this.players[player].centerX, this.players[player].centerY).setCircle(this.players[player].hitboxDiameter / 2);
             if(player == this.focusedPlayerId)
             {
                 this.focusedPlayer = this.players[player].sprite;
@@ -263,12 +268,11 @@ class MatchScene extends Phaser.Scene
             }
         }
 
+        this.smokeEmitter = this.add.particles("smoke");
+
         //initialize bullet groups
         this.enemyBullets = new Bullets(this, args[8] * (Object.keys(this.players).length + 1));
         this.playerBullets = new Bullets(this, args[8] * 2);
-
-        //enable arcade physics on the objects that will be checked for collision
-        this.physics.world.enable(this.obstacles);
 
         //initialize enemy bullets' colliders
         this.physics.add.overlap(this.enemyBullets, this.obstacles, this.justHideBullet, null, this);
@@ -279,7 +283,34 @@ class MatchScene extends Phaser.Scene
 
     justHideBullet(hitObject, bullet)
     {
-        bullet.toggleBullet(false);
+        bullet.toggleBullet(false, 0xcbcbcb);
+    }
+
+    bulletDied(bullet, tint = false)
+    {
+        var emitter = this.smokeEmitter.createEmitter({
+            alpha: { start: 1, end: 0 },
+            scale: { start: 0.5, end: 2.5 },
+            speed: 20,
+            angle: { min: -85, max: -95 },
+            tint: 0xff6c00,
+            blendMode: 'ADD',
+            rotate: { min: -180, max: 180 },
+            lifespan: { min: 500, max: 800 },
+            frequency: 110,
+            maxParticles: 1,
+            x: bullet.x,
+            y: bullet.y
+        });
+        emitter.onParticleDeath(this.checkEmitterDone, this);
+        if(tint)
+            emitter.setTint(tint);
+    }
+
+    checkEmitterDone(particle)
+    {
+        if(particle.emitter.atLimit())
+            particle.emitter.manager.emitters.remove(particle.emitter);
     }
 
     leaveMatch(socket)
