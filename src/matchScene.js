@@ -18,6 +18,7 @@ class MatchScene extends Phaser.Scene
         this.players = {};
         this.spawnables = [];
         this.obstacles = [];
+        this.playerHitboxes = [];
         this.focusedPlayer = null;
         this.focusedPlayerId = -1;
         this.background;
@@ -25,6 +26,7 @@ class MatchScene extends Phaser.Scene
         this.enemyBullets;
         this.playerBullets;
         this.smokeEmitter;
+        this.bloodEmitter;
     }
 
     create(data)
@@ -266,9 +268,13 @@ class MatchScene extends Phaser.Scene
                 this.cameras.main.startFollow(this.focusedPlayer);
                 this.backgroundFollowsCamera();
             }
+            else
+                this.playerHitboxes.push(this.players[player].sprite);
         }
 
+        //particle emitters
         this.smokeEmitter = this.add.particles("smoke");
+        this.bloodEmitter = this.add.particles("blood");
 
         //initialize bullet groups
         this.enemyBullets = new Bullets(this, args[8] * (Object.keys(this.players).length + 1));
@@ -276,9 +282,11 @@ class MatchScene extends Phaser.Scene
 
         //initialize enemy bullets' colliders
         this.physics.add.overlap(this.enemyBullets, this.obstacles, this.justHideBullet, null, this);
+        this.physics.add.overlap(this.enemyBullets, this.focusedPlayer, this.playerGotShot, null, this);
         
         //initialize player bullets' colliders
         this.physics.add.overlap(this.playerBullets, this.obstacles, this.justHideBullet, null, this);
+        this.physics.add.overlap(this.playerBullets, this.playerHitboxes, this.justHideBloodBullet, null, this);
     }
 
     justHideBullet(hitObject, bullet)
@@ -286,25 +294,57 @@ class MatchScene extends Phaser.Scene
         bullet.toggleBullet(false, 0xcbcbcb);
     }
 
-    bulletDied(bullet, tint = false)
+    justHideBloodBullet(hitObject, bullet)
     {
-        var emitter = this.smokeEmitter.createEmitter({
-            alpha: { start: 1, end: 0 },
-            scale: { start: 0.5, end: 2.5 },
-            speed: 20,
-            angle: { min: -85, max: -95 },
-            tint: 0xff6c00,
-            blendMode: 'ADD',
-            rotate: { min: -180, max: 180 },
-            lifespan: { min: 500, max: 800 },
-            frequency: 110,
-            maxParticles: 1,
-            x: bullet.x,
-            y: bullet.y
-        });
-        emitter.onParticleDeath(this.checkEmitterDone, this);
-        if(tint)
-            emitter.setTint(tint);
+        bullet.toggleBullet(false, false, "blood", hitObject);
+    }
+
+    playerGotShot(hitObject, bullet)
+    {
+        bullet.toggleBullet(false, false, "blood", hitObject);
+        this.socket.emit("matchExt", "gotShot", [bullet.playerId, bullet.damage]);
+    }
+    
+    bulletDied(bullet, tint = false, type = "none", player = null)
+    {
+        switch(type)
+        {
+            case "blood":
+                let blood = this.bloodEmitter.createEmitter({
+                    alpha: { start: 1, end: 0 },
+                    scale: { start: 0.5, end: 0},
+                    tint: 0xe90000,
+                    speed: 300,
+                    angle: { min: 0, max: 360 },
+                    lifespan: 200,
+                    frequency: 10,
+                    maxParticles: 5,
+                    x: player.x,
+                    y: player.y
+                });
+                blood.onParticleDeath(this.checkEmitterDone, this);
+                break;
+
+            default:
+                let smoke = this.smokeEmitter.createEmitter({
+                    alpha: { start: 1, end: 0 },
+                    scale: { start: 0.5, end: 2.5 },
+                    speed: 20,
+                    angle: { min: -85, max: -95 },
+                    tint: 0xff6c00,
+                    blendMode: 'ADD',
+                    rotate: { min: -180, max: 180 },
+                    lifespan: { min: 500, max: 800 },
+                    frequency: 110,
+                    maxParticles: 1,
+                    x: bullet.x,
+                    y: bullet.y
+                });
+                smoke.onParticleDeath(this.checkEmitterDone, this);
+                if(tint)
+                    smoke.setTint(tint);
+                break;
+        }
     }
 
     checkEmitterDone(particle)

@@ -49,7 +49,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
             this.toggleBullet(false);
     }
 
-    toggleBullet(toggle, tint = false)
+    toggleBullet(toggle, tint = false, type = "none", player = null)
     {
         if(toggle)
         {
@@ -62,7 +62,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
             this.setActive(false);
             this.setVisible(false);
             this.body.enable = false;
-            this.scene.bulletDied(this, tint);
+            this.scene.bulletDied(this, tint, type, player);
         }
     }
 }
