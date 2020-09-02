@@ -27,6 +27,8 @@ class UIScene extends Phaser.Scene
         this.weaponMenuIcons = {};
         this.weaponName;
         this.weaponBg;
+        this.matchMusic;
+        this.sound.pauseOnBlur = false;
     }
 
     create(data)
@@ -72,6 +74,8 @@ class UIScene extends Phaser.Scene
         this.weaponMenu.alpha = 0;
 
         this.children.bringToTop(this.loadingShadow);
+
+        this.playMusicInMatch();
     }
 
     updateWeaponHUD(args)
@@ -110,9 +114,20 @@ class UIScene extends Phaser.Scene
             var returnToLobbyBtnText = this.add.text(0, 510, "Return to Lobby", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
             this.centerInContainer(returnToLobbyBtn, returnToLobbyBtnText);
 
-            var muteSoundsBtn = this.add.sprite(0, 600, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
+            var muteMusicBtn = this.add.sprite(0, 600, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
+            this.centerInContainer(this.loadingShadow, muteMusicBtn);
+            var muteMusicBtnText = this.add.text(0, 610, "Mute Music", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
+            this.centerInContainer(muteMusicBtn, muteMusicBtnText);
+
+            if(getCookie("music") !== "true")
+            {
+                muteMusicBtnText.text = "Allow Music";
+                this.sound.removeByKey('matchMusic');
+            }
+
+            var muteSoundsBtn = this.add.sprite(0, 700, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
             this.centerInContainer(this.loadingShadow, muteSoundsBtn);
-            var muteSoundsBtnText = this.add.text(0, 610, "Mute Sounds", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
+            var muteSoundsBtnText = this.add.text(0, 710, "Mute All Sounds", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
             this.centerInContainer(muteSoundsBtn, muteSoundsBtnText);
 
             if(game.sound.mute || gameSoundMuted)
@@ -126,6 +141,8 @@ class UIScene extends Phaser.Scene
             overlayItems.push(returnToMatchBtnText);
             overlayItems.push(returnToLobbyBtn);
             overlayItems.push(returnToLobbyBtnText);
+            overlayItems.push(muteMusicBtn);
+            overlayItems.push(muteMusicBtnText);
             overlayItems.push(muteSoundsBtn);
             overlayItems.push(muteSoundsBtnText);
 
@@ -172,11 +189,48 @@ class UIScene extends Phaser.Scene
                     this.centerInContainer(muteSoundsBtn, muteSoundsBtnText);
                 }
             });
+
+            muteMusicBtn.setInteractive().on('pointerdown', () => {
+                muteMusicBtn.anims.play('wideBtnClicked');
+                if(getCookie("music") !== "true")
+                {
+                    muteMusicBtnText.text = "Mute Music";
+                    setCookie("music", "true", 365);
+                    if(!game.scene.getScene("MatchScene").waitingForMatch) this.playMatchMusic();
+                }
+                else
+                {
+                    this.sound.removeByKey('loadingScreenMusic');
+                    this.sound.removeByKey('matchMusic');
+                    setCookie("music", "false", 365);
+                    muteMusicBtnText.text = "Allow Music";
+                }
+            });
+        }
+    }
+
+    playMusicInMatch()
+    {
+        if(getCookie("music") === "true")
+        {
+            this.sound.removeByKey('loadingScreenMusic');
+            this.sound.play('loadingScreenMusic', {volume: 0.3});
+        }
+    }
+
+    playMatchMusic()
+    {
+        if(getCookie("music") === "true")
+        {
+            this.sound.removeByKey('matchMusic');
+            this.matchMusic = this.sound.play('matchMusic', {volume: 0.1, loop: true});
         }
     }
 
     leaveMatch(socket)
     {
+        this.sound.removeByKey('loadingScreenMusic');
+        this.sound.removeByKey('matchMusic');
         game.scene.start("LobbyScene", { x: 960, y: 540, socket: this.socket});
         socket.emit("gameExt", "cancelJoin");
         game.scene.stop("MatchScene");

@@ -32,9 +32,12 @@ A 2D HTML5 shooter, using the [Phaser 3](https://github.com/photonstorm/phaser/)
 - Mail verification script: Konstantin Granin <kostya@granin.me>
 - Mobile device detection: http://mobiledetect.net/
 - RexUI: https://github.com/rexrainbow/phaser3-rex-notes
-- Lobby music: https://www.audiomicro.com/chilled-dubstep-music-royalty-free-stock-music-1388001
-- Sound effects:
+- Sound effects & music:
+	- https://www.audiomicro.com/chilled-dubstep-music-royalty-free-stock-music-1388001
 	- https://www.audiomicro.com/game-select-sound-effects-1634513
 	- https://www.audiomicro.com/organic-button-1-sound-effects-1059639
+	- https://www.audiomicro.com/gun-weapon-rifle-assault-single-shot-with-dirt-impact-sound-effects-1266393
+	- https://www.audiomicro.com/hybrid-epic-indent-wav-royalty-free-stock-music-1626587
+	- https://www.audiomicro.com/lyrah-arcade-game-shooter-royalty-free-stock-music-1339105
 
 *M. Tsanov, S. Tsvetkov, Y. Berov, 2020*

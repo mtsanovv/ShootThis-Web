@@ -38,6 +38,7 @@ class LobbyScene extends Phaser.Scene
         this.voteChangeHostBtnText = null;
         this.startMatchBtnText = null;
         this.hasVoted = false;
+        this.sound.pauseOnBlur = false;
     }
 
     create(data)
@@ -412,7 +413,7 @@ class LobbyScene extends Phaser.Scene
                 }
                 else
                 {
-                    this.sound.stopByKey('lobbyMusic');
+                    this.sound.removeByKey('lobbyMusic');
                     musicIcon.setFrame('musicIcon0002.png');
                     setCookie("music", "false", 365);
                     muteMusicTxt.text = "Play Music";

@@ -171,6 +171,15 @@ class MatchScene extends Phaser.Scene
             this.playerBullets.fireBullet(args);
         else
             this.enemyBullets.fireBullet(args);
+
+        let bulletDistanceX = Math.abs(this.focusedPlayer.x - args[4]);
+        let bulletDistanceY = Math.abs(this.focusedPlayer.y - args[5]);
+        let bulletDistance = Math.sqrt(Math.pow(bulletDistanceX, 2) + Math.pow(bulletDistanceY, 2));
+        if(bulletDistance < args[8])
+        {
+            let bulletVolume = 1 - bulletDistance / args[8];
+            this.sound.play('shootSound', {volume: bulletVolume});
+        }
     }
 
     playerMoved(args)
@@ -287,6 +296,8 @@ class MatchScene extends Phaser.Scene
         //initialize player bullets' colliders
         this.physics.add.overlap(this.playerBullets, this.obstacles, this.justHideBullet, null, this);
         this.physics.add.overlap(this.playerBullets, this.playerHitboxes, this.justHideBloodBullet, null, this);
+
+        game.scene.getScene("UIScene").playMatchMusic();
     }
 
     justHideBullet(hitObject, bullet)
@@ -314,7 +325,7 @@ class MatchScene extends Phaser.Scene
                     alpha: { start: 1, end: 0 },
                     scale: { start: 0.5, end: 0},
                     tint: 0xe90000,
-                    speed: 300,
+                    speed: 500,
                     angle: { min: 0, max: 360 },
                     lifespan: 200,
                     frequency: 10,

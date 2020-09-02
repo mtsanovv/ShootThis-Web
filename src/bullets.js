@@ -20,11 +20,11 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
         this.bulletTravelTime = args[2];
         this.bulletTravelDistance = args[3];
         this.bulletSpeed = this.bulletTravelDistance / this.bulletTravelTime; //pixels per ms
-        this.damage = args[7];
 
         var x = args[4];
         var y = args[5];
         this.rotation = args[6];
+        this.damage = args[7];
         this.maxX = x + this.bulletTravelDistance * Math.cos(this.rotation);
         this.maxY = y + this.bulletTravelDistance * Math.sin(this.rotation);
 

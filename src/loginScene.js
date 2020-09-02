@@ -54,7 +54,6 @@ class LoginScene extends Phaser.Scene
         this.load.image('messageBG', 'assets/messageBG.png');
         this.load.multiatlas('connectingAnim', 'assets/loading/connectingAnim.json', 'assets/loading');
         this.load.multiatlas('wideBtn', 'assets/forms/wideBtn.json', 'assets/forms');
-        this.load.audio('lobbyMusic', ['assets/sound/lobby.mp3', 'assets/sound/lobby.ogg']);
         this.load.image('lobbybg', 'assets/lobby/lobbybg.png');
         this.load.image('lobbyCloud1', 'assets/lobby/cloud1.png');
         this.load.image('lobbyCloud2', 'assets/lobby/cloud2.png');
@@ -71,8 +70,16 @@ class LoginScene extends Phaser.Scene
         this.load.multiatlas('rendererIcon', 'assets/lobby/rendererIcon.json', 'assets/lobby');
         this.load.image('xpprogressbarbgCANVAS', 'assets/lobby/xpProgessBarCANVAS.png');
         this.load.image('characterSelectionCharacterBackground', 'assets/lobby/characterSelectionCharacterBackground.png');
-        this.load.audio('quitMatchBtnSound', ['assets/sound/quitmatchbtn.mp3', 'assets/sound/quitmatchbtn.ogg']);
-        this.load.audio('joinMatchBtnSound', ['assets/sound/joinmatchbtn.mp3', 'assets/sound/joinmatchbtn.ogg']);
+
+        //Load sounds
+        this.load.audio('lobbyMusic', 'assets/sound/lobbyMusic.mp3');
+        this.load.audio('quitMatchBtnSound', 'assets/sound/quitmatchbtn.mp3');
+        this.load.audio('joinMatchBtnSound', 'assets/sound/joinmatchbtn.mp3');
+        this.load.audio('matchMusic', 'assets/sound/matchMusic.mp3');
+        this.load.audio('winMusic', 'assets/sound/winMusic.mp3');
+        this.load.audio('loadingScreenMusic', 'assets/sound/loadingScreenMusic.mp3');
+        this.load.audio('shootSound', 'assets/sound/shootSound.mp3');
+
 
         //Load character assets
         this.load.image('characterLobby0', 'assets/lobby/characters/0.png');
