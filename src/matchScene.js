@@ -218,7 +218,7 @@ class MatchScene extends Phaser.Scene
 
         try
         {
-            this.background = this.add.tileSprite(-1024, -1024, args[0] + 1024, args[1] + 1024, 'matchTile').setOrigin(0, 0);
+            this.background = this.add.image(-1024, -1024, 'matchBackground').setOrigin(0, 0);
         }
         catch(e)
         {
@@ -226,7 +226,7 @@ class MatchScene extends Phaser.Scene
             {
                 if(this.background)
                     this.background.destroy();
-                this.background = this.add.tileSprite(0, 0, 1920, 1080, 'matchTile');
+                this.background = this.add.tileSprite(0, 0, 'matchBackgroundSmaller');
                 this.tileResourceFailed = true;
             }
             catch(e)

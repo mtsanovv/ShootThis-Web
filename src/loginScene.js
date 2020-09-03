@@ -87,7 +87,8 @@ class LoginScene extends Phaser.Scene
 
         //Load match assets
         this.load.multiatlas('characterSprites', 'assets/match/characters.json', 'assets/match');
-        this.load.image('matchTile', 'assets/match/tile.png');
+        this.load.image('matchBackground', 'assets/match/background.png');
+        this.load.image('matchBackgroundSmaller', 'assets/match/background_smaller.png');
         this.load.multiatlas('wallSprite', 'assets/match/wall.json', 'assets/match');
         this.load.multiatlas('obstacleSprites', 'assets/match/obstacles.json', 'assets/match');
         this.load.image('bullet', 'assets/match/bullet.png');
