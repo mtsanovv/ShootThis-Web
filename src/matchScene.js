@@ -17,6 +17,7 @@ class MatchScene extends Phaser.Scene
         this.socket;
         this.players = {};
         this.spawnables = [];
+        this.spawnablesSprites = [];
         this.obstacles = [];
         this.playerHitboxes = [];
         this.focusedPlayer = null;
@@ -260,13 +261,13 @@ class MatchScene extends Phaser.Scene
         }
 
         this.players = args[2];
-
-        //add first obstacles to scene, then spawnables, then players
-        //spawnables are args[4], they have to have their sprites in a specific array so that they can be used for collision checking
-        //player sprites need to be added as circles in another playersHitboxes array 
+        this.spawnables = args[4];
         
         for(var obstacle in args[3])
             this.obstacles.push(this.physics.add.image(args[3][obstacle].x, args[3][obstacle].y, 'obstacleSprites', args[3][obstacle].type + ".png").setOrigin(0, 0));
+
+        for(var spawnable in args[4])
+            this.spawnablesSprites.push(this.physics.add.image(args[4][spawnable].x, args[4][spawnable].y, args[4][spawnable].type, args[4][spawnable].spriteKey).setOrigin(0, 0));
 
         for(var player in this.players)
         {

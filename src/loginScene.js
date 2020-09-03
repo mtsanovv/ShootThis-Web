@@ -93,6 +93,7 @@ class LoginScene extends Phaser.Scene
         this.load.image('bullet', 'assets/match/bullet.png');
         this.load.image('smoke', 'assets/match/smoke.png');
         this.load.image('blood', 'assets/match/blood.png');
+        this.load.multiatlas('spawnablesSprites', 'assets/match/spawnables.json', 'assets/match');
 
         //Load match UI assets
         this.load.image('matchUIWeapon', 'assets/match/UI/weapon.png');
