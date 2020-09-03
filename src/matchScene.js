@@ -163,6 +163,9 @@ class MatchScene extends Phaser.Scene
             case "weaponUpdate":
                 game.scene.getScene("UIScene").updateWeaponHUD(args);
                 break;
+            case "playerKilled":
+                game.scene.getScene("UIScene").killedSomeone(args);
+                break;
         }
     }
 
@@ -215,12 +218,14 @@ class MatchScene extends Phaser.Scene
 
         try
         {
-            this.add.tileSprite(-1024, -1024, args[0] + 1024, args[1] + 1024, 'matchTile').setOrigin(0, 0);
+            this.background = this.add.tileSprite(-1024, -1024, args[0] + 1024, args[1] + 1024, 'matchTile').setOrigin(0, 0);
         }
         catch(e)
         {
             try
             {
+                if(this.background)
+                    this.background.destroy();
                 this.background = this.add.tileSprite(0, 0, 1920, 1080, 'matchTile');
                 this.tileResourceFailed = true;
             }
@@ -262,7 +267,7 @@ class MatchScene extends Phaser.Scene
 
         this.players = args[2];
         this.spawnables = args[4];
-        
+
         for(var obstacle in args[3])
             this.obstacles.push(this.physics.add.image(args[3][obstacle].x, args[3][obstacle].y, 'obstacleSprites', args[3][obstacle].type + ".png").setOrigin(0, 0));
 
@@ -293,6 +298,7 @@ class MatchScene extends Phaser.Scene
         //initialize enemy bullets' colliders
         this.physics.add.overlap(this.enemyBullets, this.obstacles, this.justHideBullet, null, this);
         this.physics.add.overlap(this.enemyBullets, this.focusedPlayer, this.playerGotShot, null, this);
+        this.physics.add.overlap(this.enemyBullets, this.playerHitboxes, this.justHideBloodBullet, null, this);
         
         //initialize player bullets' colliders
         this.physics.add.overlap(this.playerBullets, this.obstacles, this.justHideBullet, null, this);

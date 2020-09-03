@@ -96,7 +96,7 @@ class LoginScene extends Phaser.Scene
         this.load.multiatlas('spawnablesSprites', 'assets/match/spawnables.json', 'assets/match');
 
         //Load match UI assets
-        this.load.image('matchUIWeapon', 'assets/match/UI/weapon.png');
+        this.load.multiatlas('matchUIElements', 'assets/match/UI/elements.json', 'assets/match/UI');
         this.load.multiatlas('matchUIHopups', 'assets/match/UI/hopups.json', 'assets/match/UI');
         this.load.multiatlas('matchUIMags', 'assets/match/UI/mags.json', 'assets/match/UI');
 

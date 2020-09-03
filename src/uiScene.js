@@ -28,6 +28,11 @@ class UIScene extends Phaser.Scene
         this.weaponName;
         this.weaponBg;
         this.matchMusic;
+        this.killMenu;
+        this.killBg;
+        this.kills;
+        this.killsBoxes = [];
+        this.highestKillBoxY = 1055;
         this.sound.pauseOnBlur = false;
     }
 
@@ -54,10 +59,10 @@ class UIScene extends Phaser.Scene
         this.loadingShadow = this.add.rectangle(0, 0, 1920, 1080, "0x000000", 0.6).setOrigin(0, 0);
         this.loadingShadow.alpha = 0;
 
-        this.weaponMenu = this.add.container();
-        this.weaponBg = this.add.image(1700, 860, "matchUIWeapon").setOrigin(0, 0);
-        this.loadedAmmo = this.add.text(1760, 865, "09", { fontFamily: 'Rubik', fontSize: '60px', color: "#fff", fontStyle: "bold", align: 'right'}).setOrigin(0, 0);
-        this.totalAmmo = this.add.text(1745, 932, "000", { fontFamily: 'Rubik', fontSize: '60px', color: "#fff", fontStyle: "bold", align: 'right'}).setOrigin(0, 0);
+        this.weaponMenu = this.add.group();
+        this.weaponBg = this.add.image(1700, 860, "matchUIElements", "weapon.png").setOrigin(0, 0);
+        this.loadedAmmo = this.add.text(1760, 865, "09", { fontFamily: 'Rubik', fontSize: '60px', color: "#fff", fontStyle: "bold"}).setOrigin(0, 0);
+        this.totalAmmo = this.add.text(1745, 932, "000", { fontFamily: 'Rubik', fontSize: '60px', color: "#fff", fontStyle: "bold"}).setOrigin(0, 0);
         this.totalAmmo.alpha = 0.6;
         this.weaponMenuIcons.hopup = this.add.sprite(1700, 995, 'matchUIHopups', '00.png').setOrigin(0, 0);
         this.weaponMenuIcons.mag = this.add.sprite(1700, 995, 'matchUIMags', '00.png').setOrigin(0, 0);
@@ -71,16 +76,62 @@ class UIScene extends Phaser.Scene
         this.weaponMenu.add(this.weaponMenuIcons.hopup);
         this.weaponMenu.add(this.weaponMenuIcons.mag);
         this.weaponMenu.add(this.weaponName);
-        this.weaponMenu.alpha = 0;
+        this.weaponMenu.setAlpha(0);
+
+        this.killMenu = this.add.group();
+        this.killBg = this.add.image(1820, 20, "matchUIElements", "kills.png").setOrigin(0, 0);
+        this.kills = this.add.text(1870, 23, "00", { fontFamily: 'Rubik', fontSize: '30px', color: "#fff"}).setOrigin(0, 0);
+        this.killMenu.add(this.killBg);
+        this.killMenu.add(this.kills);
+        this.killMenu.setAlpha(0);
 
         this.children.bringToTop(this.loadingShadow);
 
         this.playMusicInMatch();
     }
 
+    killedSomeone(args)
+    {
+        this.killMenu.setAlpha(1);
+        if(Number(this.kills.text) + 1 < 10)
+            this.kills.text = "0" + (Number(this.kills.text) + 1);
+        else
+            this.kills.text = String(Number(this.kills.text) + 1);
+
+        var spaceBetweenContainers = 5;
+        var killContainer = this.add.container();
+        var killedBg = this.add.graphics();
+        killedBg.fillStyle(0x000000, 0.5);
+        var killedText = this.add.text(0, 1080, "KILLED ", { fontFamily: 'Rubik', fontSize: '30px', color: "#fff"}).setOrigin(0, 0);
+        var killedName = this.add.text(0, 1080, args[0].toUpperCase(), { fontFamily: 'Rubik', fontSize: '30px', color: "#f30000"}).setOrigin(0, 0);
+        killedText.x = Math.floor((1920 - (killedText.width + killedName.width + 20)) / 2) + 10;
+        killedText.y = this.highestKillBoxY - killedText.height - 10 - spaceBetweenContainers;
+        this.highestKillBoxY = killedText.y - spaceBetweenContainers;
+        killedName.x = killedText.x + killedText.width;
+        killedName.y = killedText.y;
+        killedBg.fillRoundedRect(killedText.x - 10, killedText.y - 5, killedText.width + killedName.width + 20, killedText.height + 10, 10);
+        killContainer.add(killedBg);
+        killContainer.add(killedText);
+        killContainer.add(killedName);
+        this.killsBoxes.push(killContainer);
+        this.time.delayedCall(3000, this.killRectangleFromKillFeed, [killContainer, spaceBetweenContainers], this)
+    }
+
+    killRectangleFromKillFeed(killContainer, spaceBetweenContainers)
+    {
+        var keyToSplice = this.killsBoxes.indexOf(killContainer);
+        if(keyToSplice != -1)
+            this.killsBoxes.splice(keyToSplice, 1);
+        if(!this.killsBoxes.length)
+            this.highestKillBoxY = 1055;
+        for(var container in this.killsBoxes)
+            this.killsBoxes[container].y -= killContainer.height;
+        killContainer.destroy();
+    }
+
     updateWeaponHUD(args)
     {
-        this.weaponMenu.alpha = 1;
+        this.weaponMenu.setAlpha(1);
         if(args[0] < 10)
             args[0] = "0" + args[0];
         if(args[1] < 10)
