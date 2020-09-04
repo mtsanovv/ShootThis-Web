@@ -33,6 +33,10 @@ class UIScene extends Phaser.Scene
         this.kills;
         this.killsBoxes = [];
         this.highestKillBoxY = 1055;
+        this.healthBar;
+        this.healthBarBg;
+        this.healthRectangle;
+        this.healthShadow;
         this.sound.pauseOnBlur = false;
     }
 
@@ -85,9 +89,28 @@ class UIScene extends Phaser.Scene
         this.killMenu.add(this.kills);
         this.killMenu.setAlpha(0);
 
+        this.healthBar = this.add.group();
+        this.healthBarBg = this.add.image(20, 20, "matchUIElements", "health.png").setOrigin(0, 0);
+        this.healthBarShadow = this.add.rectangle(65, 0, 100, 25, 0x000000, 0.5).setOrigin(0, 0);
+        this.centerInContainer(this.healthBarBg, this.healthBarShadow, true, false);
+        this.healthRectangle = this.add.rectangle(this.healthBarShadow.x, this.healthBarShadow.y, this.healthBarShadow.width, this.healthBarShadow.height, 0xffffff, 1).setOrigin(0, 0);
+        this.healthBar.add(this.healthBarBg);
+        this.healthBar.add(this.healthBarShadow);
+        this.healthBar.add(this.healthRectangle);
+        this.healthBar.setAlpha(0);
+
         this.children.bringToTop(this.loadingShadow);
 
         this.playMusicInMatch();
+    }
+
+    updateHealth(args)
+    {
+        this.healthBar.setAlpha(1);
+        if(this.healthBarShadow.width != args[1])
+            this.healthBarShadow.displayWidth = args[1];
+        
+        this.healthRectangle.displayWidth = args[1] / args[2] * args[0];
     }
 
     killedSomeone(args)
