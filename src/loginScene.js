@@ -79,6 +79,8 @@ class LoginScene extends Phaser.Scene
         this.load.audio('winMusic', 'assets/sound/winMusic.mp3');
         this.load.audio('loadingScreenMusic', 'assets/sound/loadingScreenMusic.mp3');
         this.load.audio('shootSound', 'assets/sound/shootSound.mp3');
+        this.load.audio('eliminated', 'assets/sound/eliminated.mp3');
+        this.load.audio('playerKilled', 'assets/sound/playerKilled.mp3');
 
 
         //Load character assets

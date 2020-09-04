@@ -121,6 +121,8 @@ class UIScene extends Phaser.Scene
         else
             this.kills.text = String(Number(this.kills.text) + 1);
 
+        this.sound.play('playerKilled');
+
         var spaceBetweenContainers = 5;
         var killContainer = this.add.container();
         var killedBg = this.add.graphics();
