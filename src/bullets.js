@@ -11,10 +11,12 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
         this.maxX = 0;
         this.maxY = 0;
         this.damage = 0;
+        this.playerSprite
     }
 
-    fire (args)
+    fire (args, playerSprite)
     {
+        this.playerSprite = playerSprite;
         this.playerId = args[0];
         this.timeFired = args[1];
         this.bulletTravelTime = args[2];
@@ -82,11 +84,11 @@ class Bullets extends Phaser.Physics.Arcade.Group
         });
     }
 
-    fireBullet (args)
+    fireBullet (args, playerSprite)
     {
         var bullet = this.getFirstDead(false);
 
         if (bullet)
-            bullet.fire(args);
+            bullet.fire(args, playerSprite);
     }
 }
