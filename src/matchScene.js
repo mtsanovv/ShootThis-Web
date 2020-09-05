@@ -169,7 +169,31 @@ class MatchScene extends Phaser.Scene
             case "healthUpdate":
                 game.scene.getScene("UIScene").updateHealth(args);
                 break;
+            case "killed":
+                game.scene.getScene("UIScene").gotKilled(socket, args);
+                break;
+            case "playerLeft":
+                this.playerLeft(args);
+                break;
         }
+    }
+
+    playerLeft(args)
+    {
+        if(Object.keys(this.players).indexOf(String(args[0])) !== -1)
+        {
+            for(var playerHitbox in this.playerHitboxes)
+            {
+                if(this.playerHitboxes[playerHitbox] === this.players[args[0]].sprite)
+                {
+                    this.playerHitboxes[playerHitbox].destroy();
+                    this.playerHitboxes.splice(playerHitbox, 1);
+                    break;
+                }
+            }
+            delete this.players[args[0]];
+        }
+
     }
 
     playerShot(args)

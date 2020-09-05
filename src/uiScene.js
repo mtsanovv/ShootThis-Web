@@ -46,6 +46,9 @@ class UIScene extends Phaser.Scene
         this.initVariables();
         this.socket = data.socket;
 
+        this.background = this.add.image(0, 0, 'loginbg').setOrigin(0, 0);
+        this.background.alpha = 0;
+
         this.messageContainer = this.add.container(0, 0);
         var shadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.6);
         var msgbg = this.add.image(960, 540, "messageBG");
@@ -102,6 +105,98 @@ class UIScene extends Phaser.Scene
         this.children.bringToTop(this.loadingShadow);
 
         this.playMusicInMatch();
+    }
+
+    gotKilled(socket, args)
+    {
+        this.sound.play('eliminated');
+        this.sound.removeByKey('loadingScreenMusic');
+        this.sound.removeByKey('matchMusic');
+
+        var children = this.children.getChildren();
+        for(var child in children)
+        {
+            children[child].alpha = 0;
+        }
+
+        this.tweens.add({
+            targets: this.loadingShadow,
+            duration: 200,
+            alpha: {
+                getStart: () => 0,
+                getEnd: () => 1
+            }
+        });
+
+        var eliminationContainer = this.add.group();
+        var bg = this.add.image(0, 540, "messageBG").setOrigin(0, 0);
+        this.centerInContainer(this.loadingShadow, bg, true);
+        var killed = this.add.text(0, 420, "KILLED BY ", { fontFamily: 'Rubik', fontSize: '64px', color: "#fff", fontStyle: "bold"}).setOrigin(0, 0);
+        var killedBy = this.add.text(0, 420, args[0].toUpperCase(), { fontFamily: 'Rubik', fontSize: '64px', color: "#f30000", fontStyle: "bold"}).setOrigin(0, 0);
+        killed.x = Math.floor((1920 - (killed.width + killedBy.width)) / 2);
+        killedBy.x = killed.x + killed.width;
+        var youPlaced = this.add.text(0, 510, "You placed ", { fontFamily: 'Rubik', fontSize: '32px', color: "#fff"}).setOrigin(0, 0);
+        var placement = this.add.text(0, 510, args[1], { fontFamily: 'Rubik', fontSize: '32px', color: "#ff4500", fontStyle: "bold"}).setOrigin(0, 0);
+        youPlaced.x =  Math.floor((1920 - (youPlaced.width + placement.width)) / 2);
+        placement.x = youPlaced.x + youPlaced.width;
+        eliminationContainer.add(bg);
+        eliminationContainer.add(killed);
+        eliminationContainer.add(killedBy);
+        eliminationContainer.add(youPlaced);
+        eliminationContainer.add(placement);
+        eliminationContainer.setAlpha(0);
+
+        this.tweens.add({
+            targets: eliminationContainer.getChildren(),
+            delay: 200,
+            duration: 200,
+            alpha: {
+                getStart: () => 0,
+                getEnd: () => 1
+            }
+        });
+        this.tweens.add({
+            targets: this.background,
+            delay: 400,
+            duration: 200,
+            alpha: {
+                getStart: () => 0,
+                getEnd: () => 1
+            }
+        });
+
+        var returnToLobbyBtnGroup = this.add.group();
+        var returnToLobbyBtn = this.add.sprite(0, 600, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
+        this.centerInContainer(this.loadingShadow, returnToLobbyBtn);
+        var returnToLobbyBtnText = this.add.text(0, 610, "Return to Lobby", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
+        this.centerInContainer(returnToLobbyBtn, returnToLobbyBtnText);
+        returnToLobbyBtnGroup.add(returnToLobbyBtn);
+        returnToLobbyBtnGroup.add(returnToLobbyBtnText);
+        returnToLobbyBtnGroup.setAlpha(0);
+
+        this.tweens.add({
+            targets: returnToLobbyBtnGroup.getChildren(),
+            delay: 600,
+            duration: 200,
+            alpha: {
+                getStart: () => 0,
+                getEnd: () => 1
+            },
+            onComplete: () => {
+                game.scene.start("LobbyScene", { x: 960, y: 540, socket: this.socket});
+                socket.emit("gameExt", "cancelJoin");
+                game.scene.stop("MatchScene");
+            }
+        });
+
+        returnToLobbyBtn.setInteractive().on('pointerdown', () => {
+            if(!this.messageContainer.alpha)
+            {
+                try { returnToLobbyBtn.destroy(); } catch(e) {}
+                game.scene.sendToBack("UIScene");
+                game.scene.stop("UIScene");
+            }
+        });
     }
 
     updateHealth(args)
@@ -173,7 +268,7 @@ class UIScene extends Phaser.Scene
 
     showOptions(socket)
     {
-        if(!this.showingOptions && !this.messageContainer.alpha)
+        if(!this.showingOptions && !this.messageContainer.alpha && !this.loadingShadow.alpha)
         {
             this.showingOptions = true;
             var overlayItems = [];
@@ -226,7 +321,7 @@ class UIScene extends Phaser.Scene
                 this.children.bringToTop(overlayItems[i]);
 
             returnToMatchBtn.setInteractive().on('pointerdown', () => {
-                if(!this.messageContainer.alpha)
+                if(!this.messageContainer.alpha && !this.loadingShadow.alpha)
                 {
                     for(var i in overlayItems)
                     {
@@ -237,7 +332,7 @@ class UIScene extends Phaser.Scene
             });
 
             returnToLobbyBtn.setInteractive().on('pointerdown', () => {
-                if(!this.messageContainer.alpha)
+                if(!this.messageContainer.alpha && !this.loadingShadow.alpha)
                 {
                     for(var i in overlayItems)
                     {
@@ -249,37 +344,43 @@ class UIScene extends Phaser.Scene
             });
 
             muteSoundsBtn.setInteractive().on('pointerdown', () => {
-                muteSoundsBtn.anims.play('wideBtnClicked');
-                if(game.sound.mute || gameSoundMuted)
+                if(!this.messageContainer.alpha && !this.loadingShadow.alpha)
                 {
-                    muteSoundsBtnText.text = "Mute Sounds";
-                    game.sound.mute = false;
-                    gameSoundMuted = false;
-                    this.centerInContainer(muteSoundsBtn, muteSoundsBtnText);
-                }
-                else
-                {
-                    muteSoundsBtnText.text = "Unmute Sounds";
-                    game.sound.mute = true;
-                    gameSoundMuted = true;
-                    this.centerInContainer(muteSoundsBtn, muteSoundsBtnText);
+                    muteSoundsBtn.anims.play('wideBtnClicked');
+                    if(game.sound.mute || gameSoundMuted)
+                    {
+                        muteSoundsBtnText.text = "Mute Sounds";
+                        game.sound.mute = false;
+                        gameSoundMuted = false;
+                        this.centerInContainer(muteSoundsBtn, muteSoundsBtnText);
+                    }
+                    else
+                    {
+                        muteSoundsBtnText.text = "Unmute Sounds";
+                        game.sound.mute = true;
+                        gameSoundMuted = true;
+                        this.centerInContainer(muteSoundsBtn, muteSoundsBtnText);
+                    }
                 }
             });
 
             muteMusicBtn.setInteractive().on('pointerdown', () => {
-                muteMusicBtn.anims.play('wideBtnClicked');
-                if(getCookie("music") !== "true")
+                if(!this.messageContainer.alpha && !this.loadingShadow.alpha)
                 {
-                    muteMusicBtnText.text = "Mute Music";
-                    setCookie("music", "true", 365);
-                    if(!game.scene.getScene("MatchScene").waitingForMatch) this.playMatchMusic();
-                }
-                else
-                {
-                    this.sound.removeByKey('loadingScreenMusic');
-                    this.sound.removeByKey('matchMusic');
-                    setCookie("music", "false", 365);
-                    muteMusicBtnText.text = "Allow Music";
+                    muteMusicBtn.anims.play('wideBtnClicked');
+                    if(getCookie("music") !== "true")
+                    {
+                        muteMusicBtnText.text = "Mute Music";
+                        setCookie("music", "true", 365);
+                        if(!game.scene.getScene("MatchScene").waitingForMatch) this.playMatchMusic();
+                    }
+                    else
+                    {
+                        this.sound.removeByKey('loadingScreenMusic');
+                        this.sound.removeByKey('matchMusic');
+                        setCookie("music", "false", 365);
+                        muteMusicBtnText.text = "Allow Music";
+                    }
                 }
             });
         }
