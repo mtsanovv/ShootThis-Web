@@ -249,7 +249,7 @@ class UIScene extends Phaser.Scene
         killContainer.destroy();
     }
 
-    updateWeaponHUD(args)
+    updateWeaponHUD(args, fullHUD = true)
     {
         this.weaponMenu.setAlpha(1);
         if(args[0] < 10)
@@ -260,10 +260,14 @@ class UIScene extends Phaser.Scene
             args[1] = "0" + args[1];
         this.loadedAmmo.text = args[0];
         this.totalAmmo.text = args[1];
-        this.weaponMenuIcons.hopup.setFrame(String(args[4]) + String(args[2]) + ".png");
-        this.weaponMenuIcons.mag.setFrame(String(args[4]) + String(args[3]) + ".png");
-        this.weaponName.text = args[5];
-        this.centerInContainer(this.weaponBg, this.weaponName);
+        this.totalAmmo.alpha = 0.6;
+        if(fullHUD)
+        {
+            this.weaponMenuIcons.hopup.setFrame(String(args[4]) + String(args[2]) + ".png");
+            this.weaponMenuIcons.mag.setFrame(String(args[4]) + String(args[3]) + ".png");
+            this.weaponName.text = args[5];
+            this.centerInContainer(this.weaponBg, this.weaponName);
+        }
     }
 
     showOptions(socket)

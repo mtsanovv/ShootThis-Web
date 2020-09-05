@@ -94,6 +94,9 @@ class MatchScene extends Phaser.Scene
                 case 27:
                     game.scene.getScene("UIScene").showOptions(socket);
                     break;
+                case 82:
+                    socket.emit("matchExt", "reload");
+                    break;
             }
         });
 
@@ -174,6 +177,9 @@ class MatchScene extends Phaser.Scene
                 break;
             case "playerLeft":
                 this.playerLeft(args);
+                break;
+            case "ammoUpdate":
+                game.scene.getScene("UIScene").updateWeaponHUD(args, false);
                 break;
         }
     }
