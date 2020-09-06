@@ -28,6 +28,7 @@ class MatchScene extends Phaser.Scene
         this.playerBullets;
         this.smokeEmitter;
         this.bloodEmitter;
+        this.hints = {};
     }
 
     create(data)
@@ -233,6 +234,25 @@ class MatchScene extends Phaser.Scene
         this.players[args[0]].sprite.x = args[1];
         this.players[args[0]].sprite.y = args[2];
         this.players[args[0]].sprite.rotation = args[3];
+        if(args[0] === this.focusedPlayerId && Object.keys(this.players).indexOf(String(args[0])) !== -1)
+        {
+            var spawnableKey = -1;
+            for(var spawnable in this.spawnables)
+            {
+                if(this.boxCircle(this.spawnables[spawnable].x, this.spawnables[spawnable].y, this.spawnables[spawnable].width, this.spawnables[spawnable].height, this.focusedPlayer.x, this.focusedPlayer.y, this.players[args[0]].hitboxDiameter / 2))
+                {
+                    spawnableKey = spawnable;
+                    break;
+                }
+            }
+
+            if(spawnableKey !== -1)
+                game.scene.getScene("UIScene").showHint(this.hints.pickupHint + " " + this.spawnables[spawnableKey].name);
+            else
+                game.scene.getScene("UIScene").hintsMenu.setAlpha(0);
+
+
+        }
         this.backgroundFollowsCamera();
     }
 
@@ -346,6 +366,8 @@ class MatchScene extends Phaser.Scene
         this.physics.add.overlap(this.playerBullets, this.obstacles, this.justHideBullet, null, this);
         this.physics.add.overlap(this.playerBullets, this.playerHitboxes, this.justHideBloodBullet, null, this);
 
+        this.hints = args[9];
+
         game.scene.getScene("UIScene").playMatchMusic();
     }
 
@@ -455,5 +477,42 @@ class MatchScene extends Phaser.Scene
             element.x = container.x + Math.floor((container.width - element.width) / 2);
         if(y)
             element.y = container.y + Math.floor((container.height - element.height) / 2);
+    }
+
+    /**
+     * box-circle collision
+     * @param {number} xb top-left corner of box
+     * @param {number} yb top-left corner of box
+     * @param {number} wb width of box
+     * @param {number} hb height of box
+     * @param {number} xc center of circle
+     * @param {number} yc center of circle
+     * @param {number} rc radius of circle
+     * 
+     * Credits David Figatner - https://github.com/davidfig/intersects
+     *  
+     * His function is included here outside of the module for efficiency sake
+    */
+
+    boxCircle(xb, yb, wb, hb, xc, yc, rc)
+    {
+        var hw = wb / 2
+        var hh = hb / 2
+        var distX = Math.abs(xc - (xb + wb / 2))
+        var distY = Math.abs(yc - (yb + hb / 2))
+
+        if (distX > hw + rc || distY > hh + rc)
+        {
+            return false
+        }
+
+        if (distX <= hw || distY <= hh)
+        {
+            return true
+        }
+
+        var x = distX - hw
+        var y = distY - hh
+        return x * x + y * y <= rc * rc
     }
 }

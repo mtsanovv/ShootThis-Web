@@ -37,6 +37,10 @@ class UIScene extends Phaser.Scene
         this.healthBarBg;
         this.healthRectangle;
         this.healthShadow;
+        this.hintsMenu;
+        this.hintsMenuBg;
+        this.hintsMenuText;
+        this.ammoHint;
         this.sound.pauseOnBlur = false;
     }
 
@@ -102,9 +106,27 @@ class UIScene extends Phaser.Scene
         this.healthBar.add(this.healthRectangle);
         this.healthBar.setAlpha(0);
 
+        this.hintsMenu = this.add.group();
+        this.hintsMenuBg = this.add.image(20, 1010, "matchUIElements", "hints.png").setOrigin(0, 0);
+        this.hintsMenuText = this.add.text(20, 1010, "Hint", { fontFamily: 'Rubik', fontSize: '30px', color: "#fff"}).setOrigin(0, 0);
+        this.centerInContainer(this.hintsMenuBg, this.hintsMenuText, true);
+        this.hintsMenu.add(this.hintsMenuBg);
+        this.hintsMenu.add(this.hintsMenuText);
+        this.hintsMenu.setAlpha(0);
+
+        this.ammoHint = this.add.text(20, 1010, "Reload Hint", { fontFamily: 'Rubik', fontSize: '30px', color: "#fff", fontStyle: "bold", stroke: "#fff", strokeThickness: 5}).setOrigin(0, 0);
+        this.ammoHint.alpha = 0;
+
         this.children.bringToTop(this.loadingShadow);
 
         this.playMusicInMatch();
+    }
+
+    showHint(args)
+    {
+        this.hintsMenu.setAlpha(1);
+        this.hintsMenuText.text = args;
+        this.centerInContainer(this.hintsMenuBg, this.hintsMenuText, true);
     }
 
     gotKilled(socket, args)
@@ -234,7 +256,7 @@ class UIScene extends Phaser.Scene
         killContainer.add(killedText);
         killContainer.add(killedName);
         this.killsBoxes.push(killContainer);
-        this.time.delayedCall(3000, this.killRectangleFromKillFeed, [killContainer, spaceBetweenContainers], this)
+        this.time.delayedCall(3000, this.killRectangleFromKillFeed, [killContainer, spaceBetweenContainers], this);
     }
 
     killRectangleFromKillFeed(killContainer, spaceBetweenContainers)
@@ -252,6 +274,29 @@ class UIScene extends Phaser.Scene
     updateWeaponHUD(args, fullHUD = true)
     {
         this.weaponMenu.setAlpha(1);
+
+        if(!args[0] && !args[1])
+        {
+            this.ammoHint.alpha = 1;
+            this.ammoHint.text = "No ammo";
+            this.ammoHint.style.setColor("#8b0000");
+            this.ammoHint.style.setStroke("#fff", 5);
+            this.centerInContainer(this.loadingShadow, this.ammoHint, true);
+            this.time.delayedCall(3000, () => {
+                this.ammoHint.alpha = 0;
+            }, null, this);
+        }
+        else if(args[0] < 2 && args[1])
+        {
+            this.ammoHint.alpha = 1;
+            this.ammoHint.text = game.scene.getScene("MatchScene").hints.reloadHint;
+            this.ammoHint.style.setColor("#fff");
+            this.ammoHint.style.setStroke("#6b2800", 5);
+            this.centerInContainer(this.loadingShadow, this.ammoHint, true);
+        }
+        else
+            this.ammoHint.alpha = 0;
+
         if(args[0] < 10)
             args[0] = "0" + args[0];
         if(args[1] < 10)

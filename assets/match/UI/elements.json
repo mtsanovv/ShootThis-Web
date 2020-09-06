@@ -4,11 +4,32 @@
 			"image": "elements.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 501,
+				"w": 1003,
 				"h": 202
 			},
 			"scale": 1,
 			"frames": [
+				{
+					"filename": "hints.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 500,
+						"h": 50
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 500,
+						"h": 50
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 500,
+						"h": 50
+					}
+				},
 				{
 					"filename": "health.png",
 					"rotated": false,
@@ -24,7 +45,7 @@
 						"h": 40
 					},
 					"frame": {
-						"x": 1,
+						"x": 503,
 						"y": 1,
 						"w": 297,
 						"h": 40
@@ -45,7 +66,7 @@
 						"h": 200
 					},
 					"frame": {
-						"x": 300,
+						"x": 802,
 						"y": 1,
 						"w": 200,
 						"h": 200
@@ -66,7 +87,7 @@
 						"h": 40
 					},
 					"frame": {
-						"x": 1,
+						"x": 503,
 						"y": 43,
 						"w": 90,
 						"h": 40
