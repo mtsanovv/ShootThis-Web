@@ -98,6 +98,9 @@ class MatchScene extends Phaser.Scene
                 case 82:
                     socket.emit("matchExt", "reload");
                     break;
+                case 69:
+                    socket.emit("matchExt", "pickItem");
+                    break;
             }
         });
 
@@ -182,7 +185,25 @@ class MatchScene extends Phaser.Scene
             case "ammoUpdate":
                 game.scene.getScene("UIScene").updateWeaponHUD(args, false);
                 break;
+            case "spawnablesUpdate":
+                this.updateSpawnables(args);
+                break;
         }
+    }
+
+    updateSpawnables(args)
+    {
+        try { this.spawnablesSprites[args[0]].destroy(); } catch(e) {}
+        this.spawnables.splice(args[0], 1);
+        this.spawnablesSprites.splice(args[0], 1);
+
+        for(var spawnable in args[1])
+        {
+            this.spawnables.push(args[1][spawnable]);
+            this.spawnablesSprites.push(this.physics.add.image(args[1][spawnable].x, args[1][spawnable].y, args[1][spawnable].type, args[1][spawnable].spriteKey).setOrigin(0, 0));
+        }
+
+        this.findNearbySpawnables();
     }
 
     playerLeft(args)
@@ -234,26 +255,29 @@ class MatchScene extends Phaser.Scene
         this.players[args[0]].sprite.x = args[1];
         this.players[args[0]].sprite.y = args[2];
         this.players[args[0]].sprite.rotation = args[3];
+        
         if(args[0] === this.focusedPlayerId && Object.keys(this.players).indexOf(String(args[0])) !== -1)
-        {
-            var spawnableKey = -1;
-            for(var spawnable in this.spawnables)
-            {
-                if(this.boxCircle(this.spawnables[spawnable].x, this.spawnables[spawnable].y, this.spawnables[spawnable].width, this.spawnables[spawnable].height, this.focusedPlayer.x, this.focusedPlayer.y, this.players[args[0]].hitboxDiameter / 2))
-                {
-                    spawnableKey = spawnable;
-                    break;
-                }
-            }
+            this.findNearbySpawnables();
 
-            if(spawnableKey !== -1)
-                game.scene.getScene("UIScene").showHint(this.hints.pickupHint + " " + this.spawnables[spawnableKey].name);
-            else
-                game.scene.getScene("UIScene").hintsMenu.setAlpha(0);
-
-
-        }
         this.backgroundFollowsCamera();
+    }
+
+    findNearbySpawnables()
+    {
+        var spawnableKey = -1;
+        for(var spawnable in this.spawnables)
+        {
+            if(this.boxCircle(this.spawnables[spawnable].x, this.spawnables[spawnable].y, this.spawnables[spawnable].width, this.spawnables[spawnable].height, this.focusedPlayer.x, this.focusedPlayer.y, this.players[this.focusedPlayerId].hitboxDiameter / 2))
+            {
+                spawnableKey = spawnable;
+                break;
+            }
+        }
+
+        if(spawnableKey !== -1)
+            game.scene.getScene("UIScene").showHint(this.hints.pickupHint + " " + this.spawnables[spawnableKey].name);
+        else
+            game.scene.getScene("UIScene").hintsMenu.setAlpha(0);
     }
 
     playerRotated(args)
