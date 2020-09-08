@@ -188,7 +188,44 @@ class MatchScene extends Phaser.Scene
             case "spawnablesUpdate":
                 this.updateSpawnables(args);
                 break;
+            case "damageDealt":
+                this.showDamageDealt(args);
+                break;
+            case "showHint":
+                this.showHint(args);
+                break;
         }
+    }
+
+    showHint(args)
+    {
+        game.scene.getScene("UIScene").showHint(args[0]);
+
+        if(args[1])
+            this.time.delayedCall(args[1], this.findNearbySpawnables, null, this);
+    }
+
+    showDamageDealt(args)
+    {
+        var playerGotDamage = this.players[args[0]];
+        if(playerGotDamage)
+        {
+            var damageDealt = this.add.text(playerGotDamage.sprite.x, playerGotDamage.sprite.y, args[1], { fontFamily: 'Rubik', fontSize: '40px', color: "#8b0000", fontStyle: "bold", stroke: "#fff", strokeThickness: 5}).setOrigin(0, 0);
+            damageDealt.setDepth(playerGotDamage.sprite.y + playerGotDamage.sprite.height + 10);
+            this.tweens.add({
+                targets: damageDealt,
+                duration: 700,
+                ease: 'Sine.easeInOut',
+                y: playerGotDamage.sprite.y - 100,
+                alpha: {
+                    getStart: () => 1,
+                    getEnd: () => 0
+                },
+                onComplete: () => {
+                    damageDealt.destroy();
+                }
+            });
+        } 
     }
 
     updateSpawnables(args)
@@ -388,6 +425,8 @@ class MatchScene extends Phaser.Scene
         //particle emitters
         this.smokeEmitter = this.add.particles("smoke");
         this.bloodEmitter = this.add.particles("blood");
+        this.smokeEmitter.setDepth(args[1]);
+        this.bloodEmitter.setDepth(args[1] + 1);
 
         //initialize bullet groups
         this.enemyBullets = new Bullets(this, args[8] * (Object.keys(this.players).length + 1));
