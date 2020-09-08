@@ -34,6 +34,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
 
         this.body.reset(x, y);
 
+        this.setDepth(y + this.height);
+
         this.toggleBullet(true);
     }
 
@@ -43,6 +45,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
 
         this.x += delta * this.bulletSpeed * Math.cos(this.rotation);
         this.y += delta * this.bulletSpeed * Math.sin(this.rotation);
+
+        this.setDepth(this.y + this.height);
 
         var xEvaluated = Math.cos(this.rotation) < 0 ? this.x < this.maxX : this.x > this.maxX;
         var yEvaluated = Math.sin(this.rotation) < 0 ? this.y < this.maxY : this.y > this.maxY; 

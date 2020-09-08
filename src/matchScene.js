@@ -201,6 +201,7 @@ class MatchScene extends Phaser.Scene
         {
             this.spawnables.push(args[1][spawnable]);
             this.spawnablesSprites.push(this.physics.add.image(args[1][spawnable].x, args[1][spawnable].y, args[1][spawnable].type, args[1][spawnable].spriteKey).setOrigin(0, 0));
+            this.spawnablesSprites[this.spawnablesSprites.length - 1].setDepth(args[1][spawnable].y);
         }
 
         this.findNearbySpawnables();
@@ -255,6 +256,7 @@ class MatchScene extends Phaser.Scene
         this.players[args[0]].sprite.x = args[1];
         this.players[args[0]].sprite.y = args[2];
         this.players[args[0]].sprite.rotation = args[3];
+        this.players[args[0]].sprite.setDepth(this.players[args[0]].sprite.y + this.players[args[0]].sprite.height);
         
         if(args[0] === this.focusedPlayerId && Object.keys(this.players).indexOf(String(args[0])) !== -1)
             this.findNearbySpawnables();
@@ -354,15 +356,25 @@ class MatchScene extends Phaser.Scene
         this.players = args[2];
         this.spawnables = args[4];
 
+        //spawn obstacles
         for(var obstacle in args[3])
+        {
             this.obstacles.push(this.physics.add.image(args[3][obstacle].x, args[3][obstacle].y, 'obstacleSprites', args[3][obstacle].type + ".png").setOrigin(0, 0));
+            this.obstacles[this.obstacles.length - 1].setDepth(args[3][obstacle].y);
+        }
 
+        //spawn spawnables
         for(var spawnable in args[4])
+        {
             this.spawnablesSprites.push(this.physics.add.image(args[4][spawnable].x, args[4][spawnable].y, args[4][spawnable].type, args[4][spawnable].spriteKey).setOrigin(0, 0));
+            this.spawnablesSprites[this.spawnablesSprites.length - 1].setDepth(args[4][spawnable].y);
+        }
 
+        //spawn players
         for(var player in this.players)
         {
             this.players[player].sprite = this.physics.add.sprite(this.players[player].x, this.players[player].y, 'characterSprites', this.players[player].character + ".png").setOrigin(this.players[player].centerX, this.players[player].centerY).setCircle(this.players[player].hitboxDiameter / 2);
+            this.players[player].sprite.setDepth(this.players[player].y + this.players[player].sprite.height);
             if(player == this.focusedPlayerId)
             {
                 this.focusedPlayer = this.players[player].sprite;
