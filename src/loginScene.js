@@ -512,13 +512,16 @@ class LoginScene extends Phaser.Scene
         this.loginBtnText.alpha = 0;
 
         this.loginBtn.setInteractive().on('pointerdown', () => {
-            this.loginBtn.anims.play('loginBtnClicked');
-            this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.7);
-            this.loadingText = this.add.sprite(960, 550, 'connectingAnim', 'connectingAnim0001.png');
+            if(!this.messageContainer.alpha && !this.loadingShadow.active)
+            {
+                this.loginBtn.anims.play('loginBtnClicked');
+                this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.7);
+                this.loadingText = this.add.sprite(960, 550, 'connectingAnim', 'connectingAnim0001.png');
 
-            this.loadingText.anims.play('connectingAnimation');
+                this.loadingText.anims.play('connectingAnimation');
 
-            socket.emit("loginExt", "cc", getCookie("savedLogin").split(","));
+                socket.emit("loginExt", "cc", getCookie("savedLogin").split(","));
+            }
         });
 
         this.switchToLoginForm.setInteractive().on('pointerdown', () => {
@@ -683,7 +686,7 @@ class LoginScene extends Phaser.Scene
                 else
                     this.username = this.usernameField.text;
             }
-            if(!this.messageContainer.alpha)
+            if(!this.messageContainer.alpha && !this.loadingShadow.active)
             {
                 this.loadingShadow = this.add.rectangle(960, 540, 1920, 1080, "0x000000", 0.7);
                 this.loadingText = this.add.sprite(960, 550, 'connectingAnim', 'connectingAnim0001.png');
