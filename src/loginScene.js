@@ -364,7 +364,7 @@ class LoginScene extends Phaser.Scene
 
                 var availableServers = [];
 
-                for(var i in pings)
+                for(var i = 0; i < pings.length; i++)
                 {
                     if(pings[i][1] == -1)
                         continue;
@@ -602,7 +602,7 @@ class LoginScene extends Phaser.Scene
             else
             {
                 txtObj.style.color = "rgb(98 46 0)";
-                for(var c in txtObj.text)
+                for(var c = 0; c < txtObj.text.length; c++)
                     txtObj.text = txtObj.text.substr(0, c) + '●' + txtObj.text.substr(c + 1);
             }
             this.scene.passwordFieldAsset.setFrame("field0001.png");

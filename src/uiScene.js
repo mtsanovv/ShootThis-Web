@@ -136,10 +136,8 @@ class UIScene extends Phaser.Scene
         this.sound.removeByKey('matchMusic');
 
         var children = this.children.getChildren();
-        for(var child in children)
-        {
+        for(var child = 0; child < children.length; child++)
             children[child].alpha = 0;
-        }
 
         this.tweens.add({
             targets: this.loadingShadow,
@@ -266,7 +264,7 @@ class UIScene extends Phaser.Scene
             this.killsBoxes.splice(keyToSplice, 1);
         if(!this.killsBoxes.length)
             this.highestKillBoxY = 1055;
-        for(var container in this.killsBoxes)
+        for(var container = 0; container < this.killsBoxes.length; container++)
             this.killsBoxes[container].y -= killContainer.height;
         killContainer.destroy();
     }
@@ -366,13 +364,13 @@ class UIScene extends Phaser.Scene
             overlayItems.push(muteSoundsBtn);
             overlayItems.push(muteSoundsBtnText);
 
-            for(var i in overlayItems)
+            for(var i = 0; i < overlayItems.length; i++)
                 this.children.bringToTop(overlayItems[i]);
 
             returnToMatchBtn.setInteractive().on('pointerdown', () => {
                 if(!this.messageContainer.alpha && !this.loadingShadow.alpha)
                 {
-                    for(var i in overlayItems)
+                    for(var i = 0; i < overlayItems.length; i++)
                     {
                         try { overlayItems[i].destroy() } catch(e) {}
                     }
@@ -383,7 +381,7 @@ class UIScene extends Phaser.Scene
             returnToLobbyBtn.setInteractive().on('pointerdown', () => {
                 if(!this.messageContainer.alpha && !this.loadingShadow.alpha)
                 {
-                    for(var i in overlayItems)
+                    for(var i = 0; i < overlayItems.length; i++)
                     {
                         try { overlayItems[i].destroy() } catch(e) {}
                     }

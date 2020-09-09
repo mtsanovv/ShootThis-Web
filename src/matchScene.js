@@ -230,11 +230,14 @@ class MatchScene extends Phaser.Scene
 
     updateSpawnables(args)
     {
-        try { this.spawnablesSprites[args[0]].destroy(); } catch(e) {}
-        this.spawnables.splice(args[0], 1);
-        this.spawnablesSprites.splice(args[0], 1);
+        if(args[0] !== -1)
+        {
+            try { this.spawnablesSprites[args[0]].destroy(); } catch(e) {}
+            this.spawnables.splice(args[0], 1);
+            this.spawnablesSprites.splice(args[0], 1);
+        }
 
-        for(var spawnable in args[1])
+        for(var spawnable = 0; spawnable < args[1].length; spawnable++)
         {
             this.spawnables.push(args[1][spawnable]);
             this.spawnablesSprites.push(this.physics.add.image(args[1][spawnable].x, args[1][spawnable].y, args[1][spawnable].type, args[1][spawnable].spriteKey).setOrigin(0, 0));
@@ -248,7 +251,7 @@ class MatchScene extends Phaser.Scene
     {
         if(Object.keys(this.players).indexOf(String(args[0])) !== -1)
         {
-            for(var playerHitbox in this.playerHitboxes)
+            for(var playerHitbox = 0; playerHitbox < this.playerHitboxes.length; playerHitbox++)
             {
                 if(this.playerHitboxes[playerHitbox] === this.players[args[0]].sprite)
                 {
@@ -304,7 +307,7 @@ class MatchScene extends Phaser.Scene
     findNearbySpawnables()
     {
         var spawnableKey = -1;
-        for(var spawnable in this.spawnables)
+        for(var spawnable = 0; spawnable < this.spawnables.length; spawnable++)
         {
             if(this.boxCircle(this.spawnables[spawnable].x, this.spawnables[spawnable].y, this.spawnables[spawnable].width, this.spawnables[spawnable].height, this.focusedPlayer.x, this.focusedPlayer.y, this.players[this.focusedPlayerId].hitboxDiameter / 2))
             {
@@ -394,14 +397,14 @@ class MatchScene extends Phaser.Scene
         this.spawnables = args[4];
 
         //spawn obstacles
-        for(var obstacle in args[3])
+        for(var obstacle = 0; obstacle < args[3].length; obstacle++)
         {
             this.obstacles.push(this.physics.add.image(args[3][obstacle].x, args[3][obstacle].y, 'obstacleSprites', args[3][obstacle].type + ".png").setOrigin(0, 0));
             this.obstacles[this.obstacles.length - 1].setDepth(args[3][obstacle].y);
         }
 
         //spawn spawnables
-        for(var spawnable in args[4])
+        for(var spawnable = 0; spawnable < args[4].length; spawnable++)
         {
             this.spawnablesSprites.push(this.physics.add.image(args[4][spawnable].x, args[4][spawnable].y, args[4][spawnable].type, args[4][spawnable].spriteKey).setOrigin(0, 0));
             this.spawnablesSprites[this.spawnablesSprites.length - 1].setDepth(args[4][spawnable].y);

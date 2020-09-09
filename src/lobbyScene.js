@@ -301,7 +301,7 @@ class LobbyScene extends Phaser.Scene
             {
                 var id = String(Math.floor((gameObject.x - 245 * (-Object.keys(args[0]).length + 4)) / 490));
                 socket.emit("gameExt", "changeCharacter", [id]);
-                for(var j in overlayItems)
+                for(var j = 0; j < overlayItems.length; j++)
                 {
                     try { overlayItems[j].destroy(); } catch(e) {}
                 }
@@ -314,13 +314,13 @@ class LobbyScene extends Phaser.Scene
         overlayItems.push(closeBtnText);
         overlayItems.push(titleText);
 
-        for(var i in overlayItems)
+        for(var i = 0; i < overlayItems.length; i++)
             this.children.bringToTop(overlayItems[i]);
 
         closeBtn.setInteractive().on('pointerdown', () => {
             if(!this.messageContainer.alpha)
             {
-                for(var i in overlayItems)
+                for(var i = 0; i < overlayItems.length; i++)
                 {
                     try { overlayItems[i].destroy() } catch(e) {}
                 }
@@ -528,7 +528,7 @@ class LobbyScene extends Phaser.Scene
                 nextPageBtn.setInteractive().on('pointerdown', () => {
                     if(!this.messageContainer.alpha)
                     {
-                        for(var i in overlayItems)
+                        for(var i = 0; i < overlayItems.length; i++)
                         {
                             try { overlayItems[i].destroy() } catch(e) {}
                         }
@@ -558,7 +558,7 @@ class LobbyScene extends Phaser.Scene
                 prevPageBtn.setInteractive().on('pointerdown', () => {
                     if(!this.messageContainer.alpha)
                     {
-                        for(var i in overlayItems)
+                        for(var i = 0; i < overlayItems.length; i++)
                         {
                             try { overlayItems[i].destroy() } catch(e) {}
                         }
@@ -580,13 +580,13 @@ class LobbyScene extends Phaser.Scene
         overlayItems.push(titleText);
         overlayItems.push(pageTitle);
 
-        for(var i in overlayItems)
+        for(var i = 0; i < overlayItems.length; i++)
             this.children.bringToTop(overlayItems[i]);
 
         closeBtn.setInteractive().on('pointerdown', () => {
             if(!this.messageContainer.alpha)
             {
-                for(var i in overlayItems)
+                for(var i = 0; i < overlayItems.length; i++)
                 {
                     try { overlayItems[i].destroy() } catch(e) {}
                 }
