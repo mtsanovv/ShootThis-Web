@@ -11,11 +11,13 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
         this.maxX = 0;
         this.maxY = 0;
         this.damage = 0;
-        this.playerSprite
+        this.playerSprite;
+        this.emitOnDeath = false;
     }
 
     fire (args, playerSprite)
     {
+        this.emitOnDeath = true;
         this.playerSprite = playerSprite;
         this.playerId = args[0];
         this.timeFired = args[1];
@@ -68,7 +70,9 @@ class Bullet extends Phaser.Physics.Arcade.Sprite
             this.setActive(false);
             this.setVisible(false);
             this.body.enable = false;
-            this.scene.bulletDied(this, tint, type, player);
+            
+            if(this.emitOnDeath)
+                this.scene.bulletDied(this, tint, type, player);
         }
     }
 }
