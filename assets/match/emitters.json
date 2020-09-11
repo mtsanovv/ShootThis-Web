@@ -1,0 +1,82 @@
+{
+	"textures": [
+		{
+			"image": "emitters.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 361,
+				"h": 130
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "blood.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 128,
+						"h": 128
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 128,
+						"h": 128
+					}
+				},
+				{
+					"filename": "smoke-puff.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 1,
+						"y": 4,
+						"w": 127,
+						"h": 124
+					},
+					"frame": {
+						"x": 131,
+						"y": 1,
+						"w": 127,
+						"h": 124
+					}
+				},
+				{
+					"filename": "health.png",
+					"rotated": false,
+					"trimmed": false,
+					"sourceSize": {
+						"w": 100,
+						"h": 100
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 0,
+						"w": 100,
+						"h": 100
+					},
+					"frame": {
+						"x": 260,
+						"y": 1,
+						"w": 100,
+						"h": 100
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "http://free-tex-packer.com",
+		"version": "0.6.6"
+	}
+}

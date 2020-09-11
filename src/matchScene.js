@@ -29,6 +29,7 @@ class MatchScene extends Phaser.Scene
         this.smokeEmitter;
         this.bloodEmitter;
         this.hints = {};
+        this.healthEmitter;
     }
 
     create(data)
@@ -194,6 +195,36 @@ class MatchScene extends Phaser.Scene
             case "showHint":
                 this.showHint(args);
                 break;
+            case "showEffectOnPlayer":
+                this.showEffectOnPlayer(args);
+                break;
+        }
+    }
+
+    showEffectOnPlayer(args)
+    {
+        var player = this.players[args[0]];
+        if(player) 
+        {
+            switch(args[1])
+            {
+                case "heal":
+                    var health = this.healthEmitter.createEmitter({
+                        alpha: { start: 1, end: 0 },
+                        scale: { start: 1, end: 0},
+                        speed: 100,
+                        angle: { min: 180, max: 360 },
+                        lifespan: 500,
+                        frequency: 200,
+                        accelerationY: -400,
+                        follow: player.sprite,
+                        radial: true
+                    });
+                    this.time.delayedCall(args[2], function() {
+                        this.healthEmitter.removeEmitter(health);
+                    }, null, this);
+                    break;
+            }
         }
     }
 
@@ -426,10 +457,12 @@ class MatchScene extends Phaser.Scene
         }
 
         //particle emitters
-        this.smokeEmitter = this.add.particles("smoke");
-        this.bloodEmitter = this.add.particles("blood");
+        this.smokeEmitter = this.add.particles("emitters", "smoke-puff.png");
+        this.bloodEmitter = this.add.particles("emitters", "blood.png");
+        this.healthEmitter = this.add.particles("emitters", "health.png");
         this.smokeEmitter.setDepth(args[1]);
         this.bloodEmitter.setDepth(args[1] + 1);
+        this.healthEmitter.setDepth(args[1] + 2);
 
         //initialize bullet groups
         this.enemyBullets = new Bullets(this, args[8] * (Object.keys(this.players).length + 1));
@@ -516,7 +549,7 @@ class MatchScene extends Phaser.Scene
     checkEmitterDone(particle)
     {
         if(particle.emitter.atLimit())
-            particle.emitter.manager.emitters.remove(particle.emitter);
+            particle.emitter.manager.removeEmitter(particle.emitter);
     }
 
     leaveMatch(socket)
