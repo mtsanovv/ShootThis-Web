@@ -220,14 +220,16 @@ class LobbyScene extends Phaser.Scene
         var xpText = this.add.text(980, 670, args[1].xp + '/' + args[1].xpToLevel + " XP", {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
         this.centerInContainer(statsbg, xpText);
         
-        this.add.text(980, 720, "Kills: " + args[1].kills, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
-        this.add.text(980, 770, "Deaths: " + args[1].deaths, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
-        this.add.text(980, 820, "K/DR: " + Math.round((args[1].kills / ((args[1].deaths == 0) ? 1 : args[1].deaths) + Number.EPSILON) * 100) / 100, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
-        this.add.text(980, 870, "Games played: " + args[1].totalGames, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+        this.add.text(980, 700, "Kills: " + args[1].kills, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+        this.add.text(980, 750, "Deaths: " + args[1].deaths, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+        this.add.text(980, 800, "K/DR: " + Math.round((args[1].kills / ((args[1].deaths == 0) ? 1 : args[1].deaths) + Number.EPSILON) * 100) / 100, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
+        this.add.text(980, 850, "Games played: " + args[1].totalGames, {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF'}).setOrigin(0, 0);
         
-        this.add.graphics().fillStyle(0xffffff).fillRoundedRect(progressBarBg.x, 920, progressBarBg.width, 3, 2);
-        var lastMatchText = this.add.text(950, 930, "Last Match Stats", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF', fontStyle: 'bold'}).setOrigin(0, 0);
-        this.centerInContainer(statsbg, lastMatchText)
+        this.add.graphics().fillStyle(0xffffff).fillRoundedRect(progressBarBg.x, 895, progressBarBg.width, 3, 2);
+        var lastMatchText = this.add.text(950, 900, "Last Match Stats", {fontFamily: 'Rubik', fontSize: '32px', fill: '#FFF', fontStyle: 'bold'}).setOrigin(0, 0);
+        this.centerInContainer(statsbg, lastMatchText);
+        var lastMatchPlacement = this.add.text(950, 940, "Placement: " + args[1].lastMatchPlacement, {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
+        this.centerInContainer(statsbg, lastMatchPlacement);
         var lastMatchKills = this.add.text(950, 965, "Kills: " + args[1].lastMatchKills, {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
         var damageDone = this.add.text(950, 965, "Damage Done: " + args[1].lastMatchDamageDone, {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
         lastMatchKills.x = statsbg.x + Math.floor((statsbg.width - (lastMatchKills.width + damageDone.width + 10)) / 2);
