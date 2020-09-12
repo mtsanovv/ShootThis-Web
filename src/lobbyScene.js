@@ -236,7 +236,7 @@ class LobbyScene extends Phaser.Scene
         damageDone.x = lastMatchKills.x + lastMatchKills.width + 10;
         
         var lastMatchXp = this.add.text(950, 990, "XP: " + args[1].lastMatchXp, {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
-        var timeElapsed = this.add.text(950, 990, "Time Played: " + ((Math.floor(args[1].lastMatchTimeElapsed / 60000) < 10) ? "0" + String(Math.floor(args[1].lastMatchTimeElapsed / 60000)) : Math.floor(args[1].lastMatchTimeElapsed / 60000)) + ":" + ((((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000) < 10) ? "0" + String((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000) : ((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000)), {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
+        var timeElapsed = this.add.text(950, 990, "Time Played: " + ((Math.floor(args[1].lastMatchTimeElapsed / 60000) < 10) ? "0" + String(Math.floor(args[1].lastMatchTimeElapsed / 60000)) : Math.floor(args[1].lastMatchTimeElapsed / 60000)) + ":" + ((Math.floor((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000) < 10) ? "0" + String(Math.floor((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000)) : Math.floor((args[1].lastMatchTimeElapsed - Math.floor(args[1].lastMatchTimeElapsed / 60000) * 60000) / 1000)), {fontFamily: 'Rubik', fontSize: '20px', fill: '#FFF'}).setOrigin(0, 0);
         lastMatchXp.x = statsbg.x + Math.floor((statsbg.width - (lastMatchXp.width + timeElapsed.width + 10)) / 2);
         timeElapsed.x = lastMatchXp.x + lastMatchXp.width + 10;
 

@@ -100,6 +100,8 @@ class LoginScene extends Phaser.Scene
         this.load.multiatlas('matchUIElements', 'assets/match/UI/elements.json', 'assets/match/UI');
         this.load.multiatlas('matchUIHopups', 'assets/match/UI/hopups.json', 'assets/match/UI');
         this.load.multiatlas('matchUIMags', 'assets/match/UI/mags.json', 'assets/match/UI');
+        this.load.image('champion', 'assets/match/UI/champion.png');
+
 
         //Login plugins
         this.load.scenePlugin({

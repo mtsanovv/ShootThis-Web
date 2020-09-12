@@ -198,6 +198,9 @@ class MatchScene extends Phaser.Scene
             case "showEffectOnPlayer":
                 this.showEffectOnPlayer(args);
                 break;
+            case "win":
+                game.scene.getScene("UIScene").wonGame(socket, args);
+                break;
         }
     }
 

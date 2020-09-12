@@ -124,9 +124,12 @@ class UIScene extends Phaser.Scene
 
     showHint(args)
     {
-        this.hintsMenu.setAlpha(1);
-        this.hintsMenuText.text = args;
-        this.centerInContainer(this.hintsMenuBg, this.hintsMenuText, true);
+        if(!this.loadingShadow.alpha)
+        {
+            this.hintsMenu.setAlpha(1);
+            this.hintsMenuText.text = args;
+            this.centerInContainer(this.hintsMenuBg, this.hintsMenuText, true);
+        }
     }
 
     gotKilled(socket, args)
@@ -219,6 +222,88 @@ class UIScene extends Phaser.Scene
         });
     }
 
+    wonGame(socket, args)
+    {
+        this.sound.play('winMusic');
+        this.sound.removeByKey('loadingScreenMusic');
+        this.sound.removeByKey('matchMusic');
+
+        var children = this.children.getChildren();
+        for(var child = 0; child < children.length; child++)
+            children[child].alpha = 0;
+
+        this.tweens.add({
+            targets: this.loadingShadow,
+            duration: 200,
+            alpha: {
+                getStart: () => 0,
+                getEnd: () => 1
+            }
+        });
+
+        var winContainer = this.add.group();
+        var champion = this.add.image(0, 50, 'champion').setOrigin(0, 0);
+        this.centerInContainer(this.loadingShadow, champion);
+        var numberOne = this.add.text(0, 550, "#" + args[0].split("/")[0], { fontFamily: 'Rubik', fontSize: '200px', color: "#fff", fontStyle: "bold"}).setOrigin(0, 0);
+        var outOf = this.add.text(0, 550, "/" + args[0].split("/")[1], { fontFamily: 'Rubik', fontSize: '100px', color: "#ff8a0a", fontStyle: "bold"}).setOrigin(0, 0);
+        numberOne.x =  Math.floor((1920 - (numberOne.width + outOf.width)) / 2);
+        outOf.x = numberOne.x + numberOne.width;
+        winContainer.add(champion);
+        winContainer.setAlpha(0);
+
+        this.tweens.add({
+            targets: winContainer.getChildren(),
+            delay: 200,
+            duration: 200,
+            alpha: {
+                getStart: () => 0,
+                getEnd: () => 1
+            }
+        });
+        this.tweens.add({
+            targets: this.background,
+            delay: 400,
+            duration: 200,
+            alpha: {
+                getStart: () => 0,
+                getEnd: () => 1
+            }
+        });
+
+        var returnToLobbyBtnGroup = this.add.group();
+        var returnToLobbyBtn = this.add.sprite(0, 800, 'wideBtn', 'wideBtn0001.png').setOrigin(0, 0);
+        this.centerInContainer(this.loadingShadow, returnToLobbyBtn);
+        var returnToLobbyBtnText = this.add.text(0, 810, "Return to Lobby", { fontFamily: 'Rubik', fontSize: '35px'}).setOrigin(0, 0);
+        this.centerInContainer(returnToLobbyBtn, returnToLobbyBtnText);
+        returnToLobbyBtnGroup.add(returnToLobbyBtn);
+        returnToLobbyBtnGroup.add(returnToLobbyBtnText);
+        returnToLobbyBtnGroup.setAlpha(0);
+
+        this.tweens.add({
+            targets: returnToLobbyBtnGroup.getChildren(),
+            delay: 600,
+            duration: 200,
+            alpha: {
+                getStart: () => 0,
+                getEnd: () => 1
+            },
+            onComplete: () => {
+                game.scene.start("LobbyScene", { x: 960, y: 540, socket: this.socket});
+                socket.emit("gameExt", "cancelJoin");
+                game.scene.stop("MatchScene");
+            }
+        });
+
+        returnToLobbyBtn.setInteractive().on('pointerdown', () => {
+            if(!this.messageContainer.alpha)
+            {
+                try { returnToLobbyBtn.destroy(); } catch(e) {}
+                game.scene.sendToBack("UIScene");
+                game.scene.stop("UIScene");
+            }
+        });
+    }
+
     updateHealth(args)
     {
         this.healthBar.setAlpha(1);
@@ -230,43 +315,67 @@ class UIScene extends Phaser.Scene
 
     killedSomeone(args)
     {
-        this.killMenu.setAlpha(1);
-        if(Number(this.kills.text) + 1 < 10)
-            this.kills.text = "0" + (Number(this.kills.text) + 1);
-        else
-            this.kills.text = String(Number(this.kills.text) + 1);
+        if(!this.loadingShadow.alpha)
+        {
+            this.killMenu.setAlpha(1);
+            if(Number(this.kills.text) + 1 < 10)
+                this.kills.text = "0" + (Number(this.kills.text) + 1);
+            else
+                this.kills.text = String(Number(this.kills.text) + 1);
 
-        this.sound.play('playerKilled');
+            this.sound.play('playerKilled');
 
-        var spaceBetweenContainers = 5;
-        var killContainer = this.add.container();
-        var killedBg = this.add.graphics();
-        killedBg.fillStyle(0x000000, 0.5);
-        var killedText = this.add.text(0, 1080, "KILLED ", { fontFamily: 'Rubik', fontSize: '30px', color: "#fff"}).setOrigin(0, 0);
-        var killedName = this.add.text(0, 1080, args[0].toUpperCase(), { fontFamily: 'Rubik', fontSize: '30px', color: "#f30000"}).setOrigin(0, 0);
-        killedText.x = Math.floor((1920 - (killedText.width + killedName.width + 20)) / 2) + 10;
-        killedText.y = this.highestKillBoxY - killedText.height - 10 - spaceBetweenContainers;
-        this.highestKillBoxY = killedText.y - spaceBetweenContainers;
-        killedName.x = killedText.x + killedText.width;
-        killedName.y = killedText.y;
-        killedBg.fillRoundedRect(killedText.x - 10, killedText.y - 5, killedText.width + killedName.width + 20, killedText.height + 10, 10);
-        killContainer.add(killedBg);
-        killContainer.add(killedText);
-        killContainer.add(killedName);
-        this.killsBoxes.push(killContainer);
-        this.time.delayedCall(3000, this.killRectangleFromKillFeed, [killContainer, spaceBetweenContainers], this);
+            var spaceBetweenContainers = 5;
+            var killContainer = this.add.container();
+            var killedBg = this.add.graphics();
+            killedBg.fillStyle(0x000000, 0.5);
+            var killedText = this.add.text(0, 1080, "KILLED ", { fontFamily: 'Rubik', fontSize: '30px', color: "#fff"}).setOrigin(0, 0);
+            var killedName = this.add.text(0, 1080, args[0].toUpperCase(), { fontFamily: 'Rubik', fontSize: '30px', color: "#f30000"}).setOrigin(0, 0);
+            killedText.x = Math.floor((1920 - (killedText.width + killedName.width + 20)) / 2) + 10;
+            killedText.y = this.highestKillBoxY - killedText.height - 10 - spaceBetweenContainers;
+            this.highestKillBoxY = killedText.y - spaceBetweenContainers;
+            killedName.x = killedText.x + killedText.width;
+            killedName.y = killedText.y;
+            killedBg.fillRoundedRect(killedText.x - 10, killedText.y - 5, killedText.width + killedName.width + 20, killedText.height + 10, 10);
+            killContainer.add(killedBg);
+            killContainer.add(killedText);
+            killContainer.add(killedName);
+            killContainer.setAlpha(0);
+
+            this.tweens.add({
+                targets: killContainer,
+                duration: 200,
+                alpha: {
+                    getStart: () => 0,
+                    getEnd: () => 1
+                }
+            });
+            
+            this.killsBoxes.push(killContainer);
+            this.time.delayedCall(3000, this.killRectangleFromKillFeed, [killContainer], this);
+        }
     }
 
-    killRectangleFromKillFeed(killContainer, spaceBetweenContainers)
+    killRectangleFromKillFeed(killContainer)
     {
-        var keyToSplice = this.killsBoxes.indexOf(killContainer);
-        if(keyToSplice != -1)
-            this.killsBoxes.splice(keyToSplice, 1);
-        if(!this.killsBoxes.length)
-            this.highestKillBoxY = 1055;
-        for(var container = 0; container < this.killsBoxes.length; container++)
-            this.killsBoxes[container].y -= killContainer.height;
-        killContainer.destroy();
+        this.tweens.add({
+            targets: killContainer,
+            duration: 200,
+            alpha: {
+                getStart: () => 1,
+                getEnd: () => 0
+            },
+            onComplete: () => {
+                var keyToSplice = this.killsBoxes.indexOf(killContainer);
+                if(keyToSplice != -1)
+                    this.killsBoxes.splice(keyToSplice, 1);
+                if(!this.killsBoxes.length)
+                    this.highestKillBoxY = 1055;
+                for(var container = 0; container < this.killsBoxes.length; container++)
+                    this.killsBoxes[container].y -= killContainer.height;
+                killContainer.destroy();
+            }
+        });
     }
 
     updateWeaponHUD(args, fullHUD = true)
