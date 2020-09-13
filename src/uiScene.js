@@ -41,6 +41,8 @@ class UIScene extends Phaser.Scene
         this.hintsMenuBg;
         this.hintsMenuText;
         this.ammoHint;
+        this.timer;
+        this.matchEndsOn = 0;
         this.sound.pauseOnBlur = false;
     }
 
@@ -114,12 +116,21 @@ class UIScene extends Phaser.Scene
         this.hintsMenu.add(this.hintsMenuText);
         this.hintsMenu.setAlpha(0);
 
+        this.timer = this.add.text(20, 60, "Match ends in 00:00", { fontFamily: 'Rubik', fontSize: '30px', color: "#fff", stroke: "#622e00", strokeThickness: 5 }).setOrigin(0, 0);
+        this.timer.alpha = 0;
+
         this.ammoHint = this.add.text(20, 1010, "Reload Hint", { fontFamily: 'Rubik', fontSize: '30px', color: "#fff", fontStyle: "bold", stroke: "#fff", strokeThickness: 5}).setOrigin(0, 0);
         this.ammoHint.alpha = 0;
 
         this.children.bringToTop(this.loadingShadow);
 
         this.playMusicInMatch();
+    }
+
+    startTimer(time)
+    {
+        this.timer.alpha = 1;
+        this.matchEndsOn = new Date().valueOf() + time;
     }
 
     showHint(args)
@@ -619,5 +630,24 @@ class UIScene extends Phaser.Scene
             element.x = container.x + Math.floor((container.width - element.width) / 2);
         if(y)
             element.y = container.y + Math.floor((container.height - element.height) / 2);
+    }
+
+    update(time, delta)
+    {
+        var remainingTime = this.matchEndsOn - new Date().valueOf();
+        if(remainingTime <= 0)
+            this.timer.text = "Match ends in 00:00";
+        else if(remainingTime > 0)
+        {
+            var oldText = this.timer.text.split(":")[1];
+            this.timer.text = "Match ends in " + ((Math.floor(remainingTime / 60000) < 10) ? "0" + String(Math.floor(remainingTime / 60000)) : Math.floor(remainingTime / 60000)) + ":" + ((Math.floor((remainingTime - Math.floor(remainingTime / 60000) * 60000) / 1000) < 10) ? "0" + String(Math.floor((remainingTime - Math.floor(remainingTime / 60000) * 60000) / 1000)) : Math.floor((remainingTime - Math.floor(remainingTime / 60000) * 60000) / 1000));
+            if(oldText != this.timer.text.split(":")[1] && remainingTime < 120000)
+            {
+                if(this.timer.style.color == "#fff")
+                    this.timer.style.setColor("#ff0000");
+                else
+                    this.timer.style.setColor("#fff");
+            }
+        }
     }
 }

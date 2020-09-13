@@ -483,6 +483,8 @@ class MatchScene extends Phaser.Scene
         this.hints = args[9];
 
         game.scene.getScene("UIScene").playMatchMusic();
+
+        game.scene.getScene("UIScene").startTimer(args[10]);
     }
 
     justHideBullet(hitObject, bullet)
