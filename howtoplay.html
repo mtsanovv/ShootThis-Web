@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>ShootThis - a 2D HTML5 online shooter</title>
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+		<link href="css/animate.min.css" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700|Material+Icons|Kaushan+Script">
+		<link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/cookieconsent2/1.0.10/cookieconsent.min.js"></script>
+		<script type="text/javascript">
+			window.cookieconsent_options = {"message":"This website uses cookies to improve your experience.","dismiss":"Got It","learnMore":"Learn More","link":"https://cookie-consent.app.forthe.top/why-websites-use-cookies/","target": "_blank", "theme":"light-bottom"};
+		</script>  
+	</head>
+	<body style="background-image: url('images/background.png'); color: #ffffff;">
+		<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(255,255,255, 0.1); box-shadow: none !important; border-bottom: 1px solid rgba(255, 255, 255, 0.7) !important;">
+		  <div class="navbar-brand" style="font-family: 'Kaushan Script' !important;" >ShootThis</div>
+		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		  </button>
+		  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+			<ul class="ml-auto navbar-nav">
+			  <li class="nav-item">
+				<a class="nav-link" href="index.html">Home</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="register.php">Register</a>
+			  </li>
+			  <li class="nav-item">
+				<a class="nav-link" href="play.php">Play Now!</a>
+			  </li>
+			</ul>
+		  </div>
+		</nav>
+		
+		<center>
+			<h1 style="margin-top: 3vh; font-weight: bold;">HOW TO PLAY</h1>
+			<p style="margin-left: 5vw; margin-right: 5vw;">ShootThis is an HTML5 battle royale that is played in the top view of a 2D plane. You need to have an account to play.</p>
+			<h3 style="margin-top: 3vh; font-weight: bold;">ABOUT THE SERVER SELECTION SCREEN</h3>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">It's a screen that you cannot skip and it appears immediately after you log in successfully. You need to pick one of the servers listed and it's in your best interest to choose the one with the least ping time so that you are able to respond fast to interactions with other players during a match.</p>
+			<img style="max-width: 100%; height: auto;" src="images/howtoplay/servers.png"/>
+			<h3 style="margin-top: 3vh; font-weight: bold;">ABOUT THE LOBBY</h3>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">The lobby is basically the main menu of ShootThis. From it, you can access your stats, personalize your account and control your gaming experience. There are 3 sections: experience controls, player customization and match controls.</p>
+			<h5>EXPERIENCE CONTROLS</h5>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">These are located on the bottom left of your screen and consists of the following: a button to control the music, a button to control the sound and a button to control the game quality/performance (Renderer).</p>
+			<img style="max-width: 100%; height: auto;" src="images/howtoplay/experiencecontrols.png"/>
+			<ul style="text-align: justify; margin-left: 5vw; margin-right: 5vw; margin-top: 2vh;">
+				<li>
+					<font style="font-weight: bold;">Mute/Play Music</font> - this option mutes or unmutes all music game-wide, respectively. The default of that button is whatever you chose at the "Enable Audio" prompt when you first logged in. The only way to toggle music after you choose the setting at that prompt is to click the button.
+				</li>
+				<li style="margin-top: 2vh;">
+					<font style="font-weight: bold;">Mute/Allow Sounds</font> - mutes/unmutes all audio from the game for the current session (until you refresh the page), which means that no sound or music will be played, anywhere. The way to toggle audio again is to click that button or refresh the page.
+				</li>
+				<li style="margin-top: 2vh;">
+					<font style="font-weight: bold;">Renderer</font> - this toggles between WebGL and CANVAS mode. WebGL has more extras when displaying graphics and is supported by most modern browsers, however, it can be very resource-demanding, especially on older machines. CANVAS is the more lightweight solution, but the effects may not be as amazing as WebGL. The default value is WebGL (if your browser supports it), otherwise CANVAS will be chosen by default. The only way to change between the rendering engines is to use that toggle. <b>Note: switch to CANVAS if your machine has struggles during a match. It might work a lot better.</b>
+				</li>
+			</ul>
+			<h5>PLAYER CUSTOMIZATION</h5>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">This section is on the right of the experience controls. It shows your currently chosen character (Elenuit by default), as well as some useful stats about your overall ShootThis experience as well as details about the last ShootThis match (if you have played one). <b>To change your character, simply use the "Change Character" button.</b></p>
+			<img style="max-width: 100%; height: auto;" src="images/howtoplay/playercustomization.png"/>
+			<h5 style="margin-top: 3vh;">MATCH CONTROLS</h5>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">They are on the right of the player customization section and underneath the "How to Play" button. Using the "Join Match" button you can join a queue for a match. Underneath it, you can see the current status of the queue. Whenever the current queue is created, a host is automatically assigned. The host is allowed to start the match only when there are enough players to meet the minimum requirement. If a lot of players join the queue, it's better to wait for the system to automatically start a full match. If you want the host to be reassigned, you need to click "Vote: Change Host" and if at least 2/3rds of all players in the queue vote the system will assign the host role to someone else. Voting to change the host is useful when everyone is tired of waiting and they want a smaller match and the current host is unwilling to start one.</p>
+			<img style="max-width: 100%; height: auto;" src="images/howtoplay/matchcontrols.png"/>
+			<h3 style="margin-top: 3vh; font-weight: bold;">ABOUT THE MATCHES</h3>
+		</center>
+		
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+		<script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+		<script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+	</body>
+</html>
