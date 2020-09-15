@@ -32,7 +32,7 @@ class LobbyScene extends Phaser.Scene
         this.matchLoadingIcon;
         this.matchMenuBg;
         this.isHost = false;
-        this.minPlayersPerMatch = 5;
+        this.minPlayersPerMatch = 3;
         this.voteChangeHostBtn = null;
         this.startMatchBtn = null;
         this.voteChangeHostBtnText = null;
@@ -174,9 +174,6 @@ class LobbyScene extends Phaser.Scene
                 break;
             case "changeCharacter":
                 this.changeCharacter(socket, args);
-                break;
-            case "minPlayersForMatch":
-                this.showHowToPlay(1, args);
                 break;
             case "joinMatch":
                 this.matchJoined(socket, args);
@@ -377,8 +374,9 @@ class LobbyScene extends Phaser.Scene
         howToPlayBtn.setInteractive().on('pointerdown', () => {
             if(!this.loadingShadow.alpha && !this.messageContainer.alpha)
             {
-                howToPlayBtn.anims.play('loginBtnClicked');
-                socket.emit("gameExt", "requestMinPlayersForMatch");
+                var newLocation = window.location.href.split("/");
+                newLocation[newLocation.length - 1] = "howtoplay.html";
+                window.open(newLocation.join("/"), '_blank');
             }
         });
 
@@ -495,108 +493,6 @@ class LobbyScene extends Phaser.Scene
         this.centerInContainer(muteMusicBtn, muteMusicTxt);
         this.centerInContainer(muteSoundsBtn, muteSoundsTxt);
         this.centerInContainer(rendererBtn, rendererTxt);
-    }
-
-    showHowToPlay(screen, args)
-    {
-        var overlayItems = [];
-        var pageTitle;
-
-        this.loadingShadow.alpha = 1;
-        this.children.bringToTop(this.loadingShadow);
-
-        var titleText = this.add.text(0, 15, "HOW TO PLAY", { fontFamily: 'Rubik', fontSize: '90px', fontStyle: 'bold'}).setOrigin(0, 0);
-        this.centerInContainer(this.loadingShadow, titleText);
-        var closeBtn = this.add.sprite(0, 965, 'mediumBtn', 'mediumBtn0001.png').setOrigin(0, 0);
-        this.centerInContainer(this.loadingShadow, closeBtn);
-        var closeBtnText = this.add.text(0, 985, "Back", { fontFamily: 'Rubik', fontSize: '60px'}).setOrigin(0, 0);
-        this.centerInContainer(closeBtn, closeBtnText);
-
-        switch(screen)
-        {
-            case 1:
-                pageTitle = this.add.text(0, 120, "ABOUT THE LOBBY", { fontFamily: 'Rubik', fontSize: '70px'}).setOrigin(0, 0);
-                this.centerInContainer(this.loadingShadow, pageTitle);
-                var lobbyText1 = this.add.text(0, pageTitle.y + pageTitle.height + 20, "The lobby is basically the main menu of ShootThis. From it, you can access your stats, personalize your account and control your gaming experience. There are 3 sections: experience controls, player customization and match controls.", { fontFamily: 'Rubik', fontSize: '25px', wordWrap: { width: 1800, useAdvancedWrap: true }}).setOrigin(0, 0);
-                this.centerInContainer(this.loadingShadow, lobbyText1);
-                var lobbyText2 = this.add.text(lobbyText1.x, lobbyText1.y + lobbyText1.height, "\nExperience controls:\nThese are located on the bottom left of your screen and consists of the following: a button to control the music, a button to control the sound and a button to control the game quality/performance (Renderer).\n\n\t- Mute/Unmute Music - this option mutes or unmutes all music game-wide, respectively. The default of that button is whatever you chose at the \"Enable Audio\" prompt when you first logged in. If you change this setting, it is saved and the only way to toggle music is to click that button.\n\t- Mute/Allow Sounds - mutes/unmutes all audio from the game for the current session (until you refresh the page), which means that no sound or music will be played, anywhere. The way to toggle audio again is to click that button or refresh the page.\n\t- Renderer - this toggles between WebGL and CANVAS mode. WebGL has more extras when displaying graphics and is supported by most modern browsers, however, it can be very resource-demanding, especially on older machines. CANVAS is the more lightweight solution, but the graphical effects may not be as amazing as WebGL. The default value is WebGL (if your browser supports it), otherwise CANVAS will be chosen by default. The only way to change between the rendering engines is to use that toggle.\n\nPlayer customization/stats:\nThis is right next to the experience controls. It displays your character, as well as other stats. You can change your character through the \"Change Character\" menu.\n\nMatch controls:\nThey are next to the player stats section. Using the \"Join Match\" button you can join a queue for a match. Underneath it, you can see the current status of the queue. Whenever the current queue is created, a host is automatically assigned. The host is allowed to start the match only when there are at least " + args[0] + " players. If enough players join the queue, it's better to wait for the system to automatically start a full match. If you want the host to be reassigned, you need to click \"Vote: Change Host\" and if at least " + args[1] + "/" + args[2] + " of players in the queue vote (and there are at least 5 players) the system will assign the host role to someone else. Voting to change the host is useful when everyone is tired of waiting and they want a smaller match and the current host is unwilling to start one.", { fontFamily: 'Rubik', fontSize: '25px', wordWrap: { width: 1800 }}).setOrigin(0, 0);
-                
-                var instructionsBg = this.add.rectangle(lobbyText1.x - 10, lobbyText1.y - 10, 1810, lobbyText1.height + lobbyText2.height + 20, "0x622e00", 0.8).setOrigin(0, 0);
-                
-                var nextPageBtn = this.add.sprite(closeBtn.x + closeBtn.width + 20, closeBtn.y, 'mediumBtn', 'mediumBtn0001.png').setOrigin(0, 0);
-                var nextPageText = this.add.text(0, closeBtnText.y, "Page " + String(screen + 1), { fontFamily: 'Rubik', fontSize: '60px'}).setOrigin(0, 0);
-                this.centerInContainer(nextPageBtn, nextPageText);
-
-                nextPageBtn.setInteractive().on('pointerdown', () => {
-                    if(!this.messageContainer.alpha)
-                    {
-                        for(var i = 0; i < overlayItems.length; i++)
-                        {
-                            try { overlayItems[i].destroy() } catch(e) {}
-                        }
-                        this.input.removeAllListeners('gameobjectdown'); 
-                        this.showHowToPlay(screen + 1, args);
-                    }
-                });
-
-                overlayItems.push(instructionsBg);
-                overlayItems.push(lobbyText1);
-                overlayItems.push(lobbyText2);
-                overlayItems.push(nextPageBtn);
-                overlayItems.push(nextPageText);
-                break;
-            case 2:
-                pageTitle = this.add.text(0, 120, "ABOUT THE MATCHES", { fontFamily: 'Rubik', fontSize: '70px'}).setOrigin(0, 0);
-                this.centerInContainer(this.loadingShadow, pageTitle);
-                var lobbyText1 = this.add.text(0, pageTitle.y + pageTitle.height + 20, "TBA", { fontFamily: 'Rubik', fontSize: '25px', wordWrap: { width: 1800, useAdvancedWrap: true }}).setOrigin(0, 0);
-                this.centerInContainer(this.loadingShadow, lobbyText1);
-
-                var instructionsBg = this.add.rectangle(lobbyText1.x - 10, lobbyText1.y - 10, 1810, lobbyText1.height + 20, "0x622e00", 0.8).setOrigin(0, 0);
-                
-                var prevPageBtn = this.add.sprite(closeBtn.x - closeBtn.width - 20, closeBtn.y, 'mediumBtn', 'mediumBtn0001.png').setOrigin(0, 0);
-                var prevPageText = this.add.text(0, closeBtnText.y, "Page " + String(screen - 1), { fontFamily: 'Rubik', fontSize: '60px'}).setOrigin(0, 0);
-                this.centerInContainer(prevPageBtn, prevPageText);
-
-                prevPageBtn.setInteractive().on('pointerdown', () => {
-                    if(!this.messageContainer.alpha)
-                    {
-                        for(var i = 0; i < overlayItems.length; i++)
-                        {
-                            try { overlayItems[i].destroy() } catch(e) {}
-                        }
-                        this.input.removeAllListeners('gameobjectdown'); 
-                        this.showHowToPlay(screen - 1, args);
-                    }
-                });
-
-                overlayItems.push(instructionsBg);
-                overlayItems.push(lobbyText1);
-                overlayItems.push(lobbyText2);
-                overlayItems.push(prevPageBtn);
-                overlayItems.push(prevPageText);
-                break;
-        }
-
-        overlayItems.push(closeBtn);
-        overlayItems.push(closeBtnText);
-        overlayItems.push(titleText);
-        overlayItems.push(pageTitle);
-
-        for(var i = 0; i < overlayItems.length; i++)
-            this.children.bringToTop(overlayItems[i]);
-
-        closeBtn.setInteractive().on('pointerdown', () => {
-            if(!this.messageContainer.alpha)
-            {
-                for(var i = 0; i < overlayItems.length; i++)
-                {
-                    try { overlayItems[i].destroy() } catch(e) {}
-                }
-                this.input.removeAllListeners('gameobjectdown'); 
-                this.loadingShadow.alpha = 0;
-            }
-        });
-
     }
 
     joinMatch(socket, joinMatchBtnText, joinMatchBtn)

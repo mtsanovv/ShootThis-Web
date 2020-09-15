@@ -38,12 +38,12 @@
 		<center>
 			<h1 style="margin-top: 3vh; font-weight: bold;">HOW TO PLAY</h1>
 			<p style="margin-left: 5vw; margin-right: 5vw;">ShootThis is an HTML5 battle royale that is played in the top view of a 2D plane. You need to have an account to play.</p>
-			<h3 style="margin-top: 3vh; font-weight: bold;">ABOUT THE SERVER SELECTION SCREEN</h3>
+			<h3 id="server-selection" style="margin-top: 5vh; font-weight: bold;">ABOUT THE SERVER SELECTION SCREEN</h3>
 			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">It's a screen that you cannot skip and it appears immediately after you log in successfully. You need to pick one of the servers listed and it's in your best interest to choose the one with the least ping time so that you are able to respond fast to interactions with other players during a match.</p>
 			<img style="max-width: 100%; height: auto;" src="images/howtoplay/servers.png"/>
-			<h3 style="margin-top: 3vh; font-weight: bold;">ABOUT THE LOBBY</h3>
-			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">The lobby is basically the main menu of ShootThis. From it, you can access your stats, personalize your account and control your gaming experience. There are 3 sections: experience controls, player customization and match controls.</p>
-			<h5>EXPERIENCE CONTROLS</h5>
+			<h3 id="lobby" style="margin-top: 5vh; font-weight: bold;">ABOUT THE LOBBY</h3>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">The lobby is basically the main menu of ShootThis. From it, you can access your stats, personalize your account and control your gaming experience. There are 3 sections: experience controls, player customization and match joining controls.</p>
+			<h5 id="experience-controls">EXPERIENCE CONTROLS</h5>
 			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">These are located on the bottom left of your screen and consists of the following: a button to control the music, a button to control the sound and a button to control the game quality/performance (Renderer).</p>
 			<img style="max-width: 100%; height: auto;" src="images/howtoplay/experiencecontrols.png"/>
 			<ul style="text-align: justify; margin-left: 5vw; margin-right: 5vw; margin-top: 2vh;">
@@ -57,13 +57,75 @@
 					<font style="font-weight: bold;">Renderer</font> - this toggles between WebGL and CANVAS mode. WebGL has more extras when displaying graphics and is supported by most modern browsers, however, it can be very resource-demanding, especially on older machines. CANVAS is the more lightweight solution, but the effects may not be as amazing as WebGL. The default value is WebGL (if your browser supports it), otherwise CANVAS will be chosen by default. The only way to change between the rendering engines is to use that toggle. <b>Note: switch to CANVAS if your machine has struggles during a match. It might work a lot better.</b>
 				</li>
 			</ul>
-			<h5>PLAYER CUSTOMIZATION</h5>
-			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">This section is on the right of the experience controls. It shows your currently chosen character (Elenuit by default), as well as some useful stats about your overall ShootThis experience as well as details about the last ShootThis match (if you have played one). <b>To change your character, simply use the "Change Character" button.</b></p>
+			<h5 id="player-customization">PLAYER CUSTOMIZATION</h5>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">This section is on the right of the experience controls. It shows your currently chosen character (Elenuit by default), as well as some useful stats about your overall ShootThis experience and details about the last ShootThis match (if you have played one). <b>To change your character, simply use the "Change Character" button. Changing your character is rather a cosmetic change, it does not change your hitbox during a match, for example. In other words, the character you pick does not really matter.</b></p>
 			<img style="max-width: 100%; height: auto;" src="images/howtoplay/playercustomization.png"/>
-			<h5 style="margin-top: 3vh;">MATCH CONTROLS</h5>
-			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">They are on the right of the player customization section and underneath the "How to Play" button. Using the "Join Match" button you can join a queue for a match. Underneath it, you can see the current status of the queue. Whenever the current queue is created, a host is automatically assigned. The host is allowed to start the match only when there are enough players to meet the minimum requirement. If a lot of players join the queue, it's better to wait for the system to automatically start a full match. If you want the host to be reassigned, you need to click "Vote: Change Host" and if at least 2/3rds of all players in the queue vote the system will assign the host role to someone else. Voting to change the host is useful when everyone is tired of waiting and they want a smaller match and the current host is unwilling to start one.</p>
+			<h5 id="match-joining-controls" style="margin-top: 3vh;">MATCH JOINING CONTROLS</h5>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">They are on the right of the player customization section and underneath the "How to Play" button. Using the "Join Match" button you can join a queue for a match. Underneath it, you can see the current status of the queue. Whenever the current queue is created, a host is automatically assigned. The host is allowed to start the match only when there are enough players to meet the minimum requirement of 3 players. If a lot of players join the queue, it's better to wait for the system to automatically start a full match. If you want the host to be reassigned, you need to click "Vote: Change Host" and if at least 2/3rds of all players in the queue vote the system will assign the host role to someone else. Voting to change the host is useful when everyone is tired of waiting and they want a smaller match and the current host is unwilling to start one.</p>
 			<img style="max-width: 100%; height: auto;" src="images/howtoplay/matchcontrols.png"/>
-			<h3 style="margin-top: 3vh; font-weight: bold;">ABOUT THE MATCHES</h3>
+			<h3 id="matches" style="margin-top: 5vh; font-weight: bold;">ABOUT THE MATCHES</h3>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">Right after a match is started by you or the host in the lobby, the server checks if everything is okay to start one and if so, it will show a "Match starting in..." screen. After the countdown is over, it might hang on saying "Match starting in 1" or "Waiting for response from server". It's nothing to worry about, your browser is just processing the data it has received. If it just happens that it can't load the game (because the memory is not enough, for example) it will let you know and disconnect you from the game.</p>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">After the match starts, everyone is spawned at random positions. There's different obstacles and collectibles spawned every time, the only thing that maintains its position in every match are the walls - the bounds of the match field. You always see your character centered in the game bounds.</p>
+			<h5 id="gameplay">GAMEPLAY</h5>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">The aim of you taking part in the match is eliminating all other opponents and being the last one standing, using all the cover and collectible items available. Just like any other battle royale, you start with minimal equipment - your gun and its default magazine loaded. You need to explore the map to find other players to fight, ammo, heals and other collectibles that can turn a gunfight in your favor. <br>The overall concept is simple: to eliminate other enemies you shoot at them (it affects them only if it hits their hitbox, that's the circle around them) and watch out for anyone else shooting at you. When the time assigned for the match expires, everyone is killed by ShootThis (you can read more about that below) and a winner is chosen. However, try doing your best to kill everyone else because when the game kills everyone... it may turn out that you are not the champion.</p>
+			<h5 id="match-ui">MATCH INTERFACE</h5>
+			<img style="max-width: 100%; height: auto;" src="images/howtoplay/health_timer.png"/>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">That's the health bar and a timer on the top right. Watch out for that health; if it goes down to zero, you are dead. The timer indicates how much time is left before the game eliminates people on its own. However, unlike other battle royale games, there is no zone here - everyone is inside a safe zone until the timer stops counting. After that, everyone is in an unsafe zone, gets insane amount of damage dealt by the server so that there is no way to stay alive and the one with the most health left is crowned as champion of the match.</p>
+			<img style="max-width: 100%; height: auto;" src="images/howtoplay/kills.png"/>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">In the top right corner you can see how many kills you have. When you get a kill, you get to know about it by a small popup in the bottom center, showing the name of the player you killed. When you have no kills, this icon is invisible and the top right corner is empty.</p>
+			<img style="max-width: 100%; height: auto;" src="images/howtoplay/hints.png"/>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">In the bottom left corner appear some game-related hints. Whenever you get close to a spawnable, the small box appears there, telling you what you can pick up. If you try to pick up a health orb, for example, and you have full health - it will tell you that you don't need to heal. It also shows how much time an action takes when you perform it (healing, for instance).</p>
+			<img style="max-width: 100%; height: auto;" src="images/howtoplay/weapon_info.png"/>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">In the bottom right corner you can see info about the weapon you have equipped. <b>Currently, there is only one weapon available: single-fire Rifle.</b> On the top of this menu you can see the loaded ammo, under that is the other ammo that is available to be loaded when you need to and underneath the ammo stats you have the hopup (H) and mag (M) slots.</p>
+			<h5 id="hopups">HOPUPS</h5>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">These change the way your gun does during a gunfight. You can only have one hopup equipped at a time. They are somewhat rare, so you gotta watch out for them and make sure to grab your preferred one before anyone else does. <b>Be careful: whenever you pick a hopup up, it is automatically attached and you drop your previous hopup if you had one.</b></p>
+			<ul style="text-align: justify; margin-left: 5vw; margin-right: 5vw; margin-top: 2vh;">
+				<li>
+					<img style="max-width: 100%; height: auto;" src="images/howtoplay/hopups/01.png"/> <font style="font-weight: bold;">Piercer</font> - bigger damage per shot (an increase from 12 to 15);
+				</li>
+				<li>
+					<img style="max-width: 100%; height: auto;" src="images/howtoplay/hopups/02.png"/> <font style="font-weight: bold;">Speedfire</font> - bigger fire rate, faster reload times.
+				</li>
+			</ul>
+			<h5 id="mags">MAGS</h5>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">These change the capacity of the loaded ammo of your gun. <b>The default magazine of Rifle is 9 bullets.</b></p>
+			<ul style="text-align: justify; margin-left: 5vw; margin-right: 5vw; margin-top: 2vh;">
+				<li>
+					<img style="max-width: 100%; height: auto;" src="images/howtoplay/mags/01.png"/> <font style="font-weight: bold;">Rifle Mag 1</font> - loaded ammo capacity of 10;
+				</li>
+				<li>
+					<img style="max-width: 100%; height: auto;" src="images/howtoplay/mags/02.png"/> <font style="font-weight: bold;">Rifle Mag 2</font> - loaded ammo capacity of 11;
+				</li>
+				<li>
+					<img style="max-width: 100%; height: auto;" src="images/howtoplay/mags/03.png"/> <font style="font-weight: bold;">Rifle Mag 3</font> - loaded ammo capacity of 12.
+				</li>
+			</ul>
+			<h5 id="match-controls">MATCH CONTROLS</h5>
+			<p style="text-align: justify; margin-left: 5vw; margin-right: 5vw;">These are the commands that the game can receive from your mouse and keyboard, <b>only when it is focused.</b> Basically, if the game does not respond to controls and they work fine everywhere else in your machine, you probably need to click inside the game to focus on it again.</p>
+			<ul style="text-align: justify; margin-left: 5vw; margin-right: 5vw; margin-top: 2vh;">
+				<li>
+					<font style="font-weight: bold;">Mouse pointer</font> - this controls the rotation of the player.
+				</li>
+				<li style="margin-top: 2vh;">
+					<font style="font-weight: bold;">Mouse left button</font> - shoots your gun if you have ammo loaded in it (and you are not healing or reloading at that moment).
+				</li>
+				<li style="margin-top: 2vh;">
+					<font style="font-weight: bold;">"W" key on the keyboard</font> - moves you forwards, taking into consideration your rotation.
+				</li>
+				<li style="margin-top: 2vh;">
+					<font style="font-weight: bold;">"S" key on the keyboard</font> - moves you backwards, taking into consideration your rotation.
+				</li>
+				<li style="margin-top: 2vh;">
+					<font style="font-weight: bold;">"E" key on the keyboard</font> - picks up the nearest item (that's inside the circle around your player). You can see what the item is in your bottom left corner.
+				</li>
+				<li style="margin-top: 2vh;">
+					<font style="font-weight: bold;">"R" key on the keyboard</font> - reloads your gun (if you have enough ammo).
+				</li>
+				<li style="margin-top: 2vh;">
+					<font style="font-weight: bold;">"Esc" key on the keyboard</font> - shows the options menu (quitting the match (returning to lobby), muting music & sounds).
+				</li>
+			</ul>
+			<p style="margin-top: 7vh;"><i>Last Updated: September 15, 2020</i></p>
 		</center>
 		
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
