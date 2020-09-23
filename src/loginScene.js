@@ -47,7 +47,7 @@ class LoginScene extends Phaser.Scene
         this.loadingPercentage.setOrigin(0.5, 0.5);
         //Load game assets
         this.load.image('loginbg', 'assets/loginbg.png');
-        this.load.image('loginlogo', 'assets/loginlogo.png');
+        this.load.image('loginlogo', 'assets/loginLogo.png');
         this.load.multiatlas('formFields', 'assets/forms/fields.json', 'assets/forms');
         this.load.multiatlas('rememberAccount', 'assets/forms/checkbox.json', 'assets/forms');
         this.load.multiatlas('mediumBtn', 'assets/forms/mediumBtn.json', 'assets/forms');
