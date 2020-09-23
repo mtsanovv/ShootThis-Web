@@ -451,6 +451,7 @@ class MatchScene extends Phaser.Scene
             this.players[player].sprite.setDepth(this.players[player].y + this.players[player].sprite.height);
             if(player == this.focusedPlayerId)
             {
+                this.players[player].sprite.setFrame(this.players[player].character + "_focused.png");
                 this.focusedPlayer = this.players[player].sprite;
                 this.cameras.main.startFollow(this.focusedPlayer);
                 this.backgroundFollowsCamera();
