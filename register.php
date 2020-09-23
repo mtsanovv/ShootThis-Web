@@ -161,18 +161,21 @@
 
 			if(empty($error)) 
 			{
+				$playerData = '{"level": 1, "character": 0, "xp": 0, "kills": 0, "deaths": 0, "totalGames": 0, "lastMatchKills": 0, "lastMatchXp": 0, "lastMatchDamageDone": 0, "lastMatchTimeElapsed": 0, "lastMatchPlacement": "0/0"}';
+				
 				$insertQuery = $db->prepare("
 					INSERT INTO
 						users
-						(id, username, nickname, password, email, ipfromreg, ip)
+						(id, username, nickname, password, email, ipfromreg, ip, playerData)
 					VALUES
-						(:id, :username, :username, :password, :email, :ip, :ip)
+						(:id, :username, :username, :password, :email, :ip, :ip, :playerData)
 				");
 				$insertQuery->bindValue(":id", NULL);
 				$insertQuery->bindValue(":username", $username);
 				$insertQuery->bindValue(":email", $email);
 				$insertQuery->bindValue(":password", password_hash($password, PASSWORD_BCRYPT));
 				$insertQuery->bindValue(":ip", $ip);
+				$insertQuery->bindValue(":playerData", $playerData);
 				$insertQuery->execute();
 				$insertQuery->closeCursor();
 				$success = true;	

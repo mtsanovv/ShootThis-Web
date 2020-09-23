@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.1
+-- version 5.0.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 12, 2020 at 02:48 PM
--- Server version: 10.4.8-MariaDB
--- PHP Version: 7.1.33
+-- Generation Time: Sep 23, 2020 at 08:35 PM
+-- Server version: 10.4.14-MariaDB
+-- PHP Version: 7.4.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -53,7 +52,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `ipfromreg` varchar(45) NOT NULL,
   `ip` varchar(45) NOT NULL,
-  `playerData` longtext NOT NULL DEFAULT '{"level": 1, "character": 0, "xp": 0, "kills": 0, "deaths": 0, "totalGames": 0, "lastMatchKills": 0, "lastMatchXp": 0, "lastMatchDamageDone": 0, "lastMatchTimeElapsed": 0, "lastMatchPlacement": "0/0"}',
+  `playerData` longtext DEFAULT NULL,
   `savedLoginCookie` varchar(72) NOT NULL,
   `savedLoginCookieValidUntil` datetime NOT NULL,
   `loginToken` varchar(72) NOT NULL,
