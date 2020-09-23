@@ -8,7 +8,7 @@ A 2D HTML5 battle royale, using the [Phaser 3](https://github.com/photonstorm/ph
 
 ## Demos
 
-- Trailer: TBA
+- Trailer: https://www.youtube.com/watch?v=CnBwuOsRmqI
 - Gameplay: TBA
 
 ## Instructions
