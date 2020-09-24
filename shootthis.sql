@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 23, 2020 at 09:35 PM
+-- Generation Time: Sep 24, 2020 at 10:03 AM
 -- Server version: 10.4.14-MariaDB
--- PHP Version: 7.4.9
+-- PHP Version: 7.4.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -54,9 +54,9 @@ CREATE TABLE `users` (
   `ip` varchar(45) NOT NULL,
   `playerData` longtext DEFAULT NULL,
   `savedLoginCookie` varchar(96) NOT NULL,
-  `savedLoginCookieValidUntil` datetime NOT NULL,
+  `savedLoginCookieValidUntil` datetime NOT NULL DEFAULT current_timestamp(),
   `loginToken` varchar(96) NOT NULL,
-  `loginTokenExpiry` datetime NOT NULL
+  `loginTokenExpiry` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --

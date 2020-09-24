@@ -166,9 +166,9 @@
 				$insertQuery = $db->prepare("
 					INSERT INTO
 						users
-						(id, username, nickname, password, email, ipfromreg, ip, playerData)
+						(id, username, nickname, password, email, ipfromreg, ip, playerData, savedLoginCookie, loginToken)
 					VALUES
-						(:id, :username, :username, :password, :email, :ip, :ip, :playerData)
+						(:id, :username, :username, :password, :email, :ip, :ip, :playerData, '', '')
 				");
 				$insertQuery->bindValue(":id", NULL);
 				$insertQuery->bindValue(":username", $username);
