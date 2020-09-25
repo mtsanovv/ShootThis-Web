@@ -4,7 +4,7 @@
 			"image": "emitters.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 361,
+				"w": 463,
 				"h": 130
 			},
 			"scale": 1,
@@ -70,6 +70,27 @@
 						"y": 1,
 						"w": 100,
 						"h": 100
+					}
+				},
+				{
+					"filename": "ammo.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 100,
+						"h": 100
+					},
+					"spriteSourceSize": {
+						"x": 0,
+						"y": 7,
+						"w": 100,
+						"h": 84
+					},
+					"frame": {
+						"x": 362,
+						"y": 1,
+						"w": 100,
+						"h": 84
 					}
 				}
 			]

@@ -30,6 +30,7 @@ class MatchScene extends Phaser.Scene
         this.bloodEmitter;
         this.hints = {};
         this.healthEmitter;
+        this.reloadAnimEmitter;
     }
 
     create(data)
@@ -227,6 +228,19 @@ class MatchScene extends Phaser.Scene
                         this.healthEmitter.removeEmitter(health);
                     }, null, this);
                     break;
+                case "reload":
+                        var reload = this.reloadAnimEmitter.createEmitter({
+                            alpha: { start: 1, end: 0 },
+                            scale: { start: 1, end: 0 },
+                            speed: 70,
+                            lifespan: 500,
+                            frequency: 200,
+                            follow: player.sprite
+                        });
+                        this.time.delayedCall(args[2], function() {
+                            this.reloadAnimEmitter.removeEmitter(reload);
+                        }, null, this);
+                        break;
             }
         }
     }
@@ -464,9 +478,11 @@ class MatchScene extends Phaser.Scene
         this.smokeEmitter = this.add.particles("emitters", "smoke-puff.png");
         this.bloodEmitter = this.add.particles("emitters", "blood.png");
         this.healthEmitter = this.add.particles("emitters", "health.png");
+        this.reloadAnimEmitter = this.add.particles("emitters", "ammo.png");
         this.smokeEmitter.setDepth(args[1]);
         this.bloodEmitter.setDepth(args[1] + 1);
         this.healthEmitter.setDepth(args[1] + 2);
+        this.reloadAnimEmitter.setDepth(args[1] + 3);
 
         //initialize bullet groups
         this.enemyBullets = new Bullets(this, args[8] * (Object.keys(this.players).length + 1));
