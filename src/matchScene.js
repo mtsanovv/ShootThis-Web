@@ -343,7 +343,10 @@ class MatchScene extends Phaser.Scene
     {
         this.players[args[0]].sprite.x = args[1];
         this.players[args[0]].sprite.y = args[2];
-        this.players[args[0]].sprite.rotation = args[3];
+
+        if(args[0] !== this.focusedPlayerId)
+            this.players[args[0]].sprite.rotation = args[3];
+            
         this.players[args[0]].sprite.setDepth(this.players[args[0]].sprite.y + this.players[args[0]].sprite.height);
         
         if(args[0] === this.focusedPlayerId && Object.keys(this.players).indexOf(String(args[0])) !== -1)
