@@ -6,15 +6,5 @@ var loginConfig = {
 		"address": "//localhost",
 		"port": 9903,
 		"protocol": "http:"
-	},
-	"login2": {
-		"address": "//192.168.191.1",
-		"port": 9904,
-		"protocol": "http:"
-	},
-	"login3": {
-		"address": "//5.206.227.98",
-		"port": 9907,
-		"protocol": "http:"
 	}
 };

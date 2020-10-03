@@ -50,11 +50,6 @@
 					echo '<h1 style="margin-top: 3vh; font-weight: 100; margin-right: 2vw; margin-left: 2vw;" ><span style="font-family: \'Kaushan Script\' !important;">ShootThis</span> is only available for desktop devices.</h1>';
 					die();
 				}
-
-				//no caching code, debugging only
-				header("Cache-Control: no-cache, no-store, must-revalidate");
-				header("Pragma: no-cache");
-				header("Expires: 0");
 			?>
 			
 		</center>
