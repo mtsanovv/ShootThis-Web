@@ -43,6 +43,7 @@ class UIScene extends Phaser.Scene
         this.ammoHint;
         this.timer;
         this.matchEndsOn = 0;
+        this.bleedBg;
         this.sound.pauseOnBlur = false;
     }
 
@@ -51,6 +52,9 @@ class UIScene extends Phaser.Scene
 
         this.initVariables();
         this.socket = data.socket;
+
+        this.bleedBg = this.add.image(0, 0, 'bleedBG').setOrigin(0, 0);
+        this.bleedBg.alpha = 0;
 
         this.background = this.add.image(0, 0, 'loginbg').setOrigin(0, 0);
         this.background.alpha = 0;
@@ -322,6 +326,9 @@ class UIScene extends Phaser.Scene
             this.healthBarShadow.displayWidth = args[1];
         
         this.healthRectangle.displayWidth = args[1] / args[2] * args[0];
+
+        if(25/100 * args[2] <= args[0])
+            this.bleedBg.alpha = 1 - 2 * (args[0] / args[2]);
     }
 
     killedSomeone(args)
