@@ -13,7 +13,7 @@ A 2D HTML5 battle royale, using the [Phaser 3](https://github.com/photonstorm/ph
 
 ## Instructions
 1. You can clone this repository or download a ZIP. 
-2. This project was based on php-fpm 7.1.33. Some parts of it may break down when newer or older versions are used.
+2. This project was based on PHP 7.1.33. Some parts of it may break down when newer or older versions are used. For testing purposes, if you cannot setup a MySQL/MariaDB server and/or a web server, use [XAMPP](https://www.apachefriends.org/download.html). We have used it to test the game on our personal Windows PCs, for the playtests we used an Ubuntu server and installed manually mysql-server and nginx.
 3. You may have to configure some parameters (i.e. database details and recaptcha keys) in the file register.php.
 4. The mail verfication script may not work when it's requested from a location that's behind proxy/CDN and thus break down the register.php file. You may want to configure your web server to serve that script directly. **When you do so, you need to configure $mailValidatorHost in register.php, by default it is $_SERVER['HTTP_HOST']. The mail validator script could have some unexpected behavior when requested using https protocol, so http may only be used. Since that's an inside page (make sure the address cannot be guessed by anyone), it's perfectly fine.**
 5. In order for the registration script to work, you need to create a new database using the shootthis.sql file in your SQL server. **Please note that this file was created by MariaDB. This has not been tested with other engines and it may not work with some.**
@@ -36,15 +36,5 @@ A 2D HTML5 battle royale, using the [Phaser 3](https://github.com/photonstorm/ph
 ## Credits
 - Mail verification script: Konstantin Granin <kostya@granin.me>
 - Mobile device detection: http://mobiledetect.net/
-- RexUI: https://github.com/rexrainbow/phaser3-rex-notes
-- Sound effects & music:
-	- https://www.audiomicro.com/chilled-dubstep-music-royalty-free-stock-music-1388001
-	- https://www.audiomicro.com/game-select-sound-effects-1634513
-	- https://www.audiomicro.com/organic-button-1-sound-effects-1059639
-	- https://www.audiomicro.com/gun-weapon-rifle-assault-single-shot-with-dirt-impact-sound-effects-1266393
-	- https://www.audiomicro.com/hybrid-epic-indent-wav-royalty-free-stock-music-1626587
-	- https://www.audiomicro.com/lyrah-arcade-game-shooter-royalty-free-stock-music-1339105
-	- https://www.audiomicro.com/hit-strike-impact-eliminated-royalty-free-stock-music-1198415
-	- https://www.audiomicro.com/short-positive-fx-sound-effects-1638811
 
 *M. Tsanov, S. Tsvetkov, Y. Berov, 2020*
