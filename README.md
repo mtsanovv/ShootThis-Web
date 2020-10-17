@@ -21,6 +21,9 @@ A 2D HTML5 battle royale, using the [Phaser 3](https://github.com/photonstorm/ph
 ```diff 
 - By default, this uses http, which is EXTREMELY insecure BECAUSE PASSWORDS ARE SENT IN PLAINTEXT. ALWAYS USE HTTPS WHENEVER SENDING PLAINTEXT PASSWORDS!
 ```
+
+**For using secure (https) connections for the ShootThis-Backend servers, please refer to the [SSL configuration for ShootThis-Backend servers](https://github.com/mtsanovv/ShootThis-Backend/blob/master/README-SSL.md)**.
+
 7. In order to have everything operational, you need to set up the backend, following the instructions. [ShootThis-Backend](https://github.com/mtsanovv/ShootThis-Backend)
 8. **There is the chance of having bruteforce attempts on login. Thus, you need to set up a firewall filtering packets on login and game server as well.**
 
