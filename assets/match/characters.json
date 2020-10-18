@@ -4,7 +4,7 @@
 			"image": "characters.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 498,
+				"w": 528,
 				"h": 97
 			},
 			"scale": 1,
@@ -54,42 +54,42 @@
 				{
 					"filename": "1.png",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
-						"w": 116,
+						"w": 130,
 						"h": 95
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 115,
+						"w": 130,
 						"h": 95
 					},
 					"frame": {
 						"x": 265,
 						"y": 1,
-						"w": 115,
+						"w": 130,
 						"h": 95
 					}
 				},
 				{
 					"filename": "1_focused.png",
 					"rotated": false,
-					"trimmed": true,
+					"trimmed": false,
 					"sourceSize": {
-						"w": 116,
+						"w": 130,
 						"h": 95
 					},
 					"spriteSourceSize": {
 						"x": 0,
 						"y": 0,
-						"w": 115,
+						"w": 130,
 						"h": 95
 					},
 					"frame": {
-						"x": 382,
+						"x": 397,
 						"y": 1,
-						"w": 115,
+						"w": 130,
 						"h": 95
 					}
 				}
